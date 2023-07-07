@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.userProfile.ProfileFragment"
+    android:background="#F1F1F1">
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/profile_fragment_loading_progressbar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"/>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/profile_fragment_swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/profile_fragment_whole_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F1F1F1">
+
+                <ImageView
+                    android:id="@+id/user_profile_hamburger_menu_button"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:layout_width="27dp"
+                    android:layout_height="27dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_margin="15dp"
+                    android:src="@drawable/baseline_menu_24"
+                    android:elevation="30dp"
+                    app:tint="@color/white"
+                    android:scaleType="centerCrop"/>
+
+                <ImageView
+                    android:id="@+id/user_profile_back_button"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:layout_width="27dp"
+                    android:layout_height="27dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_margin="15dp"
+                    android:src="@drawable/baseline_arrow_back_24"
+                    android:elevation="30dp"
+                    app:tint="@color/white"
+                    android:scaleType="centerCrop"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:paddingBottom="50dp"
+                    android:id="@+id/user_profile_top_shape"
+                    android:elevation="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/profile_top_shape"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_marginTop="15dp"
+                        android:id="@+id/user_profile_image"
+                        app:civ_border_color="@color/white"
+                        app:civ_border_width="2dp"
+                        android:elevation="20dp"
+                        android:layout_width="@dimen/_110mdp"
+                        android:layout_height="@dimen/_110mdp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <ProgressBar
+                        android:elevation="50dp"
+                        android:id="@+id/user_profile_progressbar"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:layout_constraintTop_toTopOf="@id/user_profile_image"
+                        app:layout_constraintEnd_toEndOf="@id/user_profile_image"
+                        app:layout_constraintStart_toStartOf="@id/user_profile_image"
+                        app:layout_constraintBottom_toBottomOf="@id/user_profile_image"/>
+
+                    <!--            <de.hdodenhof.circleimageview.CircleImageView-->
+                    <!--                android:layout_marginTop="15dp"-->
+                    <!--                android:id="@+id/profile_user_follow_check"-->
+                    <!--                app:civ_border_color="@color/white"-->
+                    <!--                app:civ_border_width="2dp"-->
+                    <!--                android:elevation="20dp"-->
+                    <!--                android:layout_width="@dimen/_26mdp"-->
+                    <!--                android:layout_height="@dimen/_26mdp"-->
+                    <!--                android:src="@drawable/add"-->
+                    <!--                app:layout_constraintEnd_toEndOf="@id/user_profile_image"-->
+                    <!--                app:layout_constraintBottom_toBottomOf="@id/user_profile_image"/>-->
+
+                    <TextView
+                        android:layout_marginTop="5dp"
+                        android:lines="1"
+                        android:id="@+id/user_profile_userName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/user_profile_image"
+                        android:elevation="30dp"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:fontFamily="@font/aclonica"
+                        android:gravity="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginEnd="50dp"
+                        android:layout_marginStart="50dp"/>
+
+                    <TextView
+                        android:paddingTop="5dp"
+                        android:id="@+id/user_profile_bio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        app:layout_constraintTop_toBottomOf="@id/user_profile_follow_button"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginStart="40dp"
+                        android:elevation="30dp"
+                        android:textSize="@dimen/_13font_mdp"
+                        android:gravity="center"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:textStyle="bold"
+                        android:layout_margin="5dp"
+                        android:elevation="30dp"
+                        app:layout_constraintTop_toBottomOf="@id/user_profile_userName"
+                        app:layout_constraintBottom_toTopOf="@id/user_profile_bio"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginBottom="@dimen/_10mdp"
+                        android:id="@+id/user_profile_follow_button"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/button_white_shape"
+                        android:fontFamily="@font/aclonica"
+                        android:text="Follow"
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/_13font_mdp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:layout_marginBottom="20dp"
+                    android:id="@+id/user_profile_mid_shape"
+                    android:layout_margin="30dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    app:layout_constraintTop_toBottomOf="@id/user_profile_top_shape"
+                    app:layout_constraintBottom_toBottomOf="@id/user_profile_top_shape"
+                    android:background="@drawable/profile_mid_shape"
+                    android:elevation="10dp"/>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/user_profile_info_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:elevation="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="5dp"
+                    app:layout_constraintBottom_toBottomOf="@id/user_profile_mid_shape"
+                    app:layout_constraintEnd_toEndOf="@id/user_profile_mid_shape"
+                    app:layout_constraintStart_toStartOf="@id/user_profile_mid_shape"
+                    app:layout_constraintTop_toTopOf="@id/user_profile_mid_shape">
+
+                    <TextView
+                        android:id="@+id/user_profile_posts_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Posts"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15font_mdp"
+                        app:layout_constraintBottom_toTopOf="@id/user_profile_posts_text"
+                        app:layout_constraintEnd_toStartOf="@+id/user_profile_followers_textView"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5" />
+
+                    <TextView
+                        android:id="@+id/user_profile_followers_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Followers"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15font_mdp"
+                        app:layout_constraintBottom_toTopOf="@id/user_profile_followers_text"
+                        app:layout_constraintEnd_toStartOf="@+id/user_profile_following_textView"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/user_profile_posts_textView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/user_profile_following_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Following"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15font_mdp"
+                        app:layout_constraintBottom_toTopOf="@id/user_profile_following_text"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/user_profile_followers_textView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:id="@+id/user_profile_posts_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15font_mdp"
+                        tools:layout_editor_absoluteX="45dp"
+                        tools:layout_editor_absoluteY="4dp"
+                        app:layout_constraintTop_toBottomOf="@id/user_profile_posts_textView"
+                        app:layout_constraintEnd_toEndOf="@id/user_profile_posts_textView"
+                        app:layout_constraintStart_toStartOf="@id/user_profile_posts_textView"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:id="@+id/user_profile_followers_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15font_mdp"
+                        tools:layout_editor_absoluteX="147dp"
+                        tools:layout_editor_absoluteY="4dp"
+                        app:layout_constraintTop_toBottomOf="@id/user_profile_followers_textView"
+                        app:layout_constraintEnd_toEndOf="@id/user_profile_followers_textView"
+                        app:layout_constraintStart_toStartOf="@id/user_profile_followers_textView"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:id="@+id/user_profile_following_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15font_mdp"
+                        tools:layout_editor_absoluteX="252dp"
+                        tools:layout_editor_absoluteY="4dp"
+                        app:layout_constraintTop_toBottomOf="@id/user_profile_following_textView"
+                        app:layout_constraintEnd_toEndOf="@id/user_profile_following_textView"
+                        app:layout_constraintStart_toStartOf="@id/user_profile_following_textView"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/user_profile_posts_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/user_profile_mid_shape"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingTop="@dimen/_10mdp"
+                    android:paddingBottom="10dp"/>
+
+                <ImageView
+                    android:src="@drawable/baseline_camera_24"
+                    android:layout_marginTop="30dp"
+                    android:id="@+id/user_profile_no_post_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:layout_constraintTop_toBottomOf="@id/user_profile_mid_shape"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+
+                <TextView
+                    android:id="@+id/user_profile_no_post_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/user_profile_no_post_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginStart="30dp"
+                    android:gravity="center"
+                    android:text="No Posts Yet"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="casual"
+                    android:textSize="@dimen/_17font_mdp"
+                    android:layout_marginTop="15dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</FrameLayout>

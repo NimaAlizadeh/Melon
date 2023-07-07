@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.comments.CommentsFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/comments_fragment_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:elevation="20dp"
+        app:navigationIconTint="@color/black"
+        app:title="Comments"
+        app:titleCentered="true"
+        app:titleTextColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/comments_fragment_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/comments_fragment_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/comments_fragment_add_comment_edt"/>
+
+    <EditText
+        android:lines="1"
+        android:id="@+id/comments_fragment_add_comment_edt"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/comments_fragment_recycler"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/white"
+        android:elevation="20dp"
+        android:hint="Add Comment..."
+        android:paddingStart="20dp"
+        android:paddingEnd="40dp"
+        android:focusedByDefault="true" />
+
+    <ImageView
+        app:tint="@color/black"
+        android:id="@+id/comments_fragment_add_comment_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_send_24"
+        app:layout_constraintBottom_toBottomOf="@id/comments_fragment_add_comment_edt"
+        app:layout_constraintTop_toTopOf="@id/comments_fragment_add_comment_edt"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="21dp"
+        android:layout_margin="10dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
