@@ -22,7 +22,7 @@ interface ApiServices {
 
     @Multipart
     @POST("post/create")
-    suspend fun addPost(@Header("auth-token") token: String, @Part("description") description: RequestBody, @Part images: MultipartBody.Part): Response<AddPostResponse>
+    suspend fun addPost(@Header("auth-token") token: String, @Part("description") description: RequestBody, @Part images: List<MultipartBody.Part>): Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
 
     @PUT("auth/edit")
@@ -32,9 +32,15 @@ interface ApiServices {
     @GET("auth/getUser")
     suspend fun getUserData(@Header("auth-token") token: String): Response<GetUserResponse>
 
+    @GET("auth/getUser/{userId}")
+    suspend fun getUserDataWithId(@Path("userId") userId: String, @Header("auth-token") token: String): Response<UserResponseWithId>
+
     @Multipart
     @POST("auth/avatars")
     suspend fun changeAvatar(@Header("auth-token") token: String, @Part avatar: MultipartBody.Part): Response<JustStringResponse>
     // response is like the same as addPostResponse and it just gets success and message
+
+    @GET("auth/getbyusername")
+    suspend fun searchUser(@Header("auth-token") token: String, @Query("searchTerm") searchTerm: String): Response<SearchUserResponse>
 
 }

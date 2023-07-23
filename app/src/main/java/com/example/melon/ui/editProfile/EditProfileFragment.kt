@@ -2,6 +2,7 @@ package com.example.melon.ui.editProfile
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.melon.R
 import com.example.melon.databinding.FragmentEditProfileBinding
 import com.example.melon.models.EditProfileModel
 import com.example.melon.models.User
@@ -31,6 +31,7 @@ class EditProfileFragment : Fragment() {
     private lateinit var gender: String
     private lateinit var birthDay: String
     private lateinit var editProfileModel: EditProfileModel
+    private var isPrivate = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentEditProfileBinding.inflate(layoutInflater, container, false)
@@ -66,6 +67,17 @@ class EditProfileFragment : Fragment() {
                 }
             }
 
+            //switch button handling
+            editProfileFragmentAccountPrivacySwitch.setOnCheckedChangeListener { _, _ ->
+
+                isPrivate = editProfileFragmentAccountPrivacySwitch.isChecked
+                if(isPrivate)
+                    editProfileFragmentAccountPrivacyText.text = "Private"
+                else
+                    editProfileFragmentAccountPrivacyText.text = "Public"
+
+            }
+
             viewModel.userDataResponse.observe(viewLifecycleOwner){
                 if(it.isSuccessful){
                     //get the response data to check with user input later
@@ -80,6 +92,12 @@ class EditProfileFragment : Fragment() {
                     editProfileFragmentBirthdayEdt.setText(response.birthday)
                     editProfileFragmentUsernameEdt.setText(response.username)
                     editProfileFragmentBioEdt.setText(response.bio)
+                    editProfileFragmentAccountPrivacySwitch.isChecked = response.private
+                    isPrivate = response.private
+                    if(isPrivate)
+                        editProfileFragmentAccountPrivacyText.text = "Private"
+                    else
+                        editProfileFragmentAccountPrivacyText.text = "Public"
                 }else{
                     Toast.makeText(requireContext(), it.body()?.success.toString(), Toast.LENGTH_SHORT).show()
                 }
@@ -101,15 +119,18 @@ class EditProfileFragment : Fragment() {
                 if(it){
                     editProfileFragmentLoadingProgressbar.visibility = View.VISIBLE
                     editProfileFragmentScrollLayout.visibility = View.GONE
+                    editProfileFragmentToolbarCheckButton.isEnabled = false
                 }else{
                     editProfileFragmentLoadingProgressbar.visibility = View.GONE
                     editProfileFragmentScrollLayout.visibility = View.VISIBLE
+                    editProfileFragmentToolbarCheckButton.isEnabled = true
                 }
             }
 
             //check button for when user is done
             editProfileFragmentToolbarCheckButton.setOnClickListener {
                 editProfileModel.bio = editProfileFragmentBioEdt.text.toString()
+                editProfileModel.private = isPrivate
 
                 if(editProfileFragmentUsernameEdt.text.toString() != userResponse.username)
                     editProfileModel.username = editProfileFragmentUsernameEdt.text.toString()
@@ -129,8 +150,6 @@ class EditProfileFragment : Fragment() {
                     editProfileModel.newPassword = editProfileFragmentNewPasswordEdt.text.toString()
                 }
 
-                Toast.makeText(requireContext(), gender, Toast.LENGTH_SHORT).show()
-
                 viewModel.doEditUserProfile(Constants.USER_TOKEN, editProfileModel)
             }
 
@@ -138,9 +157,11 @@ class EditProfileFragment : Fragment() {
                 if(it){
                     editProfileFragmentEditingProgressbar.visibility = View.VISIBLE
                     editProfileFragmentToolbarCheckButton.visibility = View.GONE
+                    editProfileFragmentToolbarBackButton.isEnabled = false
                 }else{
                     editProfileFragmentEditingProgressbar.visibility = View.GONE
                     editProfileFragmentToolbarCheckButton.visibility = View.VISIBLE
+                    editProfileFragmentToolbarBackButton.isEnabled = true
                 }
             }
 

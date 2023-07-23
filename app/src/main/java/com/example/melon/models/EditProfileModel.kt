@@ -7,5 +7,6 @@ data class EditProfileModel(
     var gender: String = "",
     var newPassword: String = "",
     var oldPassword: String = "",
-    var username: String = ""
+    var username: String = "",
+    var private: Boolean = false
 )

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/search_user_recycler_item_whole_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_margin="10dp"
+        android:id="@+id/search_user_recycler_image_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:src="@drawable/ph"/>
+
+<!--    <ProgressBar-->
+<!--        android:id="@+id/search_user_recycler_image_progressbar"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/search_user_recycler_image_view"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/search_user_recycler_image_view"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/search_user_recycler_image_view"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/search_user_recycler_image_view"/>-->
+
+    <TextView
+        android:id="@+id/search_user_recycler_user_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/search_user_recycler_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/search_user_recycler_image_view"
+        app:layout_constraintBottom_toTopOf="@id/search_user_recycler_is_following"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_15font_mdp"
+        android:text="NimaALizadeh"/>
+
+    <TextView
+        android:id="@+id/search_user_recycler_is_following"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/search_user_recycler_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_user_recycler_user_name"
+        app:layout_constraintBottom_toBottomOf="@id/search_user_recycler_image_view"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/light_grey"
+        android:textSize="@dimen/_11font_mdp"
+        android:text="Following" />
+
+    <View
+        android:alpha="0.5"
+        android:id="@+id/search_user_recycler_separator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/gray"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="10dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

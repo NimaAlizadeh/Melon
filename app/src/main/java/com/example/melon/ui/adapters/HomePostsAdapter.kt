@@ -55,10 +55,8 @@ class HomePostsAdapter @Inject constructor(): RecyclerView.Adapter<HomePostsAdap
                 }
 
                 homeFragmentDescriptionText.setOnClickListener {
-                    if(homeFragmentDescriptionText.maxLines == 1)
-                        homeFragmentDescriptionText.maxLines = 100
-                    else
-                        homeFragmentDescriptionText.maxLines = 1
+                    if(homeFragmentDescriptionText.maxLines == 2)
+                        homeFragmentDescriptionText.maxLines = 1000
                 }
 
                 homeFragmentPostLikeButton.setOnClickListener {

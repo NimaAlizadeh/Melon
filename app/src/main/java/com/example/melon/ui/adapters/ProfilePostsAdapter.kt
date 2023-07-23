@@ -95,10 +95,10 @@ class ProfilePostsAdapter @Inject constructor(): RecyclerView.Adapter<ProfilePos
 
 
                 //show multiple icon or not
-//                if(model.isMultiple)
-//                    recyclerItemIsMultiple.visibility = View.VISIBLE
-//                else
-//                    recyclerItemIsMultiple.visibility = View.GONE
+                if(model.images.size > 1)
+                    recyclerItemIsMultiple.visibility = View.VISIBLE
+                else
+                    recyclerItemIsMultiple.visibility = View.GONE
             }
         }
     }

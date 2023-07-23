@@ -19,7 +19,7 @@ class AddPostViewModel @Inject constructor(private val addPostRepository: AddPos
     val loading = MutableLiveData<Boolean>()
     val addPostResponse = MutableLiveData<Response<AddPostResponse>>()
 
-    fun doAddPost(token: String, description: RequestBody, images: MultipartBody.Part) = viewModelScope.launch {
+    fun doAddPost(token: String, description: RequestBody, images: List<MultipartBody.Part>) = viewModelScope.launch {
         loading.postValue(true)
 
         try{

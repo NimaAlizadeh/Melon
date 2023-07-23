@@ -1,5 +1,6 @@
 package com.example.melon.ui.confirmAddPost
 
+import android.app.Dialog
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,9 +16,13 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.melon.R
 import com.example.melon.databinding.FragmentConfirmAddPostBinding
 import com.example.melon.ui.adapters.ConfirmAddPostAdapter
+import com.example.melon.ui.userProfile.ProfileFragmentDirections
 import com.example.melon.utils.Constants
 import com.example.melon.viewmodels.AddPostViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -54,6 +59,11 @@ class ConfirmAddPostFragment : Fragment() {
 
         binding.apply {
 
+            //back button on click listener
+            confirmAddPostFragmentToolbarBackButton.setOnClickListener {
+                findNavController().popBackStack()
+            }
+
             //set posts on picture's recycler
             adapter.differ.submitList(path)
             confirmAddPostFragmentPicsRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -65,16 +75,22 @@ class ConfirmAddPostFragment : Fragment() {
 
 
             confirmAddPostFragmentToolbarCheckButton.setOnClickListener {
-                val originalFile = File(path[0])
-                val fileUri = Uri.parse(path[0])
-                val filePart: RequestBody = RequestBody.create(requireActivity().contentResolver.getType(fileUri)
-                    ?.toMediaTypeOrNull(), originalFile)
+                val images: ArrayList<MultipartBody.Part> = arrayListOf()
+                path.forEach {
+                    val originalFile = File(it)
+                    val fileUri = Uri.parse(it)
+                    val filePart: RequestBody = RequestBody.create(requireActivity().contentResolver.getType(fileUri)?.toMediaTypeOrNull(), originalFile)
 
-                val file: MultipartBody.Part = MultipartBody.Part.createFormData("images", originalFile.name, filePart)
+                    val file: MultipartBody.Part = MultipartBody.Part.createFormData("images", originalFile.name, filePart)
+                    images.add(file)
+                }
+
+
                 val descriptionPart = RequestBody.create(MultipartBody.FORM, confirmAddPostFragmentCaptionEdt.text.toString())
 
                 confirmAddPostFragmentToolbarBackButton.isEnabled = false
-                viewModel.doAddPost(Constants.USER_TOKEN, descriptionPart, file)
+                confirmAddPostFragmentCaptionEdt.isEnabled = false
+                viewModel.doAddPost(Constants.USER_TOKEN, descriptionPart, images)
                 Toast.makeText(requireContext(), "Posting...", Toast.LENGTH_SHORT).show()
             }
 
@@ -87,16 +103,24 @@ class ConfirmAddPostFragment : Fragment() {
                     Toast.makeText(requireContext(), "Your Post must be under 8Mb", Toast.LENGTH_SHORT).show()
                 }
                 confirmAddPostFragmentToolbarBackButton.isEnabled = true
+                confirmAddPostFragmentCaptionEdt.isEnabled = true
             }
+            val dialog = Dialog(requireContext())
+            dialog.setContentView(R.layout.progress_dialog_layout)
+            dialog.setCancelable(false)
 
             //loading progressbar handling
             viewModel.loading.observe(viewLifecycleOwner){
                 if(it){
                     confirmAddPostFragmentToolbarCheckButton.visibility = View.INVISIBLE
                     confirmAddPostFragmentToolbarPostingProgressbar.visibility = View.VISIBLE
+
+                    dialog.show()
                 }else{
                     confirmAddPostFragmentToolbarCheckButton.visibility = View.VISIBLE
                     confirmAddPostFragmentToolbarPostingProgressbar.visibility = View.INVISIBLE
+
+                    dialog.dismiss()
                 }
             }
         }

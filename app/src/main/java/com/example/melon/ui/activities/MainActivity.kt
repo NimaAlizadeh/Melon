@@ -6,25 +6,34 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.melon.R
 import com.example.melon.databinding.ActivityMainBinding
+import com.example.melon.models.FollowModel
+import com.example.melon.ui.home.HomeFragment
 import com.example.melon.ui.profileHamburger.ProfileHamburgerFragment
+import com.example.melon.ui.search.SearchFragment
 import com.example.melon.ui.userProfile.ProfileFragment
 import com.example.melon.utils.Constants
+import com.example.melon.viewmodels.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity()
+class MainActivity : AppCompatActivity(), HomeFragment.OnHomeFragmentListener
 {
     private lateinit var binding: ActivityMainBinding
 
     companion object{
         var appPagePosition = Constants.MAIN_ACTIVITY
         private lateinit var callBack: OnPermissionCallBackListener
+        var followingList: List<FollowModel> = emptyList()
+        var followingIdList = ArrayList<String>()
+        var followRequestList: List<FollowModel> = emptyList()
+        var followRequestIdList = ArrayList<String>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -33,15 +42,15 @@ class MainActivity : AppCompatActivity()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        HomeFragment().setOnHomeFragmentListener(this)
+
 
         binding.apply {
             mainBottomNavigation.selectedItemId = R.id.homeFragment
-//            ProfileFragment().onCreateAnimation()
             //set bottomNavigation to be active in special fragments
             val navController = findNavController(R.id.fragmentContainerView)
             navController.addOnDestinationChangedListener { _, destination, _ ->
-                if(destination.id == R.id.profileFragment || destination.id == R.id.homeFragment ||
-                        destination.id == R.id.searchFragment){
+                if(destination.id == R.id.profileFragment || destination.id == R.id.searchFragment){
                     mainBottomNavigation.visibility = View.VISIBLE
                     mainSimpleView1.visibility = View.VISIBLE
                 }
@@ -99,5 +108,23 @@ class MainActivity : AppCompatActivity()
 
     fun setOnPermissionCallBackClickListener(tempCallBack: OnPermissionCallBackListener) {
         callBack = tempCallBack
+    }
+
+
+    override fun onBackPressed() {
+        val searchFragment = SearchFragment()
+
+        if(appPagePosition == Constants.FRAGMENT_SEARCH && searchFragment.onBackPressed()){
+            return
+        }
+
+        super.onBackPressed()
+    }
+
+    override fun onHomeFragmentLoaded() {
+        binding.apply {
+            mainBottomNavigation.visibility = View.VISIBLE
+            mainSimpleView1.visibility = View.VISIBLE
+        }
     }
 }

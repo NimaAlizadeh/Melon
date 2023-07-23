@@ -2,12 +2,12 @@ package com.example.melon.ui.changeAvatar
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,16 +21,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.melon.R
-import com.example.melon.api.ApiServices
 import com.example.melon.databinding.FragmentChangeAvatarBinding
-import com.example.melon.models.MultiSelectRecycler
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.AddPostAdapter
-import com.example.melon.ui.addPost.AddPostFragmentDirections
 import com.example.melon.utils.Constants
 import com.example.melon.viewmodels.ChangeAvatarViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -49,9 +45,6 @@ class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListen
 
     private lateinit var anim: AlphaAnimation
     private var path = ""
-
-    @Inject
-    lateinit var apiServices: ApiServices
 
     private lateinit var selectedImages: ArrayList<String>
 
@@ -77,6 +70,11 @@ class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListen
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+            //init variables
+            val dialog = Dialog(requireContext())
+            dialog.setContentView(R.layout.progress_dialog_layout)
+            dialog.setCancelable(false)
+
 
             //refresh listener
             changeAvatarRefresh.setOnRefreshListener {
@@ -101,6 +99,7 @@ class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListen
                 viewModel.doChangeAvatar(Constants.USER_TOKEN, file)
                 changeAvatarCheckButton.isEnabled = false
                 Toast.makeText(requireContext(), "Changing avatar...", Toast.LENGTH_SHORT).show()
+                dialog.show()
             }
 
             viewModel.changeAvatarResponse.observe(viewLifecycleOwner){
@@ -111,6 +110,7 @@ class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListen
                     Toast.makeText(requireContext(), it.message(), Toast.LENGTH_SHORT).show()
                 }
                 changeAvatarCheckButton.isEnabled = true
+                dialog.dismiss()
             }
 
             viewModel.loading.observe(viewLifecycleOwner){
@@ -188,6 +188,7 @@ class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListen
             Glide.with(requireContext()).load(path).into(changeAvatarImageView)
             this@ChangeAvatarFragment.path = path
             changeAvatarImageView.startAnimation(anim)
+
         }
     }
 

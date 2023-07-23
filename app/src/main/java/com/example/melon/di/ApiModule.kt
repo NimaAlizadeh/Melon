@@ -3,7 +3,6 @@ package com.example.melon.di
 
 import com.example.melon.api.ApiServices
 import com.example.melon.models.EditProfileModel
-import com.example.melon.models.GetUserResponse
 import com.example.melon.models.User
 import com.example.melon.utils.Constants
 import com.google.gson.Gson
@@ -13,6 +12,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -37,6 +37,7 @@ object ApiModule
         .readTimeout(time, TimeUnit.SECONDS)
         .writeTimeout(time, TimeUnit.SECONDS)
         .connectTimeout(time, TimeUnit.SECONDS)
+        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         .build()
 
     @Provides

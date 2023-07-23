@@ -1,16 +1,31 @@
 package com.example.melon.ui.search
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.R
 import com.example.melon.databinding.FragmentSearchBinding
+import com.example.melon.models.SearchUserResponse
+import com.example.melon.models.UserX
+import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.ProfilePostsAdapter
+import com.example.melon.ui.adapters.SearchUserAdapter
+import com.example.melon.utils.Constants
+import com.example.melon.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -18,57 +33,77 @@ class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
 
     @Inject
-    lateinit var adapter: ProfilePostsAdapter
+    lateinit var adapter: SearchUserAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private val viewModel: SearchViewModel by viewModels()
+
+    companion object{
+        var isListVisible = MutableLiveData<Boolean>()
+        var edtClicked = MutableLiveData<Boolean>()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
+        isListVisible.value = true
+        edtClicked.value = false
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        MainActivity.appPagePosition = Constants.FRAGMENT_SEARCH
+
         binding.apply {
-//            val list = ArrayList<Int>()
-//            list.add(R.drawable.ph)
-//            list.add(R.drawable.ph1)
-//            list.add(R.drawable.ph2)
-//            list.add(R.drawable.ph3)
-//            list.add(R.drawable.ph4)
-//            list.add(R.drawable.ph5)
-//            list.add(R.drawable.ph6)
-//            list.add(R.drawable.ph7)
-//            list.add(R.drawable.ph8)
-//            list.add(R.drawable.ph9)
-//            list.add(R.drawable.ph3)
-//            list.add(R.drawable.ph4)
-//            list.add(R.drawable.ph5)
-//            list.add(R.drawable.ph6)
-//            list.add(R.drawable.ph7)
-//            list.add(R.drawable.ph8)
-//            list.add(R.drawable.ph1)
-//            list.add(R.drawable.ph2)
-//            list.add(R.drawable.ph3)
-//            list.add(R.drawable.ph4)
-//            list.add(R.drawable.ph5)
-//            list.add(R.drawable.ph6)
-//            list.add(R.drawable.ph4)
-//            list.add(R.drawable.ph5)
-//            list.add(R.drawable.ph6)
-//            list.add(R.drawable.ph7)
-//            list.add(R.drawable.ph8)
-//            list.add(R.drawable.ph9)
-//            list.add(R.drawable.ph3)
-//            list.add(R.drawable.ph4)
-//            list.add(R.drawable.ph5)
-//            list.add(R.drawable.ph6)
-//            list.add(R.drawable.ph7)
 
+            isListVisible.observe(viewLifecycleOwner){
+                toggleListVisibility()
+            }
 
-//            adapter.differ.submitList(list)
-//            searchFragmentRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
-//            searchFragmentRecycler.setHasFixedSize(true)
-//            searchFragmentRecycler.adapter = adapter
+            //I have to use both onClickListener and onFocusChangeListener to open the user search list
+            searchFragmentSearchEdt.setOnClickListener {
+                if(!edtClicked.value!!){
+                    isListVisible.postValue(!isListVisible.value!!)
+                    edtClicked.value = true
+                }
+            }
+            searchFragmentSearchEdt.setOnFocusChangeListener { view, b ->
+                isListVisible.postValue(!isListVisible.value!!)
+                edtClicked.value = true
+            }
+
+            //here we send userName that we are searching to server
+            searchFragmentSearchEdt.addTextChangedListener {
+                if(it.toString().isNotEmpty())
+                    viewModel.loadUserSearch(Constants.USER_TOKEN,it.toString())
+                else
+                    loadAdapter(emptyList())
+            }
+
+            //let's get user search data from server
+            viewModel.userSearchLiveList.observe(viewLifecycleOwner){
+                if(it.success){
+                    if(it.users.isNotEmpty()){
+                        loadAdapter(it.users)
+                    }else{
+                        loadAdapter(emptyList())
+                        searchFragmentUserNotFoundText.visibility = View.VISIBLE
+                    }
+
+                }else{
+                    Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            viewModel.loading.observe(viewLifecycleOwner){
+                if(it){
+                    searchFragmentUserProgressbar.visibility = View.VISIBLE
+                    searchFragmentUserLayout.visibility = View.INVISIBLE
+                }else{
+                    searchFragmentUserProgressbar.visibility = View.INVISIBLE
+                    searchFragmentUserLayout.visibility = View.VISIBLE
+                }
+            }
 
             // when refreshing the fragment
             searchFragmentSwipeRefresh.setOnRefreshListener {
@@ -79,7 +114,46 @@ class SearchFragment : Fragment() {
 
                 searchFragmentSwipeRefresh.isRefreshing = false
             }
+
+            adapter.setOnItemCLickListener { userX, s ->
+                if(s == Constants.SEARCH_FRAGMENT_GO_TO_PROFILE_FRAGMENT){
+                    MainActivity.appPagePosition = Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT
+                    findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToProfileFragment2(userX.id))
+                }
+            }
         }
     }
 
+    private fun toggleListVisibility(){
+        binding.apply {
+            if (isListVisible.value!!) {
+                // Hide the list with animation
+                searchFragmentUserLayout.visibility = View.INVISIBLE
+            } else {
+                // Show the list with animation
+                val slideDown: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down)
+                searchFragmentUserLayout.startAnimation(slideDown)
+                searchFragmentUserLayout.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    fun onBackPressed() : Boolean{
+        if (!isListVisible.value!!) {
+            isListVisible.value = !isListVisible.value!!
+            edtClicked.value = false
+            return true
+        }
+        return false
+    }
+
+    private fun loadAdapter(list: List<UserX>){
+        binding.apply {
+            searchFragmentUserNotFoundText.visibility = View.GONE
+            adapter.setData(list)
+            searchFragmentUserRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            searchFragmentUserRecycler.setHasFixedSize(true)
+            searchFragmentUserRecycler.adapter = adapter
+        }
+    }
 }

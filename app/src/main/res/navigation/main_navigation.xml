@@ -9,7 +9,12 @@
         android:id="@+id/profileFragment2"
         android:name="com.example.melon.ui.userProfile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+
+        <argument
+            android:name="searchingUserID"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/firstFragment"
         android:name="com.example.melon.ui.firstFragment.FirstFragment"
@@ -142,7 +147,15 @@
         android:id="@+id/searchFragment"
         android:name="com.example.melon.ui.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_profileFragment2"
+            app:destination="@id/profileFragment2"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/commentsFragment"
         android:name="com.example.melon.ui.comments.CommentsFragment"

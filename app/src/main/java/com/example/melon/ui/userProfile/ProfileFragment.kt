@@ -1,18 +1,16 @@
 package com.example.melon.ui.userProfile
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -24,6 +22,9 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.melon.R
 import com.example.melon.databinding.FragmentProfileBinding
+import com.example.melon.models.Post
+import com.example.melon.models.User
+import com.example.melon.models.UserX
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.ProfilePostsAdapter
 import com.example.melon.ui.profileHamburger.ProfileHamburgerFragment
@@ -50,6 +51,12 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     @Inject
     lateinit var dataStore: StoreUserData
 
+    private var userId = ""
+
+    private val args by navArgs<ProfileFragmentArgs>()
+
+    private var isAvatarLoaded = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         ProfileHamburgerFragment().setOnCallBackClickListener(this)
@@ -58,69 +65,44 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
     override fun onResume() {
         super.onResume()
-        binding.userProfileProgressbar.visibility = View.VISIBLE
-        loadProfileAvatar()
+        if(!isAvatarLoaded)
+            binding.userProfileProgressbar.visibility = View.VISIBLE
+//        loadProfileAvatar()
     }
 
-    private fun loadProfileAvatar()
-    {
-        //load user profile avatar with glide
-        val headers = Headers {
-            val headersMap = HashMap<String, String>()
-            headersMap["auth-token"] = Constants.USER_TOKEN
-            headersMap
-        }
-        val glideUrl = GlideUrl(Constants.BASE_URL + "auth/avatars", headers)
-
-        Glide.with(requireContext())
-            .load(glideUrl)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    binding.userProfileProgressbar.visibility = View.GONE
-                    return false
-                }
-
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    binding.userProfileProgressbar.visibility = View.GONE
-                    return false
-                }
-
-            })
-            .placeholder(R.drawable.solid_white)
-            .error(R.drawable.baseline_person_24)
-            .skipMemoryCache(true)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .into(binding.userProfileImage)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-
             if(MainActivity.appPagePosition != Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
                 MainActivity.appPagePosition = Constants.GO_TO_MY_USER_PROFILE_FRAGMENT
 
+
+
             if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT){
-                userProfileHamburgerMenuButton.visibility = View.GONE
-                userProfileFollowButton.visibility = View.VISIBLE
+                loadDataWhenIsTheirProfile(args.searchingUserID)
             }
             else if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
-                viewModel.loadPosts(Constants.USER_TOKEN)
-                userProfileHamburgerMenuButton.visibility = View.VISIBLE
-                userProfileFollowButton.visibility = View.GONE
+                loadDataWhenIsMyProfile()
             }
 
+            //refreshing the page
             profileFragmentSwipeRefresh.setOnRefreshListener {
-                viewModel.loadPosts(Constants.USER_TOKEN)
-                loadProfileAvatar()
+                userProfileProgressbar.visibility = View.VISIBLE
+
+                if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
+                    loadDataWhenIsMyProfile()
+                }else if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
+                    loadDataWhenIsTheirProfile(args.searchingUserID)
+
                 profileFragmentSwipeRefresh.isRefreshing = false
             }
 
             userProfileImage.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToChangeAvatarFragment())
+                if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
+                    findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToChangeAvatarFragment())
             }
-
 
             //back button onclick
             userProfileBackButton.setOnClickListener {
@@ -133,24 +115,47 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
 
             viewModel.allPostsResponseList.observe(viewLifecycleOwner){
-                userProfileNoPostText.visibility = View.GONE
-                userProfileNoPostImage.visibility = View.GONE
-
-                adapter.differ.submitList(it)
-                userProfilePostsRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
-                userProfilePostsRecycler.setHasFixedSize(true)
-                userProfilePostsRecycler.adapter = adapter
+                if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
+                    loadDataToRecycler(it)
             }
 
             viewModel.userDataResponse.observe(viewLifecycleOwner){
                 if(it.success){
-                    if(it.user.bio == "")
-                        userProfileBio.visibility = View.GONE
-                    else
-                        userProfileBio.visibility = View.VISIBLE
 
-                    userProfileBio.text = it.user.bio
-                    userProfileUserName.text = it.user.username
+                    MainActivity.followRequestList = it.user.followerRequests
+                    MainActivity.followingList = it.user.followings
+                    MainActivity.followingList.forEach { model ->
+                        MainActivity.followingIdList.add(model.id)
+                    }
+                    MainActivity.followRequestList.forEach {model ->
+                        MainActivity.followRequestIdList.add(model.id)
+                    }
+
+                    userId = it.user._id
+                    loadDataIntoViews(it.user.bio, it.user.username, it.user.followers.size.toString(), it.user.followings.size.toString())
+                    loadProfileAvatar(userId)
+                }
+            }
+
+            viewModel.userDataResponsewithId.observe(viewLifecycleOwner){
+                if(it.success){
+                    loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.following.toString())
+
+                    loadProfileAvatar(it.user.id)
+
+                    if(!it.user.private){
+                        loadDataToRecycler(it.user.posts)
+                        userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
+                        userProfileNoPostText.text = "No Posts Yet"
+                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.following.toString())
+
+                    }else{
+                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.following.toString())
+
+                        userProfilePostsText.text = it.user.posts.size.toString()
+                        userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_lock_24)
+                        userProfileNoPostText.text = "This Account is private"
+                    }
                 }
             }
 
@@ -167,11 +172,6 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 }
             }
 
-
-//            //add follower onClick
-//            profileUserFollowCheck.setOnClickListener {
-//                profileUserFollowCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.check))
-//            }
         }
     }
 
@@ -179,6 +179,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
         lifecycle.coroutineScope.launch {
             val dialog = Dialog(requireContext())
             dialog.setContentView(R.layout.progress_dialog_layout)
+            dialog.setCancelable(false)
             dialog.show()
             dataStore.setUserToken("out")
             delay(2000)
@@ -189,7 +190,89 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
         }
     }
 
+    private fun loadDataWhenIsTheirProfile(userId: String){
+        binding.apply {
+
+            viewModel.loadUserDataWithId(userId, Constants.USER_TOKEN)
+            userProfileHamburgerMenuButton.visibility = View.GONE
+            userProfileFollowButton.visibility = View.VISIBLE
+        }
+    }
+
+    private fun loadDataWhenIsMyProfile(){
+        binding.apply {
+            viewModel.loadPosts(Constants.USER_TOKEN)
+
+            userProfileHamburgerMenuButton.visibility = View.VISIBLE
+            userProfileFollowButton.visibility = View.GONE
+        }
+    }
+
+    private fun loadDataIntoViews(bio: String, username: String, followers: String, followings: String){
+        binding.apply {
+
+            if(bio.isEmpty())
+                userProfileBio.visibility = View.GONE
+            else
+                userProfileBio.visibility = View.VISIBLE
+
+            userProfileBio.text = bio
+            userProfileUserName.text = username
+            userProfileFollowersText.text = followers
+            userProfileFollowingText.text = followings
+        }
+    }
+
+    private fun loadDataToRecycler(it: List<Post>){
+
+        binding.apply {
+
+            if(it.isNotEmpty()){
+                userProfileNoPostText.visibility = View.GONE
+                userProfileNoPostImage.visibility = View.GONE
+                userProfilePostsText.text = it.size.toString()
+            }
+
+            adapter.differ.submitList(it)
+            userProfilePostsRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
+            userProfilePostsRecycler.setHasFixedSize(true)
+            userProfilePostsRecycler.adapter = adapter
+        }
+    }
+
+    private fun loadProfileAvatar(userId: String) {
+        //load user profile avatar with glide
+        val headers = Headers {
+            val headersMap = HashMap<String, String>()
+            headersMap["auth-token"] = Constants.USER_TOKEN
+            headersMap
+        }
+        val glideUrl = GlideUrl(Constants.BASE_URL + "auth/avatars/" + userId, headers)
+
+        Glide.with(requireContext())
+            .load(glideUrl)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    binding.userProfileProgressbar.visibility = View.GONE
+                    return false
+                }
+
+                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    binding.userProfileProgressbar.visibility = View.GONE
+                    isAvatarLoaded = true
+                    return false
+                }
+
+            })
+            .placeholder(R.drawable.solid_white)
+            .error(R.drawable.baseline_person_24)
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(binding.userProfileImage)
+    }
+
     override fun onClickSettings() {
+
 
     }
 

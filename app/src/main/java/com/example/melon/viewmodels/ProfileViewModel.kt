@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.melon.models.GetUserResponse
 import com.example.melon.models.Post
+import com.example.melon.models.UserResponseWithId
 import com.example.melon.repositories.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(private val profileRepository: ProfileRepository) : ViewModel() {
     var allPostsResponseList = MutableLiveData<List<Post>>()
     var userDataResponse = MutableLiveData<GetUserResponse>()
+    var userDataResponsewithId = MutableLiveData<UserResponseWithId>()
     var loading = MutableLiveData<Boolean>()
 
     fun loadPosts(token: String) = viewModelScope.launch {
@@ -35,7 +37,24 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
                 }
             }
         }catch (e: Exception) {
-            Log.d("------------------------------------------------------------", "exception : " + e.message)
+            Log.d("loadPosts - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
+        }
+
+        loading.postValue(false)
+    }
+
+    fun loadUserDataWithId(userId: String, token: String) = viewModelScope.launch{
+        loading.postValue(true)
+
+        try{
+            val response = profileRepository.getUserDataWithId(userId, token)
+            if(response.isSuccessful) {
+                if (response.body()!!.success) {
+                    userDataResponsewithId.postValue(response.body())
+                }
+            }
+        }catch (e: Exception) {
+            Log.d("loadUserDataWithId - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
         }
 
         loading.postValue(false)

@@ -5,5 +5,6 @@ import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(private val apiServices: ApiServices) {
     suspend fun getAllPost(token: String) = apiServices.getAllPost(token)
+    suspend fun getUserDataWithId(userId: String, token: String) = apiServices.getUserDataWithId(userId, token)
     suspend fun getUserData(token: String) = apiServices.getUserData(token)
 }
