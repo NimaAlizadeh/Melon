@@ -60,10 +60,14 @@ class SearchUserAdapter @Inject constructor(): RecyclerView.Adapter<SearchUserAd
 
                 searchUserRecyclerUserName.text = userItem.username
 
-                if(MainActivity.followingIdList.contains(userItem.id))
+                if(MainActivity.followingIdList.contains(userItem.id)){
+                    searchUserRecyclerIsFollowing.setTextColor(ContextCompat.getColor(context, R.color.light_grey))
                     searchUserRecyclerIsFollowing.text = "Following"
-                else
-                    searchUserRecyclerIsFollowing.text = "Not Following"
+                }
+                else{
+                    searchUserRecyclerIsFollowing.setTextColor(ContextCompat.getColor(context, R.color.blue_purple))
+                    searchUserRecyclerIsFollowing.text = "Not Followed"
+                }
 
                 searchUserRecyclerItemWholeLayout.setOnClickListener {
                     onItemClickListener?.let {

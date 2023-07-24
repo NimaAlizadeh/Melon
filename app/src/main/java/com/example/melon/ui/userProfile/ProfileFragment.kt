@@ -1,12 +1,15 @@
 package com.example.melon.ui.userProfile
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
@@ -22,6 +25,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.melon.R
 import com.example.melon.databinding.FragmentProfileBinding
+import com.example.melon.models.AddFollowerModel
 import com.example.melon.models.Post
 import com.example.melon.models.User
 import com.example.melon.models.UserX
@@ -52,6 +56,8 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     lateinit var dataStore: StoreUserData
 
     private var userId = ""
+    private var followUserId = ""
+    private var theirUserId = ""
 
     private val args by navArgs<ProfileFragmentArgs>()
 
@@ -67,10 +73,10 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
         super.onResume()
         if(!isAvatarLoaded)
             binding.userProfileProgressbar.visibility = View.VISIBLE
-//        loadProfileAvatar()
     }
 
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -84,6 +90,9 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 loadDataWhenIsTheirProfile(args.searchingUserID)
             }
             else if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
+                userProfileFollowButton.visibility = View.GONE
+                userProfileUnFollowButton.visibility = View.GONE
+                followProgressbar.visibility = View.GONE
                 loadDataWhenIsMyProfile()
             }
 
@@ -109,8 +118,39 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 findNavController().popBackStack()
             }
 
+            //follow button on click listener
+            userProfileFollowButton.setOnClickListener {
+                viewModel.addFollower(Constants.USER_TOKEN, AddFollowerModel(followUserId))
+                userProfileUnFollowButton.visibility = View.INVISIBLE
+                userProfileFollowButton.visibility = View.INVISIBLE
+            }
+
+            // unfollow button on click listener
+            userProfileUnFollowButton.setOnClickListener {
+
+            }
+
             userProfileHamburgerMenuButton.setOnClickListener {
                 ProfileHamburgerFragment().show(parentFragmentManager, ProfileHamburgerFragment().tag)
+            }
+
+            //response of trying to follow some one
+            viewModel.followResponse.observe(viewLifecycleOwner){
+                if(it.equals("Follow request sent successfully") || it.equals("User followed successfully")){
+                    userProfileUnFollowButton.visibility = View.VISIBLE
+                    userProfileFollowersText.text = (userProfileFollowersText.text.toString().toInt() + 1).toString()
+
+                    MainActivity.followingIdList.add(theirUserId)
+                }else{
+                    userProfileFollowButton.visibility = View.VISIBLE
+                }
+            }
+
+            viewModel.followLoading.observe(viewLifecycleOwner){
+                if(it)
+                    followProgressbar.visibility = View.VISIBLE
+                else
+                    followProgressbar.visibility = View.INVISIBLE
             }
 
 
@@ -124,9 +164,12 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
                     MainActivity.followRequestList = it.user.followerRequests
                     MainActivity.followingList = it.user.followings
+
+                    MainActivity.followingIdList.clear()
                     MainActivity.followingList.forEach { model ->
                         MainActivity.followingIdList.add(model.id)
                     }
+                    MainActivity.followRequestIdList.clear()
                     MainActivity.followRequestList.forEach {model ->
                         MainActivity.followRequestIdList.add(model.id)
                     }
@@ -137,9 +180,13 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 }
             }
 
-            viewModel.userDataResponsewithId.observe(viewLifecycleOwner){
+            viewModel.userDataResponseWithId.observe(viewLifecycleOwner){
                 if(it.success){
-                    loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.following.toString())
+
+                    followUserId = it.user.id
+                    theirUserId = it.user.id
+
+                    loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.followings.toString())
 
                     loadProfileAvatar(it.user.id)
 
@@ -147,14 +194,23 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                         loadDataToRecycler(it.user.posts)
                         userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
                         userProfileNoPostText.text = "No Posts Yet"
-                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.following.toString())
+                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.followings.toString())
 
                     }else{
-                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.following.toString())
+                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.followings.toString())
 
                         userProfilePostsText.text = it.user.posts.size.toString()
                         userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_lock_24)
                         userProfileNoPostText.text = "This Account is private"
+                    }
+
+                    if(MainActivity.followingIdList.contains(theirUserId)){
+                        userProfileUnFollowButton.visibility = View.VISIBLE
+                        userProfileFollowButton.visibility = View.INVISIBLE
+                    }
+                    else{
+                        userProfileFollowButton.visibility = View.VISIBLE
+                        userProfileUnFollowButton.visibility = View.INVISIBLE
                     }
                 }
             }

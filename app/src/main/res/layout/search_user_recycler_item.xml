@@ -7,7 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:foreground="?android:attr/selectableItemBackground"
+    android:background="#FBFBFB">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_margin="10dp"
@@ -52,21 +53,21 @@
         app:layout_constraintBottom_toBottomOf="@id/search_user_recycler_image_view"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:textColor="@color/light_grey"
+        android:textColor="@color/blue_purple"
         android:textSize="@dimen/_11font_mdp"
         android:text="Following" />
 
-    <View
-        android:alpha="0.5"
-        android:id="@+id/search_user_recycler_separator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/gray"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="10dp"/>
+<!--    <View-->
+<!--        android:alpha="0.5"-->
+<!--        android:id="@+id/search_user_recycler_separator"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0.5dp"-->
+<!--        android:background="@color/gray"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        android:layout_marginTop="10dp"/>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

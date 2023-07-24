@@ -61,6 +61,7 @@ class HomeFragment : Fragment() {
 
                 if(response.success){
                     if(response.user.followings.isNotEmpty()){
+                        MainActivity.followingIdList.clear()
                         MainActivity.followingList = response.user.followings
                         MainActivity.followingList.forEach {
                             MainActivity.followingIdList.add(it.id)
@@ -68,6 +69,7 @@ class HomeFragment : Fragment() {
                     }
 
                     if(response.user.followerRequests.isNotEmpty()){
+                        MainActivity.followRequestIdList.clear()
                         MainActivity.followRequestList = response.user.followerRequests
                         MainActivity.followRequestList.forEach {
                             MainActivity.followRequestIdList.add(it.id)

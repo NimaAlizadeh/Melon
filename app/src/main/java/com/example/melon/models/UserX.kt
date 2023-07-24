@@ -11,5 +11,5 @@ data class UserX(
     val private: Boolean = false,
     val username: String = "",
     val followers: Int = 0,
-    val following: Int = 0
+    val followings: Int = 0,
 ) : Parcelable

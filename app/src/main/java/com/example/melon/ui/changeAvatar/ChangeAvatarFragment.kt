@@ -24,6 +24,7 @@ import com.example.melon.R
 import com.example.melon.databinding.FragmentChangeAvatarBinding
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.AddPostAdapter
+import com.example.melon.ui.adapters.ChangeAvatarAdapter
 import com.example.melon.utils.Constants
 import com.example.melon.viewmodels.ChangeAvatarViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,12 +35,12 @@ import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListener, AddPostAdapter.PhotoListener {
+class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListener, ChangeAvatarAdapter.PhotoListener {
 
     private lateinit var binding: FragmentChangeAvatarBinding
 
     @Inject
-    lateinit var adapter: AddPostAdapter
+    lateinit var adapter: ChangeAvatarAdapter
 
     private lateinit var imagesList: ArrayList<String>
 
@@ -183,16 +184,12 @@ class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListen
 
     }
 
-    override fun onPhotoClicked(path: String, isSelected: Boolean) {
+    override fun onPhotoClicked(path: String) {
         binding.apply {
             Glide.with(requireContext()).load(path).into(changeAvatarImageView)
             this@ChangeAvatarFragment.path = path
             changeAvatarImageView.startAnimation(anim)
-
         }
     }
 
-    override fun onPhotoLongClicked(path: String, isSelected: Boolean) {
-
-    }
 }

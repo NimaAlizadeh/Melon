@@ -43,4 +43,7 @@ interface ApiServices {
     @GET("auth/getbyusername")
     suspend fun searchUser(@Header("auth-token") token: String, @Query("searchTerm") searchTerm: String): Response<SearchUserResponse>
 
+    @POST("auth/addFollower")
+    suspend fun addFollower(@Header("auth-token") token: String, @Body body: AddFollowerModel): Response<AddPostResponse>
+
 }

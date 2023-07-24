@@ -93,8 +93,6 @@ class AddPostAdapter @Inject constructor(): RecyclerView.Adapter<AddPostAdapter.
                     photoListener.onPhotoClicked(image, isSelectedItem)
                 }
 
-
-
                 recyclerItemImageView.setOnLongClickListener {
                     AddPostFragment().isOnMultipleMode = true
                     photoListener.onPhotoLongClicked(image, isSelected)

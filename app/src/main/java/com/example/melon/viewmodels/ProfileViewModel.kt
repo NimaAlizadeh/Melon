@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.melon.models.AddFollowerModel
 import com.example.melon.models.GetUserResponse
 import com.example.melon.models.Post
 import com.example.melon.models.UserResponseWithId
@@ -16,8 +17,10 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(private val profileRepository: ProfileRepository) : ViewModel() {
     var allPostsResponseList = MutableLiveData<List<Post>>()
     var userDataResponse = MutableLiveData<GetUserResponse>()
-    var userDataResponsewithId = MutableLiveData<UserResponseWithId>()
+    var userDataResponseWithId = MutableLiveData<UserResponseWithId>()
     var loading = MutableLiveData<Boolean>()
+    var followLoading = MutableLiveData<Boolean>()
+    var followResponse = MutableLiveData<String>()
 
     fun loadPosts(token: String) = viewModelScope.launch {
         loading.postValue(true)
@@ -50,7 +53,7 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
             val response = profileRepository.getUserDataWithId(userId, token)
             if(response.isSuccessful) {
                 if (response.body()!!.success) {
-                    userDataResponsewithId.postValue(response.body())
+                    userDataResponseWithId.postValue(response.body())
                 }
             }
         }catch (e: Exception) {
@@ -58,5 +61,21 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
         }
 
         loading.postValue(false)
+    }
+
+    fun addFollower(token: String, body: AddFollowerModel) = viewModelScope.launch {
+
+        followLoading.postValue(true)
+
+        try{
+            val response = profileRepository.addFollower(token,body)
+            if(response.isSuccessful) {
+                followResponse.postValue(response.body()?.message)
+            }
+        }catch (e: Exception) {
+            Log.d("addFollower - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
+        }
+
+        followLoading.postValue(false)
     }
 }

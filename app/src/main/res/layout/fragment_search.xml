@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.search.SearchFragment">
+    tools:context=".ui.search.SearchFragment"
+    android:background="#FBFBFB">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/search_fragment_toolbar"
