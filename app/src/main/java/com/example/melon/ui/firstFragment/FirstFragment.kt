@@ -6,14 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import com.example.melon.databinding.FragmentFirstBinding
 import com.example.melon.ui.activities.MainActivity
+import com.example.melon.ui.loginUser.LoginFragment
 import com.example.melon.utils.Constants
 import com.example.melon.utils.StoreUserData
+import com.example.melon.viewmodels.FirstFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -25,6 +29,8 @@ class FirstFragment : Fragment() {
 
     @Inject
     lateinit var userData: StoreUserData
+
+    private val viewModel: FirstFragmentViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentFirstBinding.inflate(layoutInflater, container, false)
@@ -42,6 +48,14 @@ class FirstFragment : Fragment() {
 
             firstFragmentSignUpButton.setOnClickListener {
                 findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSignupFragment())
+            }
+
+            lifecycle.coroutineScope.launch {
+                userData.getFollowings().collect{
+                    if(it.isNotEmpty()){
+                        MainActivity.followingIdList = ArrayList(it.toList())
+                    }
+                }
             }
 
             //check user token to go to next fragment

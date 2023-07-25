@@ -5,6 +5,7 @@ object Constants {
     const val CLIENT_TIMEOUT = 600L
     const val DATASTORE_NAME_USER = "user_info"
     const val DATASTORE_TOKEN_USER = "user_key"
+    const val DATASTORE_USER_FOLLOWINGS = "datastore_user_followings"
     var USER_TOKEN = ""
     const val MAIN_ACTIVITY = "main_activity"
     const val FRAGMENT_FIRST = "fragment_first"

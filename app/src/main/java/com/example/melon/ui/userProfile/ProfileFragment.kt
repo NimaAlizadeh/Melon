@@ -63,6 +63,9 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
     private var isAvatarLoaded = false
 
+    @Inject
+    lateinit var userData: StoreUserData
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         ProfileHamburgerFragment().setOnCallBackClickListener(this)
@@ -141,6 +144,10 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                     userProfileFollowersText.text = (userProfileFollowersText.text.toString().toInt() + 1).toString()
 
                     MainActivity.followingIdList.add(theirUserId)
+
+                    lifecycle.coroutineScope.launch {
+                        userData.setFollowingSet(MainActivity.followingIdList.toSet())
+                    }
                 }else{
                     userProfileFollowButton.visibility = View.VISIBLE
                 }
@@ -162,17 +169,21 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             viewModel.userDataResponse.observe(viewLifecycleOwner){
                 if(it.success){
 
-                    MainActivity.followRequestList = it.user.followerRequests
+//                    MainActivity.followRequestList = it.user.followerRequests
                     MainActivity.followingList = it.user.followings
 
                     MainActivity.followingIdList.clear()
                     MainActivity.followingList.forEach { model ->
                         MainActivity.followingIdList.add(model.id)
                     }
-                    MainActivity.followRequestIdList.clear()
-                    MainActivity.followRequestList.forEach {model ->
-                        MainActivity.followRequestIdList.add(model.id)
+
+                    lifecycle.coroutineScope.launch {
+                        userData.setFollowingSet(MainActivity.followingIdList.toSet())
                     }
+//                    MainActivity.followRequestIdList.clear()
+//                    MainActivity.followRequestList.forEach {model ->
+//                        MainActivity.followRequestIdList.add(model.id)
+//                    }
 
                     userId = it.user._id
                     loadDataIntoViews(it.user.bio, it.user.username, it.user.followers.size.toString(), it.user.followings.size.toString())

@@ -56,39 +56,16 @@ class HomeFragment : Fragment() {
 
         binding.apply {
 
-            //get user data and fill it in global variable to use in another place
-            viewModel.userDataResponse.observe(viewLifecycleOwner){ response ->
-
-                if(response.success){
-                    if(response.user.followings.isNotEmpty()){
-                        MainActivity.followingIdList.clear()
-                        MainActivity.followingList = response.user.followings
-                        MainActivity.followingList.forEach {
-                            MainActivity.followingIdList.add(it.id)
-                        }
-                    }
-
-                    if(response.user.followerRequests.isNotEmpty()){
-                        MainActivity.followRequestIdList.clear()
-                        MainActivity.followRequestList = response.user.followerRequests
-                        MainActivity.followRequestList.forEach {
-                            MainActivity.followRequestIdList.add(it.id)
-                        }
-                    }
-                }
-
-            }
-
-            viewModel.loading.observe(viewLifecycleOwner){
-                if(it){
-                    homeFragmentLoadDataProgressbar.visibility = View.VISIBLE
-                    homeFragmentWholeLayout.visibility = View.INVISIBLE
-                }else{
-                    homeFragmentLoadDataProgressbar.visibility = View.INVISIBLE
-                    homeFragmentWholeLayout.visibility = View.VISIBLE
-                    onHomeFragmentListener.onHomeFragmentLoaded()
-                }
-            }
+//            viewModel.loading.observe(viewLifecycleOwner){
+//                if(it){
+//                    homeFragmentLoadDataProgressbar.visibility = View.VISIBLE
+//                    homeFragmentWholeLayout.visibility = View.INVISIBLE
+//                }else{
+//                    homeFragmentLoadDataProgressbar.visibility = View.INVISIBLE
+//                    homeFragmentWholeLayout.visibility = View.VISIBLE
+//                    onHomeFragmentListener.onHomeFragmentLoaded()
+//                }
+//            }
 
             //where to go when
             adapter.setOnItemCLickListener { _, s ->

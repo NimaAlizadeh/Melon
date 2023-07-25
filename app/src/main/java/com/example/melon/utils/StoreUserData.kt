@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
@@ -16,6 +17,7 @@ class StoreUserData @Inject constructor(@ApplicationContext val context: Context
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.DATASTORE_NAME_USER)
 
         val userToken = stringPreferencesKey(Constants.DATASTORE_TOKEN_USER)
+        val followingSet = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWINGS)
     }
 
     suspend fun setUserToken(token: String)
@@ -29,5 +31,15 @@ class StoreUserData @Inject constructor(@ApplicationContext val context: Context
     fun getUserToken() = context.dataStore.data.map {
         //give me the userToken from datastore and if it was empty just give me an empty string
         it[userToken] ?: ""
+    }
+
+    suspend fun setFollowingSet(followings: Set<String>){
+        context.dataStore.edit {
+            it[followingSet] = followings
+        }
+    }
+
+    fun getFollowings() = context.dataStore.data.map {
+        it[followingSet] ?: setOf()
     }
 }

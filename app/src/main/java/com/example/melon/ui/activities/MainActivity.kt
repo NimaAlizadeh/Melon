@@ -32,8 +32,8 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnHomeFragmentListener
         private lateinit var callBack: OnPermissionCallBackListener
         var followingList: List<FollowModel> = emptyList()
         var followingIdList = ArrayList<String>()
-        var followRequestList: List<FollowModel> = emptyList()
-        var followRequestIdList = ArrayList<String>()
+//        var followRequestList: List<FollowModel> = emptyList()
+//        var followRequestIdList = ArrayList<String>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnHomeFragmentListener
             //set bottomNavigation to be active in special fragments
             val navController = findNavController(R.id.fragmentContainerView)
             navController.addOnDestinationChangedListener { _, destination, _ ->
-                if(destination.id == R.id.profileFragment || destination.id == R.id.searchFragment){
+                if(destination.id == R.id.profileFragment || destination.id == R.id.searchFragment || destination.id == R.id.homeFragment){
                     mainBottomNavigation.visibility = View.VISIBLE
                     mainSimpleView1.visibility = View.VISIBLE
                 }

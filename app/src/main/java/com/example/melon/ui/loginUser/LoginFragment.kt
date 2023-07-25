@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.melon.databinding.FragmentLoginBinding
 import com.example.melon.models.LoginModel
 import com.example.melon.ui.activities.MainActivity
+import com.example.melon.ui.profileHamburger.ProfileHamburgerFragment
 import com.example.melon.utils.Constants
 import com.example.melon.utils.StoreUserData
 import com.example.melon.viewmodels.LoginViewModel
@@ -30,6 +31,7 @@ class LoginFragment : Fragment() {
 
     @Inject
     lateinit var userData: StoreUserData
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
@@ -61,16 +63,35 @@ class LoginFragment : Fragment() {
             viewModel.loginResponse.observe(viewLifecycleOwner){
                 //go to home page
                 if(it.success){
-                    lifecycle.coroutineScope.launch {
-                        Log.d("TAG--------------------------------------", "user token  in login : " + it.authtoken)
-                        Constants.USER_TOKEN = it.authtoken
-                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
-                        userData.setUserToken(it.authtoken)
-                    }
+                    viewModel.getUserData(it.authtoken)
+                    Constants.USER_TOKEN = it.authtoken
                 }
                 else{
                     val snackBar = Snackbar.make(view, "Something went wrong, Please try again...", Snackbar.LENGTH_SHORT)
                     snackBar.show()
+                }
+            }
+
+            viewModel.userDataResponse.observe(viewLifecycleOwner){ response ->
+
+                Log.d("ssssssssssssssssssssssssssssssssssssss   ", response.success.toString())
+
+                if(response.success){
+                    if(response.user.followings.isNotEmpty()){
+                        val tempFollowingList = response.user.followings
+                        val tempFollowingIdList = ArrayList<String>()
+                        tempFollowingList.forEach {
+                            tempFollowingIdList.add(it.id)
+                        }
+
+                        MainActivity.followingIdList = tempFollowingIdList
+                        lifecycle.coroutineScope.launch {
+                            userData.setFollowingSet(tempFollowingIdList.toSet())
+                            userData.setUserToken(Constants.USER_TOKEN)
+                        }
+
+                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+                    }
                 }
             }
 

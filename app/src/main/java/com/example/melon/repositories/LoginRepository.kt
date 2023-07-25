@@ -7,4 +7,5 @@ import javax.inject.Inject
 class LoginRepository @Inject constructor(private val apiServices: ApiServices)
 {
     suspend fun loginUser(body: LoginModel) = apiServices.loginUser(body)
+    suspend fun getUserData(token: String) = apiServices.getUserData(token)
 }
