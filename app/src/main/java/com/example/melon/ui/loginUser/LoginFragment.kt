@@ -87,11 +87,14 @@ class LoginFragment : Fragment() {
                         MainActivity.followingIdList = tempFollowingIdList
                         lifecycle.coroutineScope.launch {
                             userData.setFollowingSet(tempFollowingIdList.toSet())
-                            userData.setUserToken(Constants.USER_TOKEN)
                         }
-
-                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
                     }
+
+                    lifecycle.coroutineScope.launch {
+                        userData.setUserToken(Constants.USER_TOKEN)
+                    }
+
+                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
                 }
             }
 

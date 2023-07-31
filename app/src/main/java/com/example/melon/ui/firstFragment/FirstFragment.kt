@@ -30,8 +30,6 @@ class FirstFragment : Fragment() {
     @Inject
     lateinit var userData: StoreUserData
 
-    private val viewModel: FirstFragmentViewModel by viewModels()
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentFirstBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -50,14 +48,6 @@ class FirstFragment : Fragment() {
                 findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSignupFragment())
             }
 
-            lifecycle.coroutineScope.launch {
-                userData.getFollowings().collect{
-                    if(it.isNotEmpty()){
-                        MainActivity.followingIdList = ArrayList(it.toList())
-                    }
-                }
-            }
-
             //check user token to go to next fragment
             lifecycle.coroutineScope.launch {
                 userData.getUserToken().collect{
@@ -66,6 +56,14 @@ class FirstFragment : Fragment() {
                             Constants.USER_TOKEN = it
                             findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToHomeFragment())
                         }
+                    }
+                }
+            }
+
+            lifecycle.coroutineScope.launch {
+                userData.getFollowings().collect{
+                    if(it.isNotEmpty()){
+                        MainActivity.followingIdList = ArrayList(it.toList())
                     }
                 }
             }

@@ -67,6 +67,10 @@ class HomeFragment : Fragment() {
 //                }
 //            }
 
+            homeFragmentToolbar.customToolbarNotificationsButton.setOnClickListener {
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNotificationFragment())
+            }
+
             //where to go when
             adapter.setOnItemCLickListener { _, s ->
                 when(s){

@@ -46,4 +46,14 @@ interface ApiServices {
     @POST("auth/addFollower")
     suspend fun addFollower(@Header("auth-token") token: String, @Body body: AddFollowerModel): Response<AddPostResponse>
 
+    @GET("auth/getRequests")
+    suspend fun getRequests(@Header("auth-token") token: String): Response<RequestsResponse>
+
+    @POST("auth/acceptRequest")
+    suspend fun acceptFollow(@Header("auth-token") token: String, @Body body: AcceptOrRejectModel): Response<AddPostResponse>
+    // response is like the same as addPostResponse and it just gets success and message
+    @POST("auth/rejectRequest")
+    suspend fun rejectFollow(@Header("auth-token") token: String, @Body body: AcceptOrRejectModel) : Response<AddPostResponse>
+    // response is like the same as addPostResponse and it just gets success and message
+
 }

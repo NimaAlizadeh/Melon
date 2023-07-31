@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.melon.models.AddFollowerModel
-import com.example.melon.models.GetUserResponse
-import com.example.melon.models.Post
-import com.example.melon.models.UserResponseWithId
+import com.example.melon.models.*
 import com.example.melon.repositories.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val profileRepository: ProfileRepository) : ViewModel() {
-    var allPostsResponseList = MutableLiveData<List<Post>>()
+    var allPostsResponseList = MutableLiveData<Data>()
     var userDataResponse = MutableLiveData<GetUserResponse>()
     var userDataResponseWithId = MutableLiveData<UserResponseWithId>()
     var loading = MutableLiveData<Boolean>()
@@ -36,7 +33,7 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
             val response = profileRepository.getAllPost(token)
             if(response.isSuccessful) {
                 if (response.body()!!.success) {
-                    allPostsResponseList.postValue(response.body()!!.data.posts)
+                    allPostsResponseList.postValue(response.body()!!.data)
                 }
             }
         }catch (e: Exception) {

@@ -100,6 +100,13 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -189,5 +196,10 @@
         android:name="com.example.melon.ui.changeAvatar.ChangeAvatarFragment"
         android:label="fragment_change_avatar"
         tools:layout="@layout/fragment_change_avatar" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.melon.ui.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
 
 </navigation>

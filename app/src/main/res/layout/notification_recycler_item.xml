@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/notification_recycler_image_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ph"/>
+
+    <TextView
+        android:id="@+id/notification_recycler_user_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="NimaAlizadeh"
+        android:fontFamily="@font/aclonica"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="@id/notification_recycler_image_view"
+        app:layout_constraintStart_toEndOf="@id/notification_recycler_image_view"
+        app:layout_constraintEnd_toStartOf="@id/notification_recycler_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@id/notification_recycler_text_request"
+        android:layout_marginStart="15dp"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/notification_recycler_text_request"
+        android:layout_marginEnd="10dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="requested to follow you"
+        android:textColor="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/notification_recycler_user_name"
+        app:layout_constraintStart_toEndOf="@id/notification_recycler_image_view"
+        app:layout_constraintEnd_toStartOf="@id/notification_recycler_buttons_layout"
+        app:layout_constraintBottom_toBottomOf="@id/notification_recycler_image_view"
+        android:layout_marginStart="15dp"
+        android:textSize="12sp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/notification_recycler_buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/notification_recycler_image_view"
+        app:layout_constraintBottom_toBottomOf="@id/notification_recycler_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="10dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/notification_recycler_button_delete"
+            android:layout_width="70dp"
+            android:layout_height="35dp"
+            android:background="@drawable/button_grey_shape"
+            android:elevation="5dp"
+            android:fontFamily="@font/aclonica"
+            android:text="Delete"
+            android:textAllCaps="false"
+            android:textSize="@dimen/_10font_mdp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/white"
+            android:focusable="true"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginEnd="5dp"
+            android:id="@+id/notification_recycler_button_confirm"
+            android:layout_width="70dp"
+            android:layout_height="35dp"
+            android:background="@drawable/button_purple_shape"
+            android:elevation="5dp"
+            android:fontFamily="@font/aclonica"
+            android:text="Confirm"
+            android:textAllCaps="false"
+            android:textSize="@dimen/_10font_mdp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/notification_recycler_button_delete"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/white"
+            android:focusable="true"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

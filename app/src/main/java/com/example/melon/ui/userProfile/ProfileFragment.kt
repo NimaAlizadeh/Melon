@@ -4,12 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
@@ -27,8 +26,6 @@ import com.example.melon.R
 import com.example.melon.databinding.FragmentProfileBinding
 import com.example.melon.models.AddFollowerModel
 import com.example.melon.models.Post
-import com.example.melon.models.User
-import com.example.melon.models.UserX
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.ProfilePostsAdapter
 import com.example.melon.ui.profileHamburger.ProfileHamburgerFragment
@@ -162,8 +159,19 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
 
             viewModel.allPostsResponseList.observe(viewLifecycleOwner){
-                if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
-                    loadDataToRecycler(it)
+                if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
+                    if(it != null)
+                    {
+                        loadDataToRecycler(it.posts)
+                        Toast.makeText(requireContext(), "it's null", Toast.LENGTH_SHORT).show()
+                    }
+                    else
+                    {
+                        loadDataToRecycler(emptyList())
+                        Toast.makeText(requireContext(), "it's not null", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
             }
 
             viewModel.userDataResponse.observe(viewLifecycleOwner){
@@ -297,13 +305,21 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             if(it.isNotEmpty()){
                 userProfileNoPostText.visibility = View.GONE
                 userProfileNoPostImage.visibility = View.GONE
+                userProfilePostsRecycler.visibility = View.VISIBLE
                 userProfilePostsText.text = it.size.toString()
-            }
 
-            adapter.differ.submitList(it)
-            userProfilePostsRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
-            userProfilePostsRecycler.setHasFixedSize(true)
-            userProfilePostsRecycler.adapter = adapter
+                adapter.differ.submitList(it)
+                userProfilePostsRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
+                userProfilePostsRecycler.setHasFixedSize(true)
+                userProfilePostsRecycler.adapter = adapter
+            }
+            else{
+                userProfileNoPostText.visibility = View.VISIBLE
+                userProfileNoPostImage.visibility = View.VISIBLE
+                userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
+                userProfileNoPostText.text = "No Posts Yet"
+                userProfilePostsRecycler.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -331,6 +347,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 }
 
             })
+            .timeout(60000)
             .placeholder(R.drawable.solid_white)
             .error(R.drawable.baseline_person_24)
             .skipMemoryCache(true)
