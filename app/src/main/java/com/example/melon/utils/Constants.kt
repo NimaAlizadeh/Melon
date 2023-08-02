@@ -16,6 +16,7 @@ object Constants {
     const val FRAGMENT_ADD_POST = "fragment_add_post"
     const val FRAGMENT_FOLLOWS = "fragment_follows"
     const val FRAGMENT_NOTIFICATION = "fragment_notification"
+    const val DO_LIKE_BUTTON = "do_like_button"
     const val GO_TO_COMMENTS_FRAGMENT = "go_to_comments_fragment"
     const val GO_TO_THEIR_USER_PROFILE_FRAGMENT = "go_to_their_user_profile_fragment"
     const val GO_TO_MY_USER_PROFILE_FRAGMENT = "go_to_my_user_profile_fragment"

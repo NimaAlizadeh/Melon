@@ -1,7 +1,6 @@
 package com.example.melon.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +15,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.R
 import com.example.melon.databinding.FragmentSearchBinding
-import com.example.melon.models.SearchUserResponse
 import com.example.melon.models.UserX
 import com.example.melon.ui.activities.MainActivity
-import com.example.melon.ui.adapters.ProfilePostsAdapter
 import com.example.melon.ui.adapters.SearchUserAdapter
 import com.example.melon.utils.Constants
 import com.example.melon.viewmodels.SearchViewModel

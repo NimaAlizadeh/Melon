@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +64,20 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     @Inject
     lateinit var userData: StoreUserData
 
+    private var posts: Array<Post> = emptyArray()
+
+    companion object{
+        private lateinit var onProfileFragmentListener: OnProfileFragmentListener
+    }
+
+    interface OnProfileFragmentListener{
+        fun onProfileFragmentLoaded()
+    }
+
+    fun setOnProfileFragmentListener(listener: OnProfileFragmentListener){
+        onProfileFragmentListener = listener
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         ProfileHamburgerFragment().setOnCallBackClickListener(this)
@@ -88,6 +103,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
             if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT){
                 loadDataWhenIsTheirProfile(args.searchingUserID)
+                onProfileFragmentListener.onProfileFragmentLoaded()
             }
             else if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
                 userProfileFollowButton.visibility = View.GONE
@@ -163,12 +179,13 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                     if(it != null)
                     {
                         loadDataToRecycler(it.posts)
-                        Toast.makeText(requireContext(), "it's null", Toast.LENGTH_SHORT).show()
+                        posts = it.posts.toTypedArray()
+                        Toast.makeText(requireContext(), "it's not null", Toast.LENGTH_SHORT).show()
                     }
                     else
                     {
                         loadDataToRecycler(emptyList())
-                        Toast.makeText(requireContext(), "it's not null", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "it's null", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -204,6 +221,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
                     followUserId = it.user.id
                     theirUserId = it.user.id
+                    userId = it.user.id
 
                     loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.followings.toString())
 
@@ -247,6 +265,13 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 }
             }
 
+
+            // on click listeners from adapter
+            adapter.setOnItemCLickListener { position, s ->
+                if(s == "onClick"){
+                    findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToShowPostFragment(position, userId))
+                }
+            }
         }
     }
 

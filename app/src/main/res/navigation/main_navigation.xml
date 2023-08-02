@@ -5,16 +5,19 @@
     android:id="@+id/main_navigation"
     app:startDestination="@id/firstFragment">
 
-    <fragment
-        android:id="@+id/profileFragment2"
-        android:name="com.example.melon.ui.userProfile.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
+<!--    <fragment-->
+<!--        android:id="@+id/profileFragment2"-->
+<!--        android:name="com.example.melon.ui.userProfile.ProfileFragment"-->
+<!--        android:label="fragment_profile"-->
+<!--        tools:layout="@layout/fragment_profile" >-->
 
-        <argument
-            android:name="searchingUserID"
-            app:argType="string" />
-    </fragment>
+<!--        <argument-->
+<!--            android:name="searchingUserID"-->
+<!--            app:argType="string" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_profileFragment2_to_showPostFragment"-->
+<!--            app:destination="@id/showPostFragment" />-->
+<!--    </fragment>-->
     <fragment
         android:id="@+id/firstFragment"
         android:name="com.example.melon.ui.firstFragment.FirstFragment"
@@ -95,7 +98,7 @@
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
-            app:destination="@id/profileFragment2"
+            app:destination="@id/profileFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -107,6 +110,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment2"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -136,6 +142,23 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_profileFragment_to_showPostFragment"
+            app:destination="@id/showPostFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <argument
+            android:name="searchingUserID"
+            app:argType="string" />
+<!--        <action-->
+<!--            android:id="@+id/action_profileFragment2_to_showPostFragment"-->
+<!--            app:destination="@id/showPostFragment"-->
+<!--            app:enterAnim="@android:anim/slide_in_left"-->
+<!--            app:exitAnim="@android:anim/slide_out_right"-->
+<!--            app:popEnterAnim="@android:anim/slide_in_left"-->
+<!--            app:popExitAnim="@android:anim/slide_out_right"/>-->
     </fragment>
     <fragment
         android:id="@+id/addPostFragment"
@@ -157,11 +180,14 @@
         tools:layout="@layout/fragment_search" >
         <action
             android:id="@+id/action_searchFragment_to_profileFragment2"
-            app:destination="@id/profileFragment2"
+            app:destination="@id/profileFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+<!--        <action-->
+<!--            android:id="@+id/action_searchFragment_to_profileFragment"-->
+<!--            app:destination="@id/profileFragment" />-->
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
@@ -201,5 +227,33 @@
         android:name="com.example.melon.ui.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/showPostFragment"
+        android:name="com.example.melon.ui.showPost.ShowPostFragment"
+        android:label="fragment_show_post"
+        tools:layout="@layout/fragment_show_post" >
+        <argument
+            android:name="position"
+            app:argType="integer" />
+        <argument
+            android:name="userId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_showPostFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <!--        <argument-->
+<!--            android:name="postListArg"-->
+<!--            app:argType="com.example.melon.models.Post[]" />-->
+<!--        <argument-->
+<!--            android:name="userName"-->
+<!--            app:argType="string" />-->
+<!--        <argument-->
+<!--            android:name="avatar"-->
+<!--            app:argType="string" />-->
+    </fragment>
 
 </navigation>

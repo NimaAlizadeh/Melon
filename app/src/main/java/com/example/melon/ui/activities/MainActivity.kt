@@ -23,7 +23,7 @@ import com.example.melon.viewmodels.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), HomeFragment.OnHomeFragmentListener
+class MainActivity : AppCompatActivity(), ProfileFragment.OnProfileFragmentListener
 {
     private lateinit var binding: ActivityMainBinding
 
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnHomeFragmentListener
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        HomeFragment().setOnHomeFragmentListener(this)
+        ProfileFragment().setOnProfileFragmentListener(this)
 
 
         binding.apply {
@@ -89,6 +89,13 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnHomeFragmentListener
         }
     }
 
+    override fun onProfileFragmentLoaded() {
+        binding.apply {
+            mainBottomNavigation.visibility = View.GONE
+            mainSimpleView1.visibility = View.GONE
+        }
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -121,10 +128,4 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnHomeFragmentListener
         super.onBackPressed()
     }
 
-    override fun onHomeFragmentLoaded() {
-        binding.apply {
-            mainBottomNavigation.visibility = View.VISIBLE
-            mainSimpleView1.visibility = View.VISIBLE
-        }
-    }
 }

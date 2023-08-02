@@ -1,23 +1,17 @@
 package com.example.melon.ui.home
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.melon.R
 import com.example.melon.databinding.FragmentHomeBinding
-import com.example.melon.models.UserX
 import com.example.melon.ui.activities.MainActivity
-import com.example.melon.ui.adapters.HomePostsAdapter
+import com.example.melon.ui.adapters.ShowPostsAdapter
 import com.example.melon.utils.Constants
 import com.example.melon.viewmodels.HomeViewModel
-import com.example.melon.viewmodels.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -27,21 +21,10 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
 
     @Inject
-    lateinit var adapter: HomePostsAdapter
+    lateinit var adapter: ShowPostsAdapter
 
     private val viewModel: HomeViewModel by viewModels()
 
-    companion object{
-        private lateinit var onHomeFragmentListener: OnHomeFragmentListener
-    }
-
-    interface OnHomeFragmentListener{
-        fun onHomeFragmentLoaded()
-    }
-
-    fun setOnHomeFragmentListener(listener: OnHomeFragmentListener){
-        onHomeFragmentListener = listener
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
@@ -71,46 +54,46 @@ class HomeFragment : Fragment() {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNotificationFragment())
             }
 
-            //where to go when
-            adapter.setOnItemCLickListener { _, s ->
-                when(s){
-                    Constants.GO_TO_COMMENTS_FRAGMENT -> {
-                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCommentsFragment())
-                    }
+//            //where to go when
+//            adapter.setOnItemCLickListener { _, s ->
+//                when(s){
+//                    Constants.GO_TO_COMMENTS_FRAGMENT -> {
+//                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCommentsFragment())
+//                    }
+//
+//                    Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT-> {
+//                        MainActivity.appPagePosition = Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT
+//                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProfileFragment(""))
+//                    }
+//                }
+//            }
 
-                    Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT-> {
-                        MainActivity.appPagePosition = Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT
-                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProfileFragment(""))
-                    }
-                }
-            }
+//
+//            val list = ArrayList<Int>()
+//            list.add(R.drawable.ph)
+//            list.add(R.drawable.ph1)
+//            list.add(R.drawable.ph2)
+//            list.add(R.drawable.ph3)
+//            list.add(R.drawable.ph4)
+//            list.add(R.drawable.ph5)
+//            list.add(R.drawable.ph6)
+//            list.add(R.drawable.ph7)
+//            list.add(R.drawable.ph8)
+//            list.add(R.drawable.ph9)
 
-
-            val list = ArrayList<Int>()
-            list.add(R.drawable.ph)
-            list.add(R.drawable.ph1)
-            list.add(R.drawable.ph2)
-            list.add(R.drawable.ph3)
-            list.add(R.drawable.ph4)
-            list.add(R.drawable.ph5)
-            list.add(R.drawable.ph6)
-            list.add(R.drawable.ph7)
-            list.add(R.drawable.ph8)
-            list.add(R.drawable.ph9)
-
-
-            adapter.differ.submitList(list)
-            homeFragmentPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            homeFragmentPostRecycler.adapter = adapter
-
-
-            // when refreshing the fragment
-            homeFragmentSwipeRefresh.setOnRefreshListener {
-                adapter.differ.submitList(list)
-                homeFragmentPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                homeFragmentPostRecycler.adapter = adapter
-                homeFragmentSwipeRefresh.isRefreshing = false
-            }
+//
+//            adapter.differ.submitList(list)
+//            homeFragmentPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+//            homeFragmentPostRecycler.adapter = adapter
+//
+//
+//            // when refreshing the fragment
+//            homeFragmentSwipeRefresh.setOnRefreshListener {
+//                adapter.differ.submitList(list)
+//                homeFragmentPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+//                homeFragmentPostRecycler.adapter = adapter
+//                homeFragmentSwipeRefresh.isRefreshing = false
+//            }
         }
     }
 }
