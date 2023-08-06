@@ -13,12 +13,11 @@ interface ApiServices {
 
     @POST("auth/register")
     suspend fun signUpUser(@Body body: UserModel): Response<SignUpResponse>
-
-    @GET("post")
-    suspend fun getAllPost(@Header("auth-token") token: String): Response<PostResponse>
-
-    @GET("")
-    suspend fun getAllPostHome()
+//
+//    @GET("post")
+//    suspend fun getAllPost(@Header("auth-token") token: String): Response<PostResponse>
+    @GET("post/{userId}")
+    suspend fun getPostsWithId(@Header("auth-token") token: String, @Path("userId") userId: String): Response<PostResponse>
 
     @Multipart
     @POST("post/create")
@@ -44,7 +43,16 @@ interface ApiServices {
     suspend fun searchUser(@Header("auth-token") token: String, @Query("searchTerm") searchTerm: String): Response<SearchUserResponse>
 
     @POST("auth/addFollower")
-    suspend fun addFollower(@Header("auth-token") token: String, @Body body: AddFollowerModel): Response<AddPostResponse>
+    suspend fun addFollower(@Header("auth-token") token: String, @Body body: AddFollowerModel): Response<FollowResponse>
+
+    @POST("auth/unfollow")
+    suspend fun unFollow(@Header("auth-token") token: String, @Body body: UnFollowModel): Response<FollowResponse>
+
+    @POST("auth/removeFollower")
+    suspend fun removeFollower(@Header("auth-token") token: String, @Body body: RemoveFollowerModel): Response<FollowResponse>
+
+    @POST("auth/cancelRequest")
+    suspend fun cancelRequest(@Header("auth-token") token: String, @Body body: RemoveFollowerModel): Response<FollowResponse>
 
     @GET("auth/getRequests")
     suspend fun getRequests(@Header("auth-token") token: String): Response<RequestsResponse>
@@ -55,5 +63,6 @@ interface ApiServices {
     @POST("auth/rejectRequest")
     suspend fun rejectFollow(@Header("auth-token") token: String, @Body body: AcceptOrRejectModel) : Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
+
 
 }

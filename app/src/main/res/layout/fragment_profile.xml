@@ -139,12 +139,6 @@
                         android:gravity="center"/>
 
                     <androidx.appcompat.widget.AppCompatButton
-                        android:drawableStart="@drawable/baseline_person_add_alt_1_24"
-                        android:drawablePadding="10dp"
-                        android:paddingTop="13dp"
-                        android:paddingBottom="13dp"
-                        android:paddingEnd="20dp"
-                        android:paddingStart="20dp"
                         android:focusable="true"
                         android:clickable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -157,8 +151,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginBottom="@dimen/_10mdp"
                         android:id="@+id/user_profile_follow_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="200dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/button_white_shape"
                         android:fontFamily="@font/aclonica"
                         android:text="Follow"
@@ -167,12 +161,6 @@
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:visibility="invisible"
-                        android:drawableStart="@drawable/baseline_person_remove_24"
-                        android:drawablePadding="10dp"
-                        android:paddingTop="13dp"
-                        android:paddingBottom="13dp"
-                        android:paddingEnd="20dp"
-                        android:paddingStart="20dp"
                         android:focusable="true"
                         android:clickable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -185,11 +173,33 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginBottom="@dimen/_10mdp"
                         android:id="@+id/user_profile_un_follow_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="200dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/button_white_shape"
                         android:fontFamily="@font/aclonica"
                         android:text="UnFollow"
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/_13font_mdp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:visibility="invisible"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:textStyle="bold"
+                        android:layout_margin="5dp"
+                        android:elevation="30dp"
+                        app:layout_constraintTop_toBottomOf="@id/user_profile_userName"
+                        app:layout_constraintBottom_toTopOf="@id/user_profile_bio"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginBottom="@dimen/_10mdp"
+                        android:id="@+id/user_profile_requested_button"
+                        android:layout_width="200dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/button_white_shape"
+                        android:fontFamily="@font/aclonica"
+                        android:text="Requested"
                         android:textAllCaps="false"
                         android:textSize="@dimen/_13font_mdp" />
 

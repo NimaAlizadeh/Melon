@@ -22,10 +22,7 @@ import com.example.melon.R
 import com.example.melon.databinding.CommentsRecyclerItemBinding
 import com.example.melon.databinding.HomePostsRecyclerItemBinding
 import com.example.melon.databinding.SearchUserRecyclerItemBinding
-import com.example.melon.models.CommentModel
-import com.example.melon.models.Post
-import com.example.melon.models.PostModel
-import com.example.melon.models.UserX
+import com.example.melon.models.*
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.utils.Constants
 import javax.inject.Inject
@@ -35,7 +32,7 @@ class SearchUserAdapter @Inject constructor(): RecyclerView.Adapter<SearchUserAd
     private lateinit var binding: SearchUserRecyclerItemBinding
     lateinit var context: Context
 
-    private var postsList = emptyList<UserX>()
+    private var postsList = emptyList<User>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         binding = SearchUserRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -51,7 +48,7 @@ class SearchUserAdapter @Inject constructor(): RecyclerView.Adapter<SearchUserAd
     override fun getItemCount() = postsList.size
 
     inner class CustomViewHolder : RecyclerView.ViewHolder(binding.root) {
-        fun bindItems(userItem: UserX) {
+        fun bindItems(userItem: User) {
             binding.apply {
 //                if(adapterPosition == differ.currentList.size - 1)
 //                    searchUserRecyclerSeparator.visibility = View.INVISIBLE
@@ -90,7 +87,7 @@ class SearchUserAdapter @Inject constructor(): RecyclerView.Adapter<SearchUserAd
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    fun setData(newListData: List<UserX>)
+    fun setData(newListData: List<User>)
     {
         val notesDiffUtils = NotesDiffUtils(postsList, newListData)
         val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
@@ -98,7 +95,7 @@ class SearchUserAdapter @Inject constructor(): RecyclerView.Adapter<SearchUserAd
         diffUtils.dispatchUpdatesTo(this)
     }
 
-    class NotesDiffUtils(private val oldItem: List<UserX>, private val newItem: List<UserX>) : DiffUtil.Callback(){
+    class NotesDiffUtils(private val oldItem: List<User>, private val newItem: List<User>) : DiffUtil.Callback(){
         override fun getOldListSize() = oldItem.size
 
         override fun getNewListSize() = newItem.size
@@ -122,9 +119,9 @@ class SearchUserAdapter @Inject constructor(): RecyclerView.Adapter<SearchUserAd
 
 
 //    //on item select handling
-    private var onItemClickListener: ((UserX, String) -> Unit)? = null
+    private var onItemClickListener: ((User, String) -> Unit)? = null
 
-    fun setOnItemCLickListener(listener: (UserX, String) -> Unit) {
+    fun setOnItemCLickListener(listener: (User, String) -> Unit) {
         onItemClickListener = listener
     }
 

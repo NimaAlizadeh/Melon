@@ -1,6 +1,6 @@
 package com.example.melon.models
 
 data class PostResponse(
-    val data: Data,
+    val posts: List<Post>,
     val success: Boolean
 )

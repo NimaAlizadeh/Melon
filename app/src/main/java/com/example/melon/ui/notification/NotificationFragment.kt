@@ -47,13 +47,13 @@ class NotificationFragment : Fragment(){
             }
 
             viewModel.requestsResponse.observe(viewLifecycleOwner){
-                if(it.requests.isEmpty())
-                    notificationFragmentNoNotificationText.visibility = View.VISIBLE
-                else
-                    notificationFragmentNoNotificationText.visibility = View.INVISIBLE
-                adapter.setData(it.requests)
-                notificationFragmentRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                notificationFragmentRecycler.adapter = adapter
+//                if(it.requests.isEmpty())
+//                    notificationFragmentNoNotificationText.visibility = View.VISIBLE
+//                else
+//                    notificationFragmentNoNotificationText.visibility = View.INVISIBLE
+//                adapter.setData(it.requests)
+//                notificationFragmentRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+//                notificationFragmentRecycler.adapter = adapter
             }
 
             notificationFragmentSwipeRefresh.setOnRefreshListener {

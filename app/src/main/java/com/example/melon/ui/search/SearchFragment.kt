@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.R
 import com.example.melon.databinding.FragmentSearchBinding
+import com.example.melon.models.User
 import com.example.melon.models.UserX
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.SearchUserAdapter
@@ -144,7 +145,7 @@ class SearchFragment : Fragment() {
         return false
     }
 
-    private fun loadAdapter(list: List<UserX>){
+    private fun loadAdapter(list: List<User>){
         binding.apply {
             searchFragmentUserNotFoundText.visibility = View.GONE
             adapter.setData(list)

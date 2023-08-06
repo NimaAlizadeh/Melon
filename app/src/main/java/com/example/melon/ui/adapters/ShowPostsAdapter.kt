@@ -1,28 +1,18 @@
 package com.example.melon.ui.adapters
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.*
-import coil.load
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.Headers
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.example.melon.R
 import com.example.melon.databinding.HomePostsRecyclerItemBinding
 import com.example.melon.models.Post
 import com.example.melon.models.PostModel
-import com.example.melon.models.UserX
 import com.example.melon.utils.Constants
+import okhttp3.internal.notifyAll
 import javax.inject.Inject
 
 
@@ -33,12 +23,7 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
     lateinit var userName: String
     lateinit var userProfileAvatar: String
 
-    private val pagerSnapHelper: PagerSnapHelper by lazy { PagerSnapHelper() }
-
-    @Inject
-    lateinit var adapter: ShowPostsItemAdapter
-
-    private var postsList = emptyArray<Post>()
+    private var postsList = emptyList<Post>()
 
     fun setValues(userName: String, userProfileAvatar: String){
         this.userName = userName
@@ -55,7 +40,6 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int)
     {
         holder.bindItems(postsList[position])
-        holder.setIsRecyclable(false)
 
         val anim = AlphaAnimation(0.0f, 1.0f)
         anim.duration = 1000
@@ -71,49 +55,10 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
             binding.apply {
                 var isLiked = false
 
-//                //indicator for recycler
-//                pagerSnapHelper.attachToRecyclerView(homeFragmentPicsRecycler)
-//                homeFragmentPicsIndicator.attachToRecyclerView(homeFragmentPicsRecycler, pagerSnapHelper)
-
-//                adapter.setValues(userName, userProfileAvatar)
-//                adapter.differ.submitList(model.images)
-//                homeFragmentPicsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-//                homeFragmentPicsRecycler.adapter = adapter
-
-
-                val headers = Headers {
-                    val headersMap = HashMap<String, String>()
-                    headersMap["auth-token"] = Constants.USER_TOKEN
-                    headersMap
-                }
-                val glideUrl = GlideUrl(Constants.BASE_URL + "post/images/" + model.images[0], headers)
-
-                Glide.with(context)
-                    .load(glideUrl)
-                    .timeout(60000)
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            Log.d("TAG", "onLoadFailed: ")
-                            return false
-                        }
-
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-//                            showPostRecyclerItemProgressbar.visibility = View.GONE
-                            return false
-                        }
-
-                    })
-                    .into(recyclerItemImageView)
-
-
-//                //load user profile avatar with glide
-//                val glideUrl1 = GlideUrl(Constants.BASE_URL + "auth/avatars/" + userProfileAvatar, headers)
-//                Glide.with(context)
-//                    .load(glideUrl1)
-//                    .placeholder(R.drawable.solid_black)
-//                    .error(R.drawable.baseline_person_24)
-//                    .into(binding)
-
+                if(model.images.size <= 1)
+                    homeFragmentPicsIndicator.visibility = View.GONE
+                else
+                    homeFragmentPicsIndicator.visibility = View.VISIBLE
 
                 //description
                 if(model.description.isNotEmpty()){
@@ -154,6 +99,17 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
                     }
                 }
 
+                //indicator for recycler
+                val pagerSnapHelper = PagerSnapHelper()
+                pagerSnapHelper.attachToRecyclerView(homeFragmentPicsRecycler)
+                homeFragmentPicsIndicator.attachToRecyclerView(homeFragmentPicsRecycler, pagerSnapHelper)
+
+                val adapter = ShowPostsItemAdapter()
+                adapter.setValues(userName, userProfileAvatar)
+                adapter.setData(model.images)
+                homeFragmentPicsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                homeFragmentPicsRecycler.adapter = adapter
+
             }
         }
     }
@@ -170,7 +126,7 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    fun setData(newListData: Array<Post>)
+    fun setData(newListData: List<Post>)
     {
         val notesDiffUtils = NotesDiffUtils(postsList, newListData)
         val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
@@ -178,7 +134,7 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
         diffUtils.dispatchUpdatesTo(this)
     }
 
-    class NotesDiffUtils(private val oldItem: Array<Post>, private val newItem: Array<Post>) : DiffUtil.Callback(){
+    class NotesDiffUtils(private val oldItem: List<Post>, private val newItem: List<Post>) : DiffUtil.Callback(){
         override fun getOldListSize() = oldItem.size
 
         override fun getNewListSize() = newItem.size

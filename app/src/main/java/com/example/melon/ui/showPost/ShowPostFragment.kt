@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.databinding.FragmentShowPostBinding
 import com.example.melon.models.Post
+import com.example.melon.models.User
 import com.example.melon.models.UserX
 import com.example.melon.ui.adapters.ShowPostsAdapter
 import com.example.melon.ui.confirmAddPost.ConfirmAddPostFragmentArgs
@@ -31,12 +32,12 @@ class ShowPostFragment : Fragment() {
 
     val viewModel: ShowPostViewModel by viewModels()
 
-    private var posts: Array<Post> = emptyArray()
-    private lateinit var userX: UserX
+    private var posts: List<Post> = emptyList()
+    private lateinit var user: User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentShowPostBinding.inflate(layoutInflater, container, false)
-        viewModel.loadUserData(Constants.USER_TOKEN, args.userId)
+        viewModel.loadPostsWithId(Constants.USER_TOKEN, args.userId)
         return binding.root
     }
 
@@ -49,19 +50,16 @@ class ShowPostFragment : Fragment() {
             }
 
 
+            // viewModel to get userdata from server
+            viewModel.allPostsResponseList.observe(viewLifecycleOwner){
+                posts = it.posts
+                loadRecycler(posts, args.position)
+            }
 
+            //refreshing
             showPostFragmentSwipeRefresh.setOnRefreshListener {
                 loadRecycler(posts, args.position)
                 showPostFragmentSwipeRefresh.isRefreshing = false
-            }
-
-
-
-            // viewModel to get userdata from server
-            viewModel.userResponse.observe(viewLifecycleOwner){
-                userX = it.user
-                posts = it.user.posts.toTypedArray()
-                loadRecycler(it.user.posts.toTypedArray(), args.position)
             }
 
             // adapter on click listeners
@@ -80,9 +78,9 @@ class ShowPostFragment : Fragment() {
         }
     }
 
-    private fun loadRecycler(list: Array<Post>, position: Int){
+    private fun loadRecycler(list: List<Post>, position: Int){
         binding.apply {
-            adapter.setValues(userX.username, userX.id)
+            adapter.setValues(args.username, args.userId)
             adapter.setData(list)
             val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             layoutManager.scrollToPosition(position)

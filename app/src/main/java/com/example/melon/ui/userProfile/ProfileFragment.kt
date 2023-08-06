@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
@@ -56,6 +54,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     private var userId = ""
     private var followUserId = ""
     private var theirUserId = ""
+    private var userName = ""
 
     private val args by navArgs<ProfileFragmentArgs>()
 
@@ -106,10 +105,8 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 onProfileFragmentListener.onProfileFragmentLoaded()
             }
             else if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
-                userProfileFollowButton.visibility = View.GONE
-                userProfileUnFollowButton.visibility = View.GONE
-                followProgressbar.visibility = View.GONE
                 loadDataWhenIsMyProfile()
+                followProgressbar.visibility = View.GONE
             }
 
             //refreshing the page
@@ -139,11 +136,21 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 viewModel.addFollower(Constants.USER_TOKEN, AddFollowerModel(followUserId))
                 userProfileUnFollowButton.visibility = View.INVISIBLE
                 userProfileFollowButton.visibility = View.INVISIBLE
+                userProfileRequestedButton.visibility = View.INVISIBLE
             }
 
             // unfollow button on click listener
             userProfileUnFollowButton.setOnClickListener {
+                //**************** unfollow view model function
+                userProfileUnFollowButton.visibility = View.INVISIBLE
+                userProfileFollowButton.visibility = View.INVISIBLE
+                userProfileRequestedButton.visibility = View.INVISIBLE
+            }
 
+            userProfileRequestedButton.setOnClickListener {
+                userProfileUnFollowButton.visibility = View.INVISIBLE
+                userProfileFollowButton.visibility = View.INVISIBLE
+                userProfileRequestedButton.visibility = View.INVISIBLE
             }
 
             userProfileHamburgerMenuButton.setOnClickListener {
@@ -152,6 +159,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
             //response of trying to follow some one
             viewModel.followResponse.observe(viewLifecycleOwner){
+
                 if(it.equals("Follow request sent successfully") || it.equals("User followed successfully")){
                     userProfileUnFollowButton.visibility = View.VISIBLE
                     userProfileFollowersText.text = (userProfileFollowersText.text.toString().toInt() + 1).toString()
@@ -175,25 +183,25 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
 
             viewModel.allPostsResponseList.observe(viewLifecycleOwner){
-                if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
+
+                if(it.success){
+                    userProfilePostsText.text = it.posts.size.toString()
                     if(it != null)
                     {
                         loadDataToRecycler(it.posts)
                         posts = it.posts.toTypedArray()
-                        Toast.makeText(requireContext(), "it's not null", Toast.LENGTH_SHORT).show()
                     }
                     else
                     {
                         loadDataToRecycler(emptyList())
-                        Toast.makeText(requireContext(), "it's null", Toast.LENGTH_SHORT).show()
                     }
                 }
-
             }
 
-            viewModel.userDataResponse.observe(viewLifecycleOwner){
+            viewModel.userDataResponseWithToken.observe(viewLifecycleOwner){
                 if(it.success){
 
+                    userName = it.user.username
 //                    MainActivity.followRequestList = it.user.followerRequests
                     MainActivity.followingList = it.user.followings
 
@@ -210,9 +218,12 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 //                        MainActivity.followRequestIdList.add(model.id)
 //                    }
 
-                    userId = it.user._id
+                    userId = it.user.id
                     loadDataIntoViews(it.user.bio, it.user.username, it.user.followers.size.toString(), it.user.followings.size.toString())
                     loadProfileAvatar(userId)
+
+
+                    viewModel.loadPostsWithId(Constants.USER_TOKEN, userId)
                 }
             }
 
@@ -223,20 +234,19 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                     theirUserId = it.user.id
                     userId = it.user.id
 
-                    loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.followings.toString())
+                    loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followersCount.toString(), followings = it.user.followingsCount.toString())
 
-                    loadProfileAvatar(it.user.id)
+                    loadProfileAvatar(userId)
 
                     if(!it.user.private){
-                        loadDataToRecycler(it.user.posts)
+                        viewModel.loadPostsWithId(Constants.USER_TOKEN, userId)
                         userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
                         userProfileNoPostText.text = "No Posts Yet"
-                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.followings.toString())
+                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followersCount.toString(), followings = it.user.followingsCount.toString())
 
                     }else{
-                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followers.toString(), followings = it.user.followings.toString())
+                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followersCount.toString(), followings = it.user.followingsCount.toString())
 
-                        userProfilePostsText.text = it.user.posts.size.toString()
                         userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_lock_24)
                         userProfileNoPostText.text = "This Account is private"
                     }
@@ -269,7 +279,8 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             // on click listeners from adapter
             adapter.setOnItemCLickListener { position, s ->
                 if(s == "onClick"){
-                    findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToShowPostFragment(position, userId))
+                    findNavController()
+                        .navigate(ProfileFragmentDirections.actionProfileFragmentToShowPostFragment(position, userId, userName))
                 }
             }
         }
@@ -282,6 +293,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             dialog.setCancelable(false)
             dialog.show()
             dataStore.setUserToken("out")
+            dataStore.setFollowingSet(emptySet())
             delay(2000)
             dialog.dismiss()
             withContext(Dispatchers.Main){
@@ -295,16 +307,22 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
             viewModel.loadUserDataWithId(userId, Constants.USER_TOKEN)
             userProfileHamburgerMenuButton.visibility = View.GONE
+
+
+            // let's understand that which button has to be shown when user comes to this page
             userProfileFollowButton.visibility = View.VISIBLE
+
         }
     }
 
     private fun loadDataWhenIsMyProfile(){
         binding.apply {
-            viewModel.loadPosts(Constants.USER_TOKEN)
+            viewModel.loadUserDataWithToken(Constants.USER_TOKEN)
 
             userProfileHamburgerMenuButton.visibility = View.VISIBLE
             userProfileFollowButton.visibility = View.GONE
+            userProfileUnFollowButton.visibility = View.GONE
+            userProfileRequestedButton.visibility = View.GONE
         }
     }
 
@@ -328,22 +346,26 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
         binding.apply {
 
             if(it.isNotEmpty()){
-                userProfileNoPostText.visibility = View.GONE
-                userProfileNoPostImage.visibility = View.GONE
-                userProfilePostsRecycler.visibility = View.VISIBLE
-                userProfilePostsText.text = it.size.toString()
 
                 adapter.differ.submitList(it)
                 userProfilePostsRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
                 userProfilePostsRecycler.setHasFixedSize(true)
                 userProfilePostsRecycler.adapter = adapter
+
+                userProfileNoPostText.visibility = View.GONE
+                userProfileNoPostImage.visibility = View.GONE
+                userProfilePostsRecycler.visibility = View.VISIBLE
+                userProfilePostsText.text = it.size.toString()
+
             }
             else{
+
                 userProfileNoPostText.visibility = View.VISIBLE
                 userProfileNoPostImage.visibility = View.VISIBLE
                 userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
                 userProfileNoPostText.text = "No Posts Yet"
                 userProfilePostsRecycler.visibility = View.INVISIBLE
+
             }
         }
     }

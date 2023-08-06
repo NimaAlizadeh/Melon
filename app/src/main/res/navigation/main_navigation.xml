@@ -245,6 +245,9 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"/>
+        <argument
+            android:name="username"
+            app:argType="string" />
         <!--        <argument-->
 <!--            android:name="postListArg"-->
 <!--            app:argType="com.example.melon.models.Post[]" />-->

@@ -23,6 +23,7 @@ import com.example.melon.databinding.HomePostsPictureItemBinding
 import com.example.melon.databinding.ProfilePostsRecyclerItemBinding
 import com.example.melon.databinding.ShowPostRecyclerItemBinding
 import com.example.melon.models.MultiSelectRecycler
+import com.example.melon.models.Post
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.addPost.AddPostFragment
 import com.example.melon.utils.Constants
@@ -35,6 +36,8 @@ class ShowPostsItemAdapter @Inject constructor(): RecyclerView.Adapter<ShowPosts
     private lateinit var context: Context
     private lateinit var userName: String
     private lateinit var avatar: String
+
+    private var imagesList = emptyList<String>()
 
     fun setValues(userName: String, avatar: String){
         this.userName = userName
@@ -50,11 +53,10 @@ class ShowPostsItemAdapter @Inject constructor(): RecyclerView.Adapter<ShowPosts
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int)
     {
-        holder.bindItems(differ.currentList[position])
-        holder.setIsRecyclable(false)
+        holder.bindItems(imagesList[position])
     }
 
-    override fun getItemCount(): Int = differ.currentList.size
+    override fun getItemCount(): Int = imagesList.size
 
     inner class CustomViewHolder: RecyclerView.ViewHolder(binding.root)
     {
@@ -76,18 +78,18 @@ class ShowPostsItemAdapter @Inject constructor(): RecyclerView.Adapter<ShowPosts
                 Glide.with(context)
                     .load(glideUrl)
                     .timeout(60000)
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            Log.d("TAG", "onLoadFailed: ")
-                            return false
-                        }
-
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-//                            showPostRecyclerItemProgressbar.visibility = View.GONE
-                            return false
-                        }
-
-                    })
+//                    .listener(object : RequestListener<Drawable> {
+//                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+//                            Log.d("TAG", "onLoadFailed: ")
+//                            return false
+//                        }
+//
+//                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+////                            showPostRecyclerItemProgressbar.visibility = View.GONE
+//                            return false
+//                        }
+//
+//                    })
                     .into(showPostRecyclerItemImageView)
 
 
@@ -113,4 +115,28 @@ class ShowPostsItemAdapter @Inject constructor(): RecyclerView.Adapter<ShowPosts
     }
 
     val differ = AsyncListDiffer(this, differCallback)
+
+    fun setData(newListData: List<String>)
+    {
+        val notesDiffUtils = NotesDiffUtils(imagesList, newListData)
+        val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
+        imagesList = newListData
+        diffUtils.dispatchUpdatesTo(this)
+    }
+
+    class NotesDiffUtils(private val oldItem: List<String>, private val newItem: List<String>) : DiffUtil.Callback(){
+        override fun getOldListSize() = oldItem.size
+
+        override fun getNewListSize() = newItem.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean
+        {
+            return oldItem[oldItemPosition] === newItem[newItemPosition]
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean
+        {
+            return oldItem[oldItemPosition] === newItem[newItemPosition]
+        }
+    }
 }

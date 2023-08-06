@@ -5,6 +5,6 @@ import javax.inject.Inject
 
 class HomeRepository @Inject constructor(private val apiServices: ApiServices)
 {
-    suspend fun getAllPostHome() = apiServices.getAllPostHome()
+//    suspend fun getAllPostHome() = apiServices.getAllPostHome()
     suspend fun getUserData(token: String) = apiServices.getUserData(token)
 }

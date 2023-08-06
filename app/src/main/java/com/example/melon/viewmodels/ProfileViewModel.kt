@@ -12,35 +12,46 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val profileRepository: ProfileRepository) : ViewModel() {
-    var allPostsResponseList = MutableLiveData<Data>()
-    var userDataResponse = MutableLiveData<GetUserResponse>()
+    var allPostsResponseList = MutableLiveData<PostResponse>()
+    var userDataResponseWithToken = MutableLiveData<GetUserResponse>()
     var userDataResponseWithId = MutableLiveData<UserResponseWithId>()
     var loading = MutableLiveData<Boolean>()
     var followLoading = MutableLiveData<Boolean>()
-    var followResponse = MutableLiveData<String>()
+    var followResponse = MutableLiveData<FollowResponse>()
 
-    fun loadPosts(token: String) = viewModelScope.launch {
+    fun loadUserDataWithToken(token: String) = viewModelScope.launch {
         loading.postValue(true)
 
         try{
-            val response1 = profileRepository.getUserData(token)
-            if(response1.isSuccessful) {
-                if (response1.body()!!.success) {
-                    userDataResponse.postValue(response1.body())
+            val response = profileRepository.getUserData(token)
+            if(response.isSuccessful) {
+                if (response.body()!!.success) {
+                    userDataResponseWithToken.postValue(response.body())
                 }
             }
 
-            val response = profileRepository.getAllPost(token)
-            if(response.isSuccessful) {
-                if (response.body()!!.success) {
-                    allPostsResponseList.postValue(response.body()!!.data)
-                }
-            }
         }catch (e: Exception) {
             Log.d("loadPosts - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
         }
 
         loading.postValue(false)
+    }
+
+    fun loadPostsWithId(token: String, userId: String) = viewModelScope.launch {
+
+        try{
+
+            val response = profileRepository.getPostsWithId(token, userId)
+            if(response.isSuccessful) {
+                if (response.body()!!.success) {
+                    allPostsResponseList.postValue(response.body())
+                }
+            }
+
+        }catch (e: Exception) {
+            Log.d("loadPosts - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
+        }
+
     }
 
     fun loadUserDataWithId(userId: String, token: String) = viewModelScope.launch{
@@ -67,7 +78,7 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
         try{
             val response = profileRepository.addFollower(token,body)
             if(response.isSuccessful) {
-                followResponse.postValue(response.body()?.message)
+                followResponse.postValue(response.body())
             }
         }catch (e: Exception) {
             Log.d("addFollower - profileViewModel ------------------------------------------------------------", "exception : " + e.message)

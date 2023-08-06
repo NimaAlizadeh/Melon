@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.melon.models.PostResponse
 import com.example.melon.models.UserResponseWithId
 import com.example.melon.repositories.ShowPostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,25 +15,22 @@ import javax.inject.Inject
 class ShowPostViewModel @Inject constructor(private val showPostRepository: ShowPostRepository) : ViewModel()
 {
     val loading = MutableLiveData<Boolean>()
-    val userResponse = MutableLiveData<UserResponseWithId>()
+    val allPostsResponseList = MutableLiveData<PostResponse>()
 
-
-    fun loadUserData(token: String, userId: String) = viewModelScope.launch {
-        loading.postValue(true)
+    fun loadPostsWithId(token: String, userId: String) = viewModelScope.launch {
 
         try{
-            val response = showPostRepository.getUserDataWithId(userId, token)
+
+            val response = showPostRepository.getPostsWithId(token, userId)
             if(response.isSuccessful) {
                 if (response.body()!!.success) {
-                    Log.d("sssssssssssssssssssssssssssssssssssssssss", "hello we got heree")
-                    userResponse.postValue(response.body())
-                    Log.d("sssssssssssssssssssssssssssssssssssssssss", "hello we got heree 2")
+                    allPostsResponseList.postValue(response.body())
                 }
             }
+
         }catch (e: Exception) {
-            Log.d("loadUserDataWithId - ShowPostViewModel ------------------------------------------------------------", "exception : " + e.message)
+            Log.d("loadPosts - ShowPostViewModel ------------------------------------------------------------", "exception : " + e.message)
         }
 
-        loading.postValue(false)
     }
 }
