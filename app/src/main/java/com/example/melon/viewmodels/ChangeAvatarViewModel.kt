@@ -20,11 +20,11 @@ class ChangeAvatarViewModel @Inject constructor(private val changeAvatarReposito
     val loading = MutableLiveData<Boolean>()
     val changeAvatarResponse = MutableLiveData<Response<JustStringResponse>>()
 
-    fun doChangeAvatar(token: String, avatar: MultipartBody.Part) = viewModelScope.launch {
+    fun doChangeAvatar(avatar: MultipartBody.Part) = viewModelScope.launch {
         loading.postValue(true)
 
         try{
-            val response = changeAvatarRepository.changeAvatar(token, avatar)
+            val response = changeAvatarRepository.changeAvatar(avatar)
             changeAvatarResponse.postValue(response)
 
         }catch (e: Exception) {

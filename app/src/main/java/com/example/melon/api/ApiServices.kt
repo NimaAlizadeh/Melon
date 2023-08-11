@@ -13,56 +13,56 @@ interface ApiServices {
 
     @POST("auth/register")
     suspend fun signUpUser(@Body body: UserModel): Response<SignUpResponse>
-//
-//    @GET("post")
-//    suspend fun getAllPost(@Header("auth-token") token: String): Response<PostResponse>
+
+    @GET("post")
+    suspend fun getPostsWithToken(): Response<PostResponse>
+
     @GET("post/{userId}")
-    suspend fun getPostsWithId(@Header("auth-token") token: String, @Path("userId") userId: String): Response<PostResponse>
+    suspend fun getPostsWithId(@Path("userId") userId: String): Response<PostResponse>
 
     @Multipart
     @POST("post/create")
-    suspend fun addPost(@Header("auth-token") token: String, @Part("description") description: RequestBody, @Part images: List<MultipartBody.Part>): Response<AddPostResponse>
+    suspend fun addPost(@Part("description") description: RequestBody, @Part images: List<MultipartBody.Part>): Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
 
     @PUT("auth/edit")
-    suspend fun editProfile(@Header("auth-token") token: String, @Body body: EditProfileModel): Response<AddPostResponse>
+    suspend fun editProfile(@Body body: EditProfileModel): Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
 
     @GET("auth/getUser")
-    suspend fun getUserData(@Header("auth-token") token: String): Response<GetUserResponse>
+    suspend fun getUserData(): Response<GetUserResponse>
 
     @GET("auth/getUser/{userId}")
-    suspend fun getUserDataWithId(@Path("userId") userId: String, @Header("auth-token") token: String): Response<UserResponseWithId>
+    suspend fun getUserDataWithId(@Path("userId") userId: String): Response<UserResponseWithId>
 
     @Multipart
     @POST("auth/avatars")
-    suspend fun changeAvatar(@Header("auth-token") token: String, @Part avatar: MultipartBody.Part): Response<JustStringResponse>
+    suspend fun changeAvatar(@Part avatar: MultipartBody.Part): Response<JustStringResponse>
     // response is like the same as addPostResponse and it just gets success and message
 
     @GET("auth/getbyusername")
-    suspend fun searchUser(@Header("auth-token") token: String, @Query("searchTerm") searchTerm: String): Response<SearchUserResponse>
+    suspend fun searchUser(@Query("searchTerm") searchTerm: String): Response<SearchUserResponse>
 
     @POST("auth/addFollower")
-    suspend fun addFollower(@Header("auth-token") token: String, @Body body: AddFollowerModel): Response<FollowResponse>
+    suspend fun addFollower(@Body body: AddFollowerModel): Response<FollowResponse>
 
     @POST("auth/unfollow")
-    suspend fun unFollow(@Header("auth-token") token: String, @Body body: UnFollowModel): Response<FollowResponse>
+    suspend fun unFollow(@Body body: UnFollowModel): Response<FollowResponse>
 
     @POST("auth/removeFollower")
-    suspend fun removeFollower(@Header("auth-token") token: String, @Body body: RemoveFollowerModel): Response<FollowResponse>
+    suspend fun removeFollower(@Body body: RemoveFollowerModel): Response<FollowResponse>
 
     @POST("auth/cancelRequest")
-    suspend fun cancelRequest(@Header("auth-token") token: String, @Body body: RemoveFollowerModel): Response<FollowResponse>
+    suspend fun cancelRequest(@Body body: RemoveFollowerModel): Response<FollowResponse>
 
     @GET("auth/getRequests")
-    suspend fun getRequests(@Header("auth-token") token: String): Response<RequestsResponse>
+    suspend fun getRequests(): Response<RequestsResponse>
 
     @POST("auth/acceptRequest")
-    suspend fun acceptFollow(@Header("auth-token") token: String, @Body body: AcceptOrRejectModel): Response<AddPostResponse>
+    suspend fun acceptFollow(@Body body: AcceptOrRejectModel): Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
     @POST("auth/rejectRequest")
-    suspend fun rejectFollow(@Header("auth-token") token: String, @Body body: AcceptOrRejectModel) : Response<AddPostResponse>
+    suspend fun rejectFollow(@Body body: AcceptOrRejectModel) : Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
-
 
 }

@@ -37,7 +37,7 @@ class ShowPostFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentShowPostBinding.inflate(layoutInflater, container, false)
-        viewModel.loadPostsWithId(Constants.USER_TOKEN, args.userId)
+        viewModel.loadPostsWithId(args.userId)
         return binding.root
     }
 

@@ -23,11 +23,11 @@ class NotificationViewModel @Inject constructor(private val notificationReposito
     val rejectResponse = MutableLiveData<AddPostResponse>()
     val requestLoading = MutableLiveData<Boolean>()
 
-    fun loadRequests(token: String) = viewModelScope.launch {
+    fun loadRequests() = viewModelScope.launch {
         loading.postValue(true)
 
         try {
-            val response = notificationRepository.getRequests(token)
+            val response = notificationRepository.getRequests()
             if(response.isSuccessful)
                 requestsResponse.postValue(response.body())
             else{
@@ -41,11 +41,11 @@ class NotificationViewModel @Inject constructor(private val notificationReposito
         loading.postValue(false)
     }
 
-    fun acceptFollowRequest(token: String, body: AcceptOrRejectModel) = viewModelScope.launch {
+    fun acceptFollowRequest(body: AcceptOrRejectModel) = viewModelScope.launch {
         requestLoading.postValue(true)
 
         try {
-            val response = notificationRepository.acceptFollowRequest(token,body)
+            val response = notificationRepository.acceptFollowRequest(body)
             if(response.isSuccessful)
                 acceptResponse.postValue(response.body())
             else{
@@ -59,11 +59,11 @@ class NotificationViewModel @Inject constructor(private val notificationReposito
         requestLoading.postValue(false)
     }
 
-    fun rejectFollowRequest(token: String, body: AcceptOrRejectModel) = viewModelScope.launch {
+    fun rejectFollowRequest(body: AcceptOrRejectModel) = viewModelScope.launch {
         requestLoading.postValue(true)
 
         try {
-            val response = notificationRepository.rejectFollowRequest(token,body)
+            val response = notificationRepository.rejectFollowRequest(body)
             if(response.isSuccessful)
                 acceptResponse.postValue(response.body())
             else{

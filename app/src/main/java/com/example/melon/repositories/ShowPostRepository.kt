@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class ShowPostRepository @Inject constructor(private val apiServices: ApiServices)
 {
-    suspend fun getPostsWithId(token: String, userId: String) = apiServices.getPostsWithId(token, userId)
+    suspend fun getPostsWithId(userId: String) = apiServices.getPostsWithId(userId)
 }

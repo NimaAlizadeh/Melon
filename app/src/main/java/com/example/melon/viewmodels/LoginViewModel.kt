@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.melon.models.GetUserResponse
 import com.example.melon.models.LoginModel
 import com.example.melon.models.LoginResponse
+import com.example.melon.models.RequestsResponse
 import com.example.melon.repositories.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     val loading = MutableLiveData<Boolean>()
     val loginResponse = MutableLiveData<LoginResponse>()
     val userDataResponse = MutableLiveData<GetUserResponse>()
+    val userRequestedData = MutableLiveData<RequestsResponse>()
 
     fun loginUser(body: LoginModel) = viewModelScope.launch {
         loading.postValue(true)
@@ -33,11 +35,11 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         loading.postValue(false)
     }
 
-    fun getUserData(token: String) = viewModelScope.launch {
+    fun getUserData() = viewModelScope.launch {
         loading.postValue(true)
 
         try {
-            val response = loginRepository.getUserData(token)
+            val response = loginRepository.getUserData()
             if(response.isSuccessful)
                 userDataResponse.postValue(response.body())
             else{
@@ -48,6 +50,24 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             Log.d("LoginViewModel getUserData try exception :     ", e.message.toString())
         }
 
+
+        loading.postValue(false)
+    }
+
+    fun getRequestedData() = viewModelScope.launch {
+        loading.postValue(true)
+
+        try {
+            val response = loginRepository.getRequestData()
+            if(response.isSuccessful)
+                userRequestedData.postValue(response.body())
+            else{
+                Log.d("LoginViewModel getRequestedData code:     ", response.code().toString())
+                Log.d("LoginViewModel getRequestedData message:     ", response.message().toString())
+            }
+        }catch (e: Exception){
+            Log.d("LoginViewModel getRequestedData try exception :     ", e.message.toString())
+        }
 
         loading.postValue(false)
     }

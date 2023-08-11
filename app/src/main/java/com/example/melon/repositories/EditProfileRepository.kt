@@ -6,6 +6,6 @@ import javax.inject.Inject
 
 class EditProfileRepository @Inject constructor(private val apiServices: ApiServices)
 {
-    suspend fun getUserData(token: String) = apiServices.getUserData(token)
-    suspend fun editUserProfile(token: String, body: EditProfileModel) = apiServices.editProfile(token, body)
+    suspend fun getUserData() = apiServices.getUserData()
+    suspend fun editUserProfile(body: EditProfileModel) = apiServices.editProfile(body)
 }

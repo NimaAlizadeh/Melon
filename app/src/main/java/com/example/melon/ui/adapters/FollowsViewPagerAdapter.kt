@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.melon.databinding.FollowsViewPagerItemBinding
 import com.example.melon.databinding.FragmentFollowsBinding
+import com.example.melon.models.Follow
 import com.example.melon.models.FollowModel
 import javax.inject.Inject
 
@@ -37,7 +38,7 @@ class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.View
 
 
     inner class ViewPagerViewHolder: RecyclerView.ViewHolder(binding.root){
-        fun bindItems(list: List<FollowModel>){
+        fun bindItems(list: List<Follow>){
             binding.apply {
 
                 loadAdapter(list)
@@ -45,7 +46,7 @@ class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.View
                 followsViewPagerItemSearchEdt.addTextChangedListener {
                     if(it!!.isNotEmpty()){
 
-                        val tempList = ArrayList<FollowModel>()
+                        val tempList = ArrayList<Follow>()
                         list.forEach{ model ->
                             if(model.username.contains(it.toString()))
                                 tempList.add(model)
@@ -62,7 +63,7 @@ class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.View
         }
     }
 
-    fun loadAdapter(list: List<FollowModel>){
+    fun loadAdapter(list: List<Follow>){
         binding.apply {
             adapter.setData(list)
             followsViewPagerItemRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -71,12 +72,12 @@ class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.View
     }
 
 
-    private val differCallback = object: DiffUtil.ItemCallback<FollowModel>(){
-        override fun areItemsTheSame(oldItem: FollowModel, newItem: FollowModel): Boolean {
+    private val differCallback = object: DiffUtil.ItemCallback<Follow>(){
+        override fun areItemsTheSame(oldItem: Follow, newItem: Follow): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: FollowModel, newItem: FollowModel): Boolean {
+        override fun areContentsTheSame(oldItem: Follow, newItem: Follow): Boolean {
             return oldItem == newItem
         }
     }

@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class NotificationRepository @Inject constructor(private val apiServices: ApiServices)
 {
-    suspend fun getRequests(token: String) = apiServices.getRequests(token)
-    suspend fun acceptFollowRequest(token: String, body: AcceptOrRejectModel) = apiServices.acceptFollow(token,body)
-    suspend fun rejectFollowRequest(token: String, body: AcceptOrRejectModel) = apiServices.rejectFollow(token,body)
+    suspend fun getRequests() = apiServices.getRequests()
+    suspend fun acceptFollowRequest(body: AcceptOrRejectModel) = apiServices.acceptFollow(body)
+    suspend fun rejectFollowRequest(body: AcceptOrRejectModel) = apiServices.rejectFollow(body)
 }

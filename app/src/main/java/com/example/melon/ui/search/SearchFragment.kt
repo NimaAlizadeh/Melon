@@ -73,7 +73,7 @@ class SearchFragment : Fragment() {
             //here we send userName that we are searching to server
             searchFragmentSearchEdt.addTextChangedListener {
                 if(it.toString().isNotEmpty())
-                    viewModel.loadUserSearch(Constants.USER_TOKEN,it.toString())
+                    viewModel.loadUserSearch(it.toString())
                 else
                     loadAdapter(emptyList())
             }

@@ -30,10 +30,11 @@ class MainActivity : AppCompatActivity(), ProfileFragment.OnProfileFragmentListe
     companion object{
         var appPagePosition = Constants.MAIN_ACTIVITY
         private lateinit var callBack: OnPermissionCallBackListener
-        var followingList: List<FollowModel> = emptyList()
-        var followingIdList = ArrayList<String>()
-//        var followRequestList: List<FollowModel> = emptyList()
-//        var followRequestIdList = ArrayList<String>()
+
+        var followingsIdList = ArrayList<String>()
+        var followersIdList = ArrayList<String>()
+        var followingsRequestedIdList = ArrayList<String>()
+        var followersRequestedIdList = ArrayList<String>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -61,31 +62,6 @@ class MainActivity : AppCompatActivity(), ProfileFragment.OnProfileFragmentListe
             }
             mainBottomNavigation.setupWithNavController(navController)
             mainBottomNavigation.setOnItemReselectedListener {  }
-
-
-//            mainBottomNavigation.setOnItemSelectedListener { item ->
-//                if (item.itemId == mainBottomNavigation.selectedItemId) {
-//                    // Do nothing if the clicked item is already selected
-//                    return@setOnItemSelectedListener false
-//                }
-//
-//                // Handle navigation to the selected item
-////                when (item.itemId) {
-////                    R.id.menu_item1 -> {
-////                        // Handle navigation to item 1
-////                        // For example: navigate to a specific fragment
-////                        navController.navigate(R.id.destination_fragment1)
-////                    }
-////                    R.id.menu_item2 -> {
-////                        // Handle navigation to item 2
-////                        // For example: navigate to a specific fragment
-////                        navController.navigate(R.id.destination_fragment2)
-////                    }
-////                    // Add more cases for other menu items
-////                }
-//
-//                true // Return true to indicate that the selection has been handled
-//            }
         }
     }
 

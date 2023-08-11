@@ -1,6 +1,7 @@
 package com.example.melon.ui.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.Headers
 import com.example.melon.R
 import com.example.melon.databinding.NotificationRecyclerItemBinding
+import com.example.melon.models.Follow
 import com.example.melon.models.FollowModel
 import com.example.melon.models.UserX
 import com.example.melon.ui.activities.MainActivity
@@ -23,7 +25,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     private lateinit var binding: NotificationRecyclerItemBinding
     lateinit var context: Context
 
-    private var notificationList = emptyList<FollowModel>()
+    private var notificationList = emptyList<Follow>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         binding = NotificationRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -32,29 +34,29 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        holder.bindItems(differ.currentList[position])
+        holder.bindItems(notificationList[position])
         holder.setIsRecyclable(false)
     }
 
-    override fun getItemCount() = differ.currentList.size
+    override fun getItemCount() = notificationList.size
 
     inner class CustomViewHolder : RecyclerView.ViewHolder(binding.root) {
-        fun bindItems(model: FollowModel) {
+        fun bindItems(model: Follow) {
             binding.apply {
 
                 if(MainActivity.appPagePosition == Constants.FRAGMENT_FOLLOWS){
-                    notificationRecyclerButtonConfirm.text = "Confirm"
+                    notificationRecyclerButtonConfirm.text = "Follow"
                     notificationRecyclerButtonDelete.visibility = View.GONE
 
-                    if(model.name.isEmpty()){
+                    if(model.name.toString().isEmpty()){
                         notificationRecyclerTextRequest.visibility = View.GONE
                     }else{
                         notificationRecyclerTextRequest.visibility = View.VISIBLE
-                        notificationRecyclerTextRequest.text = model.name
+                        notificationRecyclerTextRequest.text = model.name.toString()
                     }
 
                 }else{
-                    notificationRecyclerButtonConfirm.text = "Follow"
+                    notificationRecyclerButtonConfirm.text = "Confirm"
                     notificationRecyclerButtonDelete.visibility = View.VISIBLE
 
                     notificationRecyclerTextRequest.visibility = View.VISIBLE
@@ -81,19 +83,19 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         }
     }
 
-    private val differCallback = object : DiffUtil.ItemCallback<FollowModel>() {
-        override fun areItemsTheSame(oldItem: FollowModel, newItem: FollowModel): Boolean {
+    private val differCallback = object : DiffUtil.ItemCallback<Follow>() {
+        override fun areItemsTheSame(oldItem: Follow, newItem: Follow): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: FollowModel, newItem: FollowModel): Boolean {
+        override fun areContentsTheSame(oldItem: Follow, newItem: Follow): Boolean {
             return oldItem == newItem
         }
     }
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    fun setData(newListData: List<FollowModel>)
+    fun setData(newListData: List<Follow>)
     {
         val notesDiffUtils = NotesDiffUtils(notificationList, newListData)
         val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
@@ -101,7 +103,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         diffUtils.dispatchUpdatesTo(this)
     }
 
-    class NotesDiffUtils(private val oldItem: List<FollowModel>, private val newItem: List<FollowModel>) : DiffUtil.Callback(){
+    class NotesDiffUtils(private val oldItem: List<Follow>, private val newItem: List<Follow>) : DiffUtil.Callback(){
         override fun getOldListSize() = oldItem.size
 
         override fun getNewListSize() = newItem.size
@@ -118,9 +120,9 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     }
 
     //on item select handling
-    private var onItemClickListener: ((FollowModel, String) -> Unit)? = null
+    private var onItemClickListener: ((Follow, String) -> Unit)? = null
 
-    fun setOnItemCLickListener(listener: (FollowModel, String) -> Unit) {
+    fun setOnItemCLickListener(listener: (Follow, String) -> Unit) {
         onItemClickListener = listener
     }
 

@@ -15,6 +15,4 @@ import javax.inject.Inject
 class FirstFragmentViewModel @Inject constructor(private val firstFragmentRepository: FirstFragmentRepository): ViewModel()
 {
     val loading = MutableLiveData<Boolean>()
-
-
 }

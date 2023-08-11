@@ -16,11 +16,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     val userDataResponse = MutableLiveData<GetUserResponse>()
     val loading = MutableLiveData<Boolean>()
 
-    fun loadData(token: String) = viewModelScope.launch {
+    fun loadData() = viewModelScope.launch {
         loading.postValue(true)
 
         try {
-            val response = homeRepository.getUserData(token)
+            val response = homeRepository.getUserData()
             if(response.isSuccessful)
                 userDataResponse.postValue(response.body())
             else{

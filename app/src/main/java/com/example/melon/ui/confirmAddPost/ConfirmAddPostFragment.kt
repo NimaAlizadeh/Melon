@@ -90,7 +90,7 @@ class ConfirmAddPostFragment : Fragment() {
 
                 confirmAddPostFragmentToolbarBackButton.isEnabled = false
                 confirmAddPostFragmentCaptionEdt.isEnabled = false
-                viewModel.doAddPost(Constants.USER_TOKEN, descriptionPart, images)
+                viewModel.doAddPost(descriptionPart, images)
                 Toast.makeText(requireContext(), "Posting...", Toast.LENGTH_SHORT).show()
             }
 

@@ -21,11 +21,11 @@ class EditProfileViewModel @Inject constructor(private val editProfileRepository
     val editProfileResponse = MutableLiveData<Response<AddPostResponse>>()
     val userDataResponse = MutableLiveData<Response<GetUserResponse>>()
 
-    fun loadUserData(token: String) = viewModelScope.launch {
+    fun loadUserData() = viewModelScope.launch {
         userDataLoading.postValue(true)
 
         try{
-            val response = editProfileRepository.getUserData(token)
+            val response = editProfileRepository.getUserData()
             userDataResponse.postValue(response)
 
         }catch (e: Exception) {
@@ -35,11 +35,11 @@ class EditProfileViewModel @Inject constructor(private val editProfileRepository
         userDataLoading.postValue(false)
     }
 
-    fun doEditUserProfile(token: String, body: EditProfileModel) = viewModelScope.launch {
+    fun doEditUserProfile(body: EditProfileModel) = viewModelScope.launch {
         editLoading.postValue(true)
 
         try{
-            val response = editProfileRepository.editUserProfile(token, body)
+            val response = editProfileRepository.editUserProfile(body)
             editProfileResponse.postValue(response)
 
         }catch (e: Exception) {

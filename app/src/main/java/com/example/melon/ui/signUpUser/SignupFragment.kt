@@ -62,7 +62,7 @@ class SignupFragment : Fragment() {
             signupFragmentBirthdayEdt.setOnClickListener {
                 val picker = DatePickerDialog(requireContext())
                 picker.setOnDateSetListener { datePicker, _, _, _ ->
-                    val temp = datePicker.year.toString() + " / " + datePicker.month.toString() + " / " + datePicker.dayOfMonth.toString()
+                    val temp = datePicker.year.toString() + " / " + (datePicker.month+1).toString() + " / " + datePicker.dayOfMonth.toString()
                     signupFragmentBirthdayEdt.setText(temp)
                     birthDay = temp
                 }

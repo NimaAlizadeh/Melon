@@ -6,13 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import com.example.melon.databinding.FragmentHomeBinding
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.ShowPostsAdapter
 import com.example.melon.utils.Constants
+import com.example.melon.utils.StoreUserData
 import com.example.melon.viewmodels.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -23,19 +26,25 @@ class HomeFragment : Fragment() {
     @Inject
     lateinit var adapter: ShowPostsAdapter
 
+    @Inject
+    lateinit var userData: StoreUserData
+
+
     private val viewModel: HomeViewModel by viewModels()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
-        viewModel.loadData(Constants.USER_TOKEN)
+        MainActivity.appPagePosition = Constants.FRAGMENT_HOME
+        lifecycle.coroutineScope.launch {
+            userData.setUserToken(Constants.USER_TOKEN)
+        }
+//        viewModel.loadData()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        MainActivity.appPagePosition = Constants.FRAGMENT_HOME
 
         binding.apply {
 

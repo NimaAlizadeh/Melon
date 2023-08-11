@@ -1,5 +1,5 @@
 package com.example.melon.models
 
 data class RemoveFollowerModel (
-    val followerId: String = "",
+    val followingId: String = "",
 )

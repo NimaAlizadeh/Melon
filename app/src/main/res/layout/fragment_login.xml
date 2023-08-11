@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="ٍUser Name"
+            android:hint="User Name"
             app:startIconDrawable="@drawable/ic_baseline_person_24"
             app:boxStrokeWidth="2dp">
 
@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="ٍPassword"
+            android:hint="Password"
             app:startIconDrawable="@drawable/ic_baseline_lock_24"
             app:boxStrokeWidth="2dp">
 

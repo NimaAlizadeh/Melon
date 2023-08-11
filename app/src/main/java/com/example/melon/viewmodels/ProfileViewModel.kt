@@ -18,12 +18,14 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
     var loading = MutableLiveData<Boolean>()
     var followLoading = MutableLiveData<Boolean>()
     var followResponse = MutableLiveData<FollowResponse>()
+    var unFollowResponse = MutableLiveData<FollowResponse>()
+    var cancelRequestResponse = MutableLiveData<FollowResponse>()
 
-    fun loadUserDataWithToken(token: String) = viewModelScope.launch {
+    fun loadUserDataWithToken() = viewModelScope.launch {
         loading.postValue(true)
 
         try{
-            val response = profileRepository.getUserData(token)
+            val response = profileRepository.getUserData()
             if(response.isSuccessful) {
                 if (response.body()!!.success) {
                     userDataResponseWithToken.postValue(response.body())
@@ -37,11 +39,11 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
         loading.postValue(false)
     }
 
-    fun loadPostsWithId(token: String, userId: String) = viewModelScope.launch {
+    fun loadPostsWithId(userId: String) = viewModelScope.launch {
 
         try{
 
-            val response = profileRepository.getPostsWithId(token, userId)
+            val response = profileRepository.getPostsWithId(userId)
             if(response.isSuccessful) {
                 if (response.body()!!.success) {
                     allPostsResponseList.postValue(response.body())
@@ -54,11 +56,28 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
 
     }
 
-    fun loadUserDataWithId(userId: String, token: String) = viewModelScope.launch{
+    fun loadPostsWithToken() = viewModelScope.launch {
+
+        try{
+
+            val response = profileRepository.getPostsWithToken()
+            if(response.isSuccessful) {
+                if (response.body()!!.success) {
+                    allPostsResponseList.postValue(response.body())
+                }
+            }
+
+        }catch (e: Exception) {
+            Log.d("loadPosts - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
+        }
+
+    }
+
+    fun loadUserDataWithId(token: String) = viewModelScope.launch{
         loading.postValue(true)
 
         try{
-            val response = profileRepository.getUserDataWithId(userId, token)
+            val response = profileRepository.getUserDataWithId(token)
             if(response.isSuccessful) {
                 if (response.body()!!.success) {
                     userDataResponseWithId.postValue(response.body())
@@ -71,17 +90,49 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
         loading.postValue(false)
     }
 
-    fun addFollower(token: String, body: AddFollowerModel) = viewModelScope.launch {
+    fun addFollower(body: AddFollowerModel) = viewModelScope.launch {
 
         followLoading.postValue(true)
 
         try{
-            val response = profileRepository.addFollower(token,body)
+            val response = profileRepository.addFollower(body)
             if(response.isSuccessful) {
                 followResponse.postValue(response.body())
             }
         }catch (e: Exception) {
             Log.d("addFollower - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
+        }
+
+        followLoading.postValue(false)
+    }
+
+    fun unFollow(body: UnFollowModel) = viewModelScope.launch {
+
+        followLoading.postValue(true)
+
+        try{
+            val response = profileRepository.unFollow(body)
+            if(response.isSuccessful) {
+                unFollowResponse.postValue(response.body())
+            }
+        }catch (e: Exception) {
+            Log.d("unFollow - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
+        }
+
+        followLoading.postValue(false)
+    }
+
+    fun cancelRequest(body: RemoveFollowerModel) = viewModelScope.launch {
+
+        followLoading.postValue(true)
+
+        try{
+            val response = profileRepository.cancelRequest(body)
+            if(response.isSuccessful) {
+                cancelRequestResponse.postValue(response.body())
+            }
+        }catch (e: Exception) {
+            Log.d("cancelRequest - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
         }
 
         followLoading.postValue(false)

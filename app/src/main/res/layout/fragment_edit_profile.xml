@@ -109,7 +109,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="ٍUser Name"
+                android:hint="User Name"
                 app:startIconDrawable="@drawable/ic_baseline_person_24"
                 app:boxStrokeWidth="2dp"
                 app:hintTextColor="@color/gray">
@@ -133,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="ٍEmail Address"
+                android:hint="Email Address"
                 app:startIconDrawable="@drawable/ic_baseline_email_24"
                 app:boxStrokeWidth="2dp">
 
@@ -156,7 +156,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="ٍBirth Day"
+                android:hint="Birth Day"
                 app:startIconDrawable="@drawable/ic_baseline_date_range_24"
                 app:boxStrokeWidth="2dp">
 

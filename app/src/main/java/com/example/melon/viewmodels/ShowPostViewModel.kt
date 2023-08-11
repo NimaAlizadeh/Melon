@@ -17,11 +17,11 @@ class ShowPostViewModel @Inject constructor(private val showPostRepository: Show
     val loading = MutableLiveData<Boolean>()
     val allPostsResponseList = MutableLiveData<PostResponse>()
 
-    fun loadPostsWithId(token: String, userId: String) = viewModelScope.launch {
+    fun loadPostsWithId(userId: String) = viewModelScope.launch {
 
         try{
 
-            val response = showPostRepository.getPostsWithId(token, userId)
+            val response = showPostRepository.getPostsWithId(userId)
             if(response.isSuccessful) {
                 if (response.body()!!.success) {
                     allPostsResponseList.postValue(response.body())

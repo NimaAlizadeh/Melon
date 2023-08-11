@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.R
@@ -15,8 +16,11 @@ import com.example.melon.models.AcceptOrRejectModel
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.NotificationAdapter
 import com.example.melon.utils.Constants
+import com.example.melon.utils.StoreUserData
+import com.example.melon.utils.getFollowIds
 import com.example.melon.viewmodels.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,9 +33,12 @@ class NotificationFragment : Fragment(){
 
     private val viewModel: NotificationViewModel by viewModels()
 
+    @Inject
+    lateinit var userData: StoreUserData
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentNotificationBinding.inflate(layoutInflater, container, false)
-        viewModel.loadRequests(Constants.USER_TOKEN)
+        viewModel.loadRequests()
         return binding.root
     }
 
@@ -47,17 +54,32 @@ class NotificationFragment : Fragment(){
             }
 
             viewModel.requestsResponse.observe(viewLifecycleOwner){
-//                if(it.requests.isEmpty())
-//                    notificationFragmentNoNotificationText.visibility = View.VISIBLE
-//                else
-//                    notificationFragmentNoNotificationText.visibility = View.INVISIBLE
-//                adapter.setData(it.requests)
-//                notificationFragmentRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-//                notificationFragmentRecycler.adapter = adapter
+
+//                if(it.followerRequests != null && it.followingRequests != null){
+                    val tempFollowerRequested = it.followerRequests.getFollowIds()
+                    val tempFollowingRequested = it.followingRequests.getFollowIds()
+
+                    lifecycle.coroutineScope.launch {
+                        userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())
+                        userData.setFollowingRequestedCollection(tempFollowingRequested.toSet())
+                    }
+                    MainActivity.followersRequestedIdList = tempFollowerRequested
+                    MainActivity.followingsRequestedIdList = tempFollowingRequested
+//                }
+
+
+                if(it.followerRequests.isEmpty())
+                    notificationFragmentNoNotificationText.visibility = View.VISIBLE
+                else
+                    notificationFragmentNoNotificationText.visibility = View.INVISIBLE
+
+                adapter.setData(it.followerRequests)
+                notificationFragmentRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                notificationFragmentRecycler.adapter = adapter
             }
 
             notificationFragmentSwipeRefresh.setOnRefreshListener {
-                viewModel.loadRequests(Constants.USER_TOKEN)
+                viewModel.loadRequests()
                 notificationFragmentSwipeRefresh.isRefreshing = false
             }
 
@@ -75,11 +97,11 @@ class NotificationFragment : Fragment(){
             adapter.setOnItemCLickListener { followModel, s ->
                 when(s){
                     "confirm" -> {
-                        viewModel.acceptFollowRequest(Constants.USER_TOKEN, AcceptOrRejectModel(followModel.id))
+                        viewModel.acceptFollowRequest(AcceptOrRejectModel(followModel.id))
                     }
 
                     "delete" -> {
-                        viewModel.rejectFollowRequest(Constants.USER_TOKEN, AcceptOrRejectModel(followModel.id))
+                        viewModel.rejectFollowRequest(AcceptOrRejectModel(followModel.id))
                     }
                 }
             }
@@ -88,19 +110,16 @@ class NotificationFragment : Fragment(){
 
                 Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
 
-                if(it.message == "Follower request accepted successfully"){
-                    viewModel.loadRequests(Constants.USER_TOKEN)
-                }
+                viewModel.loadRequests()
             }
 
             viewModel.rejectResponse.observe(viewLifecycleOwner){
 
                 Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
 
-                if(it.message == "Follower request rejected successfully"){
-                    viewModel.loadRequests(Constants.USER_TOKEN)
-                }
+                viewModel.loadRequests()
             }
+
 
         }
     }

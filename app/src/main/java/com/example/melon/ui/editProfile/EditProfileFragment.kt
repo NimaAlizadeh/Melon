@@ -35,7 +35,7 @@ class EditProfileFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentEditProfileBinding.inflate(layoutInflater, container, false)
-        viewModel.loadUserData(Constants.USER_TOKEN)
+        viewModel.loadUserData()
         editProfileModel = EditProfileModel()
         gender = ""
         birthDay = ""
@@ -107,7 +107,7 @@ class EditProfileFragment : Fragment() {
             editProfileFragmentBirthdayEdt.setOnClickListener {
                 val picker = DatePickerDialog(requireContext())
                 picker.setOnDateSetListener { datePicker, _, _, _ ->
-                    val temp = datePicker.year.toString() + " / " + datePicker.month.toString() + " / " + datePicker.dayOfMonth.toString()
+                    val temp = datePicker.year.toString() + " / " + (datePicker.month+1).toString() + " / " + datePicker.dayOfMonth.toString()
                     editProfileFragmentBirthdayEdt.setText(temp)
                     birthDay = temp
                 }
@@ -150,7 +150,7 @@ class EditProfileFragment : Fragment() {
                     editProfileModel.newPassword = editProfileFragmentNewPasswordEdt.text.toString()
                 }
 
-                viewModel.doEditUserProfile(Constants.USER_TOKEN, editProfileModel)
+                viewModel.doEditUserProfile(editProfileModel)
             }
 
             viewModel.editLoading.observe(viewLifecycleOwner){

@@ -20,11 +20,11 @@ class SearchViewModel @Inject constructor(private val searchRepository: SearchRe
 //    val explorePostsLiveList = MutableLiveData<Post>()
 
     @SuppressLint("SuspiciousIndentation")
-    fun loadUserSearch(token: String, searchTerm: String) = viewModelScope.launch {
+    fun loadUserSearch(searchTerm: String) = viewModelScope.launch {
         loading.postValue(true)
 
         try {
-            val response = searchRepository.searchUser(token, searchTerm)
+            val response = searchRepository.searchUser(searchTerm)
             if(response.isSuccessful)
                 userSearchLiveList.postValue(response.body())
             else{

@@ -54,16 +54,35 @@ class FirstFragment : Fragment() {
                     withContext(Dispatchers.Main){
                         if(it.isNotEmpty()  && it != "out"){
                             Constants.USER_TOKEN = it
-                            findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToHomeFragment())
+                            if(MainActivity.appPagePosition != Constants.FRAGMENT_HOME)
+                                findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToHomeFragment())
                         }
                     }
                 }
             }
 
             lifecycle.coroutineScope.launch {
-                userData.getFollowings().collect{
+                userData.getFollowingsCollection().collect{
                     if(it.isNotEmpty()){
-                        MainActivity.followingIdList = ArrayList(it.toList())
+                        MainActivity.followingsIdList = ArrayList(it.toList())
+                    }
+                }
+
+                userData.getFollowersCollection().collect{
+                    if(it.isNotEmpty()){
+                        MainActivity.followersIdList = ArrayList(it.toList())
+                    }
+                }
+
+                userData.getFollowersRequestedCollection().collect{
+                    if(it.isNotEmpty()){
+                        MainActivity.followersRequestedIdList = ArrayList(it.toList())
+                    }
+                }
+
+                userData.getFollowingRequestedCollection().collect{
+                    if(it.isNotEmpty()){
+                        MainActivity.followingsRequestedIdList = ArrayList(it.toList())
                     }
                 }
             }

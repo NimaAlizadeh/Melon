@@ -69,21 +69,6 @@ class AddPostFragment : Fragment(), MainActivity.OnPermissionCallBackListener, A
         binding.apply {
             addPostSelectedCount.text = adapter.selectedItems.size.toString()
 
-            //we are gonna make the mode to be false from the multiple mode button
-//            addPostMultipleModeButton.setOnClickListener {
-//                if(isOnMultipleMode){
-//                    isOnMultipleMode = false
-//                    addPostSelectedCount.text = "0"
-//                    addPostSelectedCount.visibility = View.GONE
-//                    adapter.selectedItems.clear()
-//                }else{
-//                    isOnMultipleMode = true
-//                    addPostSelectedCount.text = "1"
-//                    addPostSelectedCount.visibility = View.VISIBLE
-//                }
-//            }
-
-
             //refresh listener
             addPostRefresh.setOnRefreshListener {
                 adapter.selectedItems.clear()
@@ -144,32 +129,12 @@ class AddPostFragment : Fragment(), MainActivity.OnPermissionCallBackListener, A
         val cursor = requireContext().contentResolver.query(uri, projection, null, null, "$orderBy DESC")
         val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
 
-//        val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-//        val projection = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME)
-//        val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
-//
-//        val cursor = requireContext().contentResolver.query(uri, projection, null, null, sortOrder)
-//
-//        cursor?.use {
-//            val columnIndexId = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-////            val columnIndexDisplayName = it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-//
-//            while (it.moveToNext()) {
-//                val imageId = it.getLong(columnIndexId)
-////                val displayName = it.getString(columnIndexDisplayName)
-//
-//                val imageUri = Uri.withAppendedPath(uri, imageId.toString())
-//                val imagePath = imageUri.toString()
-//
-//                // Display the image using the imagePath in your UI
-//                // You can load the image into an ImageView, for example
-//
-//                imagesList.add(imagePath)
-//            }
-//        }
-
         while (cursor.moveToNext())
             imagesList.add(cursor.getString(columnIndexData))
+
+        cursor.close()
+
+        Toast.makeText(requireContext(), imagesList.size.toString(), Toast.LENGTH_LONG).show()
 
 
         binding.apply {

@@ -5,7 +5,10 @@ object Constants {
     const val CLIENT_TIMEOUT = 600L
     const val DATASTORE_NAME_USER = "user_info"
     const val DATASTORE_TOKEN_USER = "user_key"
-    const val DATASTORE_USER_FOLLOWINGS = "datastore_user_followings"
+    const val DATASTORE_USER_FOLLOWINGS_COLLECTION = "datastore_user_followings_collection"
+    const val DATASTORE_USER_FOLLOWERS_COLLECTION = "datastore_user_followers_collection"
+    const val DATASTORE_USER_FOLLOWING_REQUESTED_COLLECTION = "datastore_user_following_requested_collection"
+    const val DATASTORE_USER_FOLLOWERS_REQUESTED_COLLECTION = "datastore_user_followers_requested_collection"
     var USER_TOKEN = ""
     const val MAIN_ACTIVITY = "main_activity"
     const val FRAGMENT_FIRST = "fragment_first"

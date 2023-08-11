@@ -50,18 +50,21 @@ class SearchUserAdapter @Inject constructor(): RecyclerView.Adapter<SearchUserAd
     inner class CustomViewHolder : RecyclerView.ViewHolder(binding.root) {
         fun bindItems(userItem: User) {
             binding.apply {
-//                if(adapterPosition == differ.currentList.size - 1)
-//                    searchUserRecyclerSeparator.visibility = View.INVISIBLE
 
                 loadUserProfileAvatar(userItem.id)
 
                 searchUserRecyclerUserName.text = userItem.username
 
-                if(MainActivity.followingIdList.contains(userItem.id)){
+                if(MainActivity.followingsIdList.contains(userItem.id)){
                     searchUserRecyclerIsFollowing.setTextColor(ContextCompat.getColor(context, R.color.light_grey))
                     searchUserRecyclerIsFollowing.text = "Following"
                 }
-                else{
+                else if(MainActivity.followingsRequestedIdList.contains(userItem.id)){
+                    searchUserRecyclerIsFollowing.setTextColor(ContextCompat.getColor(context, R.color.light_grey))
+                    searchUserRecyclerIsFollowing.text = "Requested"
+                }
+                else
+                {
                     searchUserRecyclerIsFollowing.setTextColor(ContextCompat.getColor(context, R.color.blue_purple))
                     searchUserRecyclerIsFollowing.text = "Not Followed"
                 }

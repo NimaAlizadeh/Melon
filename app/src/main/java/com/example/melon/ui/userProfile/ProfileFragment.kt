@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
@@ -25,11 +27,15 @@ import com.example.melon.R
 import com.example.melon.databinding.FragmentProfileBinding
 import com.example.melon.models.AddFollowerModel
 import com.example.melon.models.Post
+import com.example.melon.models.RemoveFollowerModel
+import com.example.melon.models.UnFollowModel
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.ProfilePostsAdapter
 import com.example.melon.ui.profileHamburger.ProfileHamburgerFragment
 import com.example.melon.utils.Constants
 import com.example.melon.utils.StoreUserData
+import com.example.melon.utils.getFollowIds
+import com.example.melon.utils.getIds
 import com.example.melon.viewmodels.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +61,8 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     private var followUserId = ""
     private var theirUserId = ""
     private var userName = ""
+    private var isPrivate = false
+    private var isFromFollow = false
 
     private val args by navArgs<ProfileFragmentArgs>()
 
@@ -133,7 +141,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
             //follow button on click listener
             userProfileFollowButton.setOnClickListener {
-                viewModel.addFollower(Constants.USER_TOKEN, AddFollowerModel(followUserId))
+                viewModel.addFollower(AddFollowerModel(followUserId))
                 userProfileUnFollowButton.visibility = View.INVISIBLE
                 userProfileFollowButton.visibility = View.INVISIBLE
                 userProfileRequestedButton.visibility = View.INVISIBLE
@@ -141,13 +149,14 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
             // unfollow button on click listener
             userProfileUnFollowButton.setOnClickListener {
-                //**************** unfollow view model function
+                viewModel.unFollow(UnFollowModel(followUserId))
                 userProfileUnFollowButton.visibility = View.INVISIBLE
                 userProfileFollowButton.visibility = View.INVISIBLE
                 userProfileRequestedButton.visibility = View.INVISIBLE
             }
 
             userProfileRequestedButton.setOnClickListener {
+                viewModel.cancelRequest(RemoveFollowerModel(followUserId))
                 userProfileUnFollowButton.visibility = View.INVISIBLE
                 userProfileFollowButton.visibility = View.INVISIBLE
                 userProfileRequestedButton.visibility = View.INVISIBLE
@@ -160,18 +169,93 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             //response of trying to follow some one
             viewModel.followResponse.observe(viewLifecycleOwner){
 
-                if(it.equals("Follow request sent successfully") || it.equals("User followed successfully")){
-                    userProfileUnFollowButton.visibility = View.VISIBLE
-                    userProfileFollowersText.text = (userProfileFollowersText.text.toString().toInt() + 1).toString()
+                Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
 
-                    MainActivity.followingIdList.add(theirUserId)
+                if(it.message == "Follow request sent successfully"){
+                    if(isPrivate){
+                        MainActivity.followingsRequestedIdList.add(userId)
+                        lifecycle.coroutineScope.launch {
+                            dataStore.setFollowingRequestedCollection(MainActivity.followingsRequestedIdList.toSet())
+                        }
+                    }
+
+                }else if(it.message == "User followed successfully"){
+                    val tempFollowings = it.data.followings.getFollowIds()
+                    val tempFollowers = it.data.followers.getFollowIds()
+
+                    MainActivity.followingsIdList = tempFollowings
+                    MainActivity.followersIdList = tempFollowers
 
                     lifecycle.coroutineScope.launch {
-                        userData.setFollowingSet(MainActivity.followingIdList.toSet())
+                        userData.setFollowingsCollection(tempFollowings.toSet())
+                        userData.setFollowersCollection(tempFollowers.toSet())
                     }
-                }else{
+                } else{
                     userProfileFollowButton.visibility = View.VISIBLE
                 }
+
+                isFromFollow = true
+                viewModel.followLoading.postValue(true)
+                viewModel.loadUserDataWithId(userId)
+
+
+            }
+
+            // response of unFollowing some one
+            viewModel.unFollowResponse.observe(viewLifecycleOwner){
+
+                Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+
+                if(it.message == "Follower unfollowed successfully"){
+
+//                    if(it.data.followers != null && it.data.followings != null){
+                        val tempFollowings = it.data.followings.getFollowIds()
+                        val tempFollowers = it.data.followers.getFollowIds()
+
+                        MainActivity.followingsIdList = tempFollowings
+                        MainActivity.followersIdList = tempFollowers
+
+                        lifecycle.coroutineScope.launch {
+                            userData.setFollowingsCollection(tempFollowings.toSet())
+                            userData.setFollowersCollection(tempFollowers.toSet())
+                        }
+//                    }
+
+                    isFromFollow = true
+                    viewModel.followLoading.postValue(true)
+                    viewModel.loadUserDataWithId(userId)
+                }else{
+                    userProfileUnFollowButton.visibility = View.VISIBLE
+                }
+
+            }
+
+            // response of cancelling the request of following some one
+            viewModel.cancelRequestResponse.observe(viewLifecycleOwner){
+
+                Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+
+                if(it.message == "Follow request cancelled successfully"){
+
+//                    if(it.data.followerRequests != null && it.data.followingRequests != null){
+                        val tempFollowerRequested = it.data.followerRequests.getFollowIds()
+                        val tempFollowingRequested = it.data.followingRequests.getFollowIds()
+
+                        lifecycle.coroutineScope.launch {
+                            userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())
+                            userData.setFollowingRequestedCollection(tempFollowingRequested.toSet())
+                        }
+                        MainActivity.followersRequestedIdList = tempFollowerRequested
+                        MainActivity.followingsRequestedIdList = tempFollowingRequested
+//                    }
+
+                    isFromFollow = true
+                    viewModel.followLoading.postValue(true)
+                    viewModel.loadUserDataWithId(userId)
+                }else{
+                    userProfileRequestedButton.visibility = View.GONE
+                }
+
             }
 
             viewModel.followLoading.observe(viewLifecycleOwner){
@@ -185,7 +269,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             viewModel.allPostsResponseList.observe(viewLifecycleOwner){
 
                 if(it.success){
-                    userProfilePostsText.text = it.posts.size.toString()
+                    userProfilePostsNumberText.text = it.posts.size.toString()
                     if(it != null)
                     {
                         loadDataToRecycler(it.posts)
@@ -199,79 +283,98 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             }
 
             viewModel.userDataResponseWithToken.observe(viewLifecycleOwner){
+
+
                 if(it.success){
 
                     userName = it.user.username
-//                    MainActivity.followRequestList = it.user.followerRequests
-                    MainActivity.followingList = it.user.followings
 
-                    MainActivity.followingIdList.clear()
-                    MainActivity.followingList.forEach { model ->
-                        MainActivity.followingIdList.add(model.id)
-                    }
+//                    if(it.user.followings != null && it.user.followers != null){
 
-                    lifecycle.coroutineScope.launch {
-                        userData.setFollowingSet(MainActivity.followingIdList.toSet())
-                    }
-//                    MainActivity.followRequestIdList.clear()
-//                    MainActivity.followRequestList.forEach {model ->
-//                        MainActivity.followRequestIdList.add(model.id)
+                        val tempFollowings = it.user.followings.getIds()
+                        val tempFollowers = it.user.followers.getIds()
+
+                        MainActivity.followingsIdList = tempFollowings
+                        MainActivity.followersIdList = tempFollowers
+
+                        lifecycle.coroutineScope.launch {
+                            userData.setFollowingsCollection(tempFollowings.toSet())
+                            userData.setFollowersCollection(tempFollowers.toSet())
+                        }
+
 //                    }
+
 
                     userId = it.user.id
                     loadDataIntoViews(it.user.bio, it.user.username, it.user.followers.size.toString(), it.user.followings.size.toString())
                     loadProfileAvatar(userId)
 
 
-                    viewModel.loadPostsWithId(Constants.USER_TOKEN, userId)
+                    if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
+                        viewModel.loadPostsWithId(userId)
+                    else if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
+                        viewModel.loadPostsWithToken()
                 }
             }
 
             viewModel.userDataResponseWithId.observe(viewLifecycleOwner){
+
+                isFromFollow = false
+
                 if(it.success){
 
                     followUserId = it.user.id
                     theirUserId = it.user.id
                     userId = it.user.id
+                    isPrivate = it.user.private
 
                     loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followersCount.toString(), followings = it.user.followingsCount.toString())
 
                     loadProfileAvatar(userId)
 
-                    if(!it.user.private){
-                        viewModel.loadPostsWithId(Constants.USER_TOKEN, userId)
+                    if(!it.user.private || (it.user.private && MainActivity.followingsIdList.contains(userId))){
+
+                        viewModel.loadPostsWithId(userId)
                         userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
                         userProfileNoPostText.text = "No Posts Yet"
-                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followersCount.toString(), followings = it.user.followingsCount.toString())
 
                     }else{
-                        loadDataIntoViews(bio = it.user.bio, username = it.user.username, followers = it.user.followersCount.toString(), followings = it.user.followingsCount.toString())
-
                         userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_lock_24)
                         userProfileNoPostText.text = "This Account is private"
                     }
 
-                    if(MainActivity.followingIdList.contains(theirUserId)){
+                    if(MainActivity.followingsIdList.contains(theirUserId)){
                         userProfileUnFollowButton.visibility = View.VISIBLE
                         userProfileFollowButton.visibility = View.INVISIBLE
+                        userProfileRequestedButton.visibility = View.INVISIBLE
+                    }
+                    else if(MainActivity.followingsRequestedIdList.contains(theirUserId)){
+                        userProfileUnFollowButton.visibility = View.INVISIBLE
+                        userProfileFollowButton.visibility = View.INVISIBLE
+                        userProfileRequestedButton.visibility = View.VISIBLE
                     }
                     else{
                         userProfileFollowButton.visibility = View.VISIBLE
                         userProfileUnFollowButton.visibility = View.INVISIBLE
+                        userProfileRequestedButton.visibility = View.INVISIBLE
                     }
                 }
+
+                viewModel.followLoading.postValue(false)
             }
 
 
             viewModel.loading.observe(viewLifecycleOwner){
-                if(it){
-                    profileFragmentLoadingProgressbar.visibility = View.VISIBLE
-                    profileFragmentWholeLayout.visibility = View.GONE
-                }
-                else
-                {
-                    profileFragmentLoadingProgressbar.visibility = View.GONE
-                    profileFragmentWholeLayout.visibility = View.VISIBLE
+                if(!isFromFollow){
+                    if(it){
+                        profileFragmentLoadingProgressbar.visibility = View.VISIBLE
+                        profileFragmentWholeLayout.visibility = View.GONE
+                    }
+                    else
+                    {
+                        profileFragmentLoadingProgressbar.visibility = View.GONE
+                        profileFragmentWholeLayout.visibility = View.VISIBLE
+                    }
                 }
             }
 
@@ -293,7 +396,10 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             dialog.setCancelable(false)
             dialog.show()
             dataStore.setUserToken("out")
-            dataStore.setFollowingSet(emptySet())
+            dataStore.setFollowingsCollection(emptySet())
+            dataStore.setFollowersCollection(emptySet())
+            dataStore.setFollowingRequestedCollection(emptySet())
+            dataStore.setFollowersRequestedCollection(emptySet())
             delay(2000)
             dialog.dismiss()
             withContext(Dispatchers.Main){
@@ -305,19 +411,15 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     private fun loadDataWhenIsTheirProfile(userId: String){
         binding.apply {
 
-            viewModel.loadUserDataWithId(userId, Constants.USER_TOKEN)
+            viewModel.loadUserDataWithId(userId)
             userProfileHamburgerMenuButton.visibility = View.GONE
-
-
-            // let's understand that which button has to be shown when user comes to this page
-            userProfileFollowButton.visibility = View.VISIBLE
 
         }
     }
 
     private fun loadDataWhenIsMyProfile(){
         binding.apply {
-            viewModel.loadUserDataWithToken(Constants.USER_TOKEN)
+            viewModel.loadUserDataWithToken()
 
             userProfileHamburgerMenuButton.visibility = View.VISIBLE
             userProfileFollowButton.visibility = View.GONE
@@ -336,8 +438,8 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
             userProfileBio.text = bio
             userProfileUserName.text = username
-            userProfileFollowersText.text = followers
-            userProfileFollowingText.text = followings
+            userProfileFollowersNumberText.text = followers
+            userProfileFollowingNumberText.text = followings
         }
     }
 
@@ -355,7 +457,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 userProfileNoPostText.visibility = View.GONE
                 userProfileNoPostImage.visibility = View.GONE
                 userProfilePostsRecycler.visibility = View.VISIBLE
-                userProfilePostsText.text = it.size.toString()
+                userProfilePostsNumberText.text = it.size.toString()
 
             }
             else{
@@ -396,14 +498,13 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             })
             .timeout(60000)
             .placeholder(R.drawable.solid_white)
-            .error(R.drawable.baseline_person_24)
+            .error(R.drawable.user_png)
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.userProfileImage)
     }
 
     override fun onClickSettings() {
-
 
     }
 

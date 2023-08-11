@@ -7,6 +7,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.melon.models.FollowData
+import com.example.melon.models.Follow
+import com.example.melon.models.FollowResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -17,7 +20,10 @@ class StoreUserData @Inject constructor(@ApplicationContext val context: Context
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.DATASTORE_NAME_USER)
 
         val userToken = stringPreferencesKey(Constants.DATASTORE_TOKEN_USER)
-        val followingSet = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWINGS)
+        val followingsCollection = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWINGS_COLLECTION)
+        val followersCollection = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWERS_COLLECTION)
+        val followingsRequestedCollection = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWING_REQUESTED_COLLECTION)
+        val followersRequestedCollection = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWERS_REQUESTED_COLLECTION)
     }
 
     suspend fun setUserToken(token: String)
@@ -33,13 +39,43 @@ class StoreUserData @Inject constructor(@ApplicationContext val context: Context
         it[userToken] ?: ""
     }
 
-    suspend fun setFollowingSet(followings: Set<String>){
+    suspend fun setFollowingsCollection(data: Set<String>){
         context.dataStore.edit {
-            it[followingSet] = followings
+            it[followingsCollection] = data
         }
     }
 
-    fun getFollowings() = context.dataStore.data.map {
-        it[followingSet] ?: setOf()
+    fun getFollowingsCollection() = context.dataStore.data.map {
+        it[followingsCollection] ?: setOf()
+    }
+
+    suspend fun setFollowersCollection(data: Set<String>){
+        context.dataStore.edit {
+            it[followersCollection] = data
+        }
+    }
+
+    fun getFollowersCollection() = context.dataStore.data.map {
+        it[followersCollection] ?: setOf()
+    }
+
+    suspend fun setFollowingRequestedCollection(followings: Set<String>){
+        context.dataStore.edit {
+            it[followingsRequestedCollection] = followings
+        }
+    }
+
+    fun getFollowingRequestedCollection() = context.dataStore.data.map {
+        it[followingsRequestedCollection] ?: setOf()
+    }
+
+    suspend fun setFollowersRequestedCollection(followings: Set<String>){
+        context.dataStore.edit {
+            it[followersRequestedCollection] = followings
+        }
+    }
+
+    fun getFollowersRequestedCollection() = context.dataStore.data.map {
+        it[followersRequestedCollection] ?: setOf()
     }
 }

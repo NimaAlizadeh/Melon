@@ -15,6 +15,8 @@ import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.profileHamburger.ProfileHamburgerFragment
 import com.example.melon.utils.Constants
 import com.example.melon.utils.StoreUserData
+import com.example.melon.utils.getFollowIds
+import com.example.melon.utils.getIds
 import com.example.melon.viewmodels.LoginViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,7 +65,7 @@ class LoginFragment : Fragment() {
             viewModel.loginResponse.observe(viewLifecycleOwner){
                 //go to home page
                 if(it.success){
-                    viewModel.getUserData(it.authtoken)
+                    viewModel.getUserData()
                     Constants.USER_TOKEN = it.authtoken
                 }
                 else{
@@ -74,28 +76,41 @@ class LoginFragment : Fragment() {
 
             viewModel.userDataResponse.observe(viewLifecycleOwner){ response ->
 
-                Log.d("ssssssssssssssssssssssssssssssssssssss   ", response.success.toString())
-
                 if(response.success){
-                    if(response.user.followings.isNotEmpty()){
-                        val tempFollowingList = response.user.followings
-                        val tempFollowingIdList = ArrayList<String>()
-                        tempFollowingList.forEach {
-                            tempFollowingIdList.add(it.id)
-                        }
 
-                        MainActivity.followingIdList = tempFollowingIdList
-                        lifecycle.coroutineScope.launch {
-                            userData.setFollowingSet(tempFollowingIdList.toSet())
-                        }
-                    }
+                    val tempFollowings = response.user.followings.getIds()
+                    val tempFollowers = response.user.followers.getIds()
+
+                    MainActivity.followingsIdList = tempFollowings
+                    MainActivity.followersIdList = tempFollowers
 
                     lifecycle.coroutineScope.launch {
-                        userData.setUserToken(Constants.USER_TOKEN)
+                        userData.setFollowingsCollection(tempFollowings.toSet())
+                        userData.setFollowersCollection(tempFollowers.toSet())
+                    }
+                }
+
+                viewModel.getRequestedData()
+            }
+
+            viewModel.userRequestedData.observe(viewLifecycleOwner){
+
+//                if(it.followerRequests != null && it.followingRequests != null){
+                    val tempFollowerRequested = it.followerRequests.getFollowIds()
+                    val tempFollowingRequested = it.followingRequests.getFollowIds()
+                    lifecycle.coroutineScope.launch {
+                        userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())
+                        userData.setFollowingRequestedCollection(tempFollowingRequested.toSet())
                     }
 
-                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
-                }
+                    MainActivity.followersRequestedIdList = tempFollowerRequested
+                    MainActivity.followingsRequestedIdList = tempFollowingRequested
+//                }
+
+
+
+                // we have to get all data we need and then lead the user inside the application
+                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
             }
 
             //loading progressbar handling

@@ -97,7 +97,7 @@ class ChangeAvatarFragment : Fragment(), MainActivity.OnPermissionCallBackListen
 
                 val file: MultipartBody.Part = MultipartBody.Part.createFormData("avatar", originalFile.name, filePart)
 
-                viewModel.doChangeAvatar(Constants.USER_TOKEN, file)
+                viewModel.doChangeAvatar(file)
                 changeAvatarCheckButton.isEnabled = false
                 Toast.makeText(requireContext(), "Changing avatar...", Toast.LENGTH_SHORT).show()
                 dialog.show()
