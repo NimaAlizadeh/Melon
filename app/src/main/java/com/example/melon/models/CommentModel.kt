@@ -1,10 +1,13 @@
 package com.example.melon.models
 
-import android.graphics.drawable.Drawable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+
+@Parcelize
 data class CommentModel(
+    var user_id: String = "",
     var username: String = "",
-    var builtTime: String = "",
-    var commentText: String = "",
-    var userImage: Drawable
-)
+    var comment: String = "",
+    var time: String
+): Parcelable

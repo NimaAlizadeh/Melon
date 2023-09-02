@@ -25,7 +25,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     private lateinit var binding: NotificationRecyclerItemBinding
     lateinit var context: Context
 
-    private var notificationList = emptyList<Follow>()
+    var notificationList = emptyList<FollowModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         binding = NotificationRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -41,18 +41,22 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     override fun getItemCount() = notificationList.size
 
     inner class CustomViewHolder : RecyclerView.ViewHolder(binding.root) {
-        fun bindItems(model: Follow) {
+        fun bindItems(model: FollowModel) {
             binding.apply {
 
-                if(MainActivity.appPagePosition == Constants.FRAGMENT_FOLLOWS){
+                if(MainActivity.appPagePosition == Constants.FRAGMENT_FOLLOWERS || MainActivity.appPagePosition == Constants.FRAGMENT_FOLLOWINGS){
                     notificationRecyclerButtonConfirm.text = "Follow"
                     notificationRecyclerButtonDelete.visibility = View.GONE
 
-                    if(model.name.toString().isEmpty()){
+                    if(model.name == null){
                         notificationRecyclerTextRequest.visibility = View.GONE
                     }else{
-                        notificationRecyclerTextRequest.visibility = View.VISIBLE
-                        notificationRecyclerTextRequest.text = model.name.toString()
+                        if(model.name.isEmpty()){
+                            notificationRecyclerTextRequest.visibility = View.GONE
+                        }else{
+                            notificationRecyclerTextRequest.visibility = View.VISIBLE
+                            notificationRecyclerTextRequest.text = model.name
+                        }
                     }
 
                 }else{
@@ -95,7 +99,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    fun setData(newListData: List<Follow>)
+    fun setData(newListData: List<FollowModel>)
     {
         val notesDiffUtils = NotesDiffUtils(notificationList, newListData)
         val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
@@ -103,7 +107,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         diffUtils.dispatchUpdatesTo(this)
     }
 
-    class NotesDiffUtils(private val oldItem: List<Follow>, private val newItem: List<Follow>) : DiffUtil.Callback(){
+    class NotesDiffUtils(private val oldItem: List<FollowModel>, private val newItem: List<FollowModel>) : DiffUtil.Callback(){
         override fun getOldListSize() = oldItem.size
 
         override fun getNewListSize() = newItem.size
@@ -120,9 +124,9 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     }
 
     //on item select handling
-    private var onItemClickListener: ((Follow, String) -> Unit)? = null
+    private var onItemClickListener: ((FollowModel, String) -> Unit)? = null
 
-    fun setOnItemCLickListener(listener: (Follow, String) -> Unit) {
+    fun setOnItemCLickListener(listener: (FollowModel, String) -> Unit) {
         onItemClickListener = listener
     }
 

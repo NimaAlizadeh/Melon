@@ -77,6 +77,7 @@ class LoginFragment : Fragment() {
             viewModel.userDataResponse.observe(viewLifecycleOwner){ response ->
 
                 if(response.success){
+                    MainActivity.myUserID = response.user.id
 
                     val tempFollowings = response.user.followings.getIds()
                     val tempFollowers = response.user.followers.getIds()
@@ -96,8 +97,8 @@ class LoginFragment : Fragment() {
             viewModel.userRequestedData.observe(viewLifecycleOwner){
 
 //                if(it.followerRequests != null && it.followingRequests != null){
-                    val tempFollowerRequested = it.followerRequests.getFollowIds()
-                    val tempFollowingRequested = it.followingRequests.getFollowIds()
+                    val tempFollowerRequested = it.followerRequests.getIds()
+                    val tempFollowingRequested = it.followingRequests.getIds()
                     lifecycle.coroutineScope.launch {
                         userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())
                         userData.setFollowingRequestedCollection(tempFollowingRequested.toSet())

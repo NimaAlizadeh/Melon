@@ -1,5 +1,6 @@
 package com.example.melon.ui.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.example.melon.R
 import com.example.melon.databinding.HomePostsRecyclerItemBinding
 import com.example.melon.models.Post
 import com.example.melon.models.PostModel
+import com.example.melon.ui.activities.MainActivity
 import com.example.melon.utils.Constants
 import okhttp3.internal.notifyAll
 import javax.inject.Inject
@@ -50,10 +52,23 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
 
     inner class CustomViewHolder: RecyclerView.ViewHolder(binding.root)
     {
+        @SuppressLint("SetTextI18n")
         fun bindItems(model: Post)
         {
             binding.apply {
                 var isLiked = false
+
+                homeFragmentTimeText.text = model.time
+
+                isLiked = if(model.likes.contains(MainActivity.myUserID)){
+                    homeFragmentPostLikeImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.baseline_favorite_24))
+                    true
+                } else {
+                    homeFragmentPostLikeImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.baseline_favorite_border_24))
+                    false
+                }
+
+                homeFragmentLikesText.text = model.likes.size.toString()
 
                 if(model.images.size <= 1)
                     homeFragmentPicsIndicator.visibility = View.GONE
@@ -75,27 +90,26 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
                 }
 
 
-                // do what you want in this when user clicks on like button
-                // use interface to do that
+                homeFragmentPostCommentButton.setOnClickListener {
+                    onItemClickListener?.let {
+                        it(postsList[adapterPosition], Constants.GO_TO_COMMENTS_FRAGMENT)
+                    }
+                }
+
                 homeFragmentPostLikeButton.setOnClickListener {
+                    onItemClickListener?.let {
+                        it(postsList[adapterPosition], Constants.DO_LIKE_BUTTON)
+                    }
+
                     if(isLiked){
                         isLiked = false
                         homeFragmentPostLikeImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.baseline_favorite_border_24))
-                    }else{
+                        homeFragmentLikesText.text = ((homeFragmentLikesText.text).toString().toInt() - 1).toString()
+                    }
+                    else{
                         isLiked = true
                         homeFragmentPostLikeImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.baseline_favorite_24))
-                    }
-                }
-
-                homeFragmentPostCommentButton.setOnClickListener {
-                    onItemClickListener?.let {
-                        it(PostModel(), Constants.GO_TO_COMMENTS_FRAGMENT)
-                    }
-                }
-
-                homeFragmentPostLikeButton.setOnClickListener {
-                    onItemClickListener?.let {
-                        it(PostModel(), Constants.DO_LIKE_BUTTON)
+                        homeFragmentLikesText.text = ((homeFragmentLikesText.text).toString().toInt() + 1).toString()
                     }
                 }
 
@@ -150,10 +164,11 @@ class ShowPostsAdapter @Inject constructor(): RecyclerView.Adapter<ShowPostsAdap
         }
     }
 
-    //on item select handling
-    private var onItemClickListener: ((PostModel, String) -> Unit)? = null
 
-    fun setOnItemCLickListener(listener: (PostModel, String) -> Unit){
+    //on item select handling
+    private var onItemClickListener: ((Post, String) -> Unit)? = null
+
+    fun setOnItemCLickListener(listener: (Post, String) -> Unit){
         onItemClickListener = listener
     }
 }

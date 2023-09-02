@@ -15,7 +15,7 @@ import com.example.melon.models.Follow
 import com.example.melon.models.FollowModel
 import javax.inject.Inject
 
-class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.ViewPagerViewHolder>()
+class FollowsViewPagerAdapter @Inject constructor(): RecyclerView.Adapter<FollowsViewPagerAdapter.ViewPagerViewHolder>()
 {
     private lateinit var binding: FollowsViewPagerItemBinding
 
@@ -33,12 +33,12 @@ class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.View
     override fun getItemCount(): Int = differ.currentList.size
 
     override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
-        holder.bindItems(differ.currentList)
+        holder.bindItems(differ.currentList[position])
     }
 
 
     inner class ViewPagerViewHolder: RecyclerView.ViewHolder(binding.root){
-        fun bindItems(list: List<Follow>){
+        fun bindItems(list: List<FollowModel>){
             binding.apply {
 
                 loadAdapter(list)
@@ -46,16 +46,14 @@ class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.View
                 followsViewPagerItemSearchEdt.addTextChangedListener {
                     if(it!!.isNotEmpty()){
 
-                        val tempList = ArrayList<Follow>()
+                        val tempList = ArrayList<FollowModel>()
                         list.forEach{ model ->
                             if(model.username.contains(it.toString()))
                                 tempList.add(model)
                         }
                         loadAdapter(tempList)
-                        followsViewPagerItemNotFoundText.visibility = View.GONE
                     }else{
                         loadAdapter(emptyList())
-                        followsViewPagerItemNotFoundText.visibility = View.VISIBLE
                     }
                 }
 
@@ -63,7 +61,7 @@ class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.View
         }
     }
 
-    fun loadAdapter(list: List<Follow>){
+    fun loadAdapter(list: List<FollowModel>){
         binding.apply {
             adapter.setData(list)
             followsViewPagerItemRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -72,12 +70,12 @@ class FollowsViewPagerAdapter: RecyclerView.Adapter<FollowsViewPagerAdapter.View
     }
 
 
-    private val differCallback = object: DiffUtil.ItemCallback<Follow>(){
-        override fun areItemsTheSame(oldItem: Follow, newItem: Follow): Boolean {
+    private val differCallback = object: DiffUtil.ItemCallback<List<FollowModel>>(){
+        override fun areItemsTheSame(oldItem: List<FollowModel>, newItem: List<FollowModel>): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: Follow, newItem: Follow): Boolean {
+        override fun areContentsTheSame(oldItem: List<FollowModel>, newItem: List<FollowModel>): Boolean {
             return oldItem == newItem
         }
     }

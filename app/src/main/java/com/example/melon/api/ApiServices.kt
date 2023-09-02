@@ -22,7 +22,7 @@ interface ApiServices {
 
     @Multipart
     @POST("post/create")
-    suspend fun addPost(@Part("description") description: RequestBody, @Part images: List<MultipartBody.Part>): Response<AddPostResponse>
+    suspend fun addPost(@Part("time") time: RequestBody,@Part("description") description: RequestBody, @Part images: List<MultipartBody.Part>): Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
 
     @PUT("auth/edit")
@@ -65,4 +65,9 @@ interface ApiServices {
     suspend fun rejectFollow(@Body body: AcceptOrRejectModel) : Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
 
+    @POST("post/like")
+    suspend fun likePost(@Body body: LikeCommentModel): Response<JustStringResponse>
+
+    @POST("post/comment")
+    suspend fun addComment(@Body body: LikeCommentModel): Response<CommentResponse>
 }

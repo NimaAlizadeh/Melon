@@ -31,6 +31,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/comments_fragment_add_comment_edt"/>
 
+    <TextView
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/comments_fragment_no_comment_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textColor="@color/light_grey"
+        android:layout_gravity="center"
+        android:text="No Comment"
+        android:elevation="10dp"/>
+
     <EditText
         android:lines="1"
         android:id="@+id/comments_fragment_add_comment_edt"
@@ -44,19 +59,33 @@
         android:elevation="20dp"
         android:hint="Add Comment..."
         android:paddingStart="20dp"
-        android:paddingEnd="40dp"
+        android:paddingEnd="50dp"
         android:focusedByDefault="true" />
 
     <ImageView
         app:tint="@color/black"
         android:id="@+id/comments_fragment_add_comment_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/baseline_send_24"
         app:layout_constraintBottom_toBottomOf="@id/comments_fragment_add_comment_edt"
         app:layout_constraintTop_toTopOf="@id/comments_fragment_add_comment_edt"
         app:layout_constraintEnd_toEndOf="parent"
         android:elevation="21dp"
-        android:layout_margin="10dp"/>
+        android:layout_margin="15dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"/>
+
+    <ProgressBar
+        android:id="@+id/comments_fragment_add_comment_progressbar"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@id/comments_fragment_add_comment_button"
+        app:layout_constraintBottom_toBottomOf="@id/comments_fragment_add_comment_button"
+        app:layout_constraintEnd_toEndOf="@id/comments_fragment_add_comment_button"
+        app:layout_constraintStart_toStartOf="@id/comments_fragment_add_comment_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:elevation="21dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -152,7 +152,14 @@
         <argument
             android:name="searchingUserID"
             app:argType="string" />
-<!--        <action-->
+        <action
+            android:id="@+id/action_profileFragment_to_followsFragment"
+            app:destination="@id/followsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <!--        <action-->
 <!--            android:id="@+id/action_profileFragment2_to_showPostFragment"-->
 <!--            app:destination="@id/showPostFragment"-->
 <!--            app:enterAnim="@android:anim/slide_in_left"-->
@@ -193,7 +200,17 @@
         android:id="@+id/commentsFragment"
         android:name="com.example.melon.ui.comments.CommentsFragment"
         android:label="fragment_comments"
-        tools:layout="@layout/fragment_comments" />
+        tools:layout="@layout/fragment_comments" >
+        <argument
+            android:name="postId"
+            app:argType="string" />
+        <argument
+            android:name="userId"
+            app:argType="string" />
+        <argument
+            android:name="commentsList"
+            app:argType="com.example.melon.models.CommentModel[]" />
+    </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.example.melon.ui.editProfile.EditProfileFragment"
@@ -257,6 +274,18 @@
 <!--        <argument-->
 <!--            android:name="avatar"-->
 <!--            app:argType="string" />-->
+    </fragment>
+    <fragment
+        android:id="@+id/followsFragment"
+        android:name="com.example.melon.ui.follows.FollowsFragment"
+        android:label="fragment_follows"
+        tools:layout="@layout/fragment_follows" >
+        <argument
+            android:name="followers"
+            app:argType="com.example.melon.models.FollowModel[]" />
+        <argument
+            android:name="followings"
+            app:argType="com.example.melon.models.FollowModel[]" />
     </fragment>
 
 </navigation>

@@ -16,6 +16,7 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
     var userDataResponseWithToken = MutableLiveData<GetUserResponse>()
     var userDataResponseWithId = MutableLiveData<UserResponseWithId>()
     var loading = MutableLiveData<Boolean>()
+    var postloading = MutableLiveData<Boolean>()
     var followLoading = MutableLiveData<Boolean>()
     var followResponse = MutableLiveData<FollowResponse>()
     var unFollowResponse = MutableLiveData<FollowResponse>()
@@ -40,6 +41,7 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
     }
 
     fun loadPostsWithId(userId: String) = viewModelScope.launch {
+        postloading.postValue(true)
 
         try{
 
@@ -54,10 +56,11 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
             Log.d("loadPosts - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
         }
 
+        postloading.postValue(false)
     }
 
     fun loadPostsWithToken() = viewModelScope.launch {
-
+        postloading.postValue(true)
         try{
 
             val response = profileRepository.getPostsWithToken()
@@ -71,6 +74,7 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
             Log.d("loadPosts - profileViewModel ------------------------------------------------------------", "exception : " + e.message)
         }
 
+        postloading.postValue(false)
     }
 
     fun loadUserDataWithId(token: String) = viewModelScope.launch{

@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 class AddPostRepository @Inject constructor(private val apiServices: ApiServices)
 {
-    suspend fun addPost(description: RequestBody, images: List<MultipartBody.Part>) = apiServices.addPost(description, images)
+    suspend fun addPost(time: RequestBody, description: RequestBody, images: List<MultipartBody.Part>) = apiServices.addPost(time,description, images)
 }

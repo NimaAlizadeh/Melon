@@ -3,6 +3,7 @@ package com.example.melon.ui.confirmAddPost
 import android.app.Dialog
 import android.net.Uri
 import android.os.Bundle
+import android.text.format.DateFormat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +29,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class ConfirmAddPostFragment : Fragment() {
@@ -85,12 +88,20 @@ class ConfirmAddPostFragment : Fragment() {
                     images.add(file)
                 }
 
+                val date = Date()
+                val day = DateFormat.format("dd", date) as String
+                val monthName = DateFormat.format("MMMM", date) as String
+                val year = DateFormat.format("yyyy", date) as String
+
 
                 val descriptionPart = RequestBody.create(MultipartBody.FORM, confirmAddPostFragmentCaptionEdt.text.toString())
+                val timePart = RequestBody.create(MultipartBody.FORM, "$year $monthName $day")
+
+
 
                 confirmAddPostFragmentToolbarBackButton.isEnabled = false
                 confirmAddPostFragmentCaptionEdt.isEnabled = false
-                viewModel.doAddPost(descriptionPart, images)
+                viewModel.doAddPost(timePart, descriptionPart, images)
                 Toast.makeText(requireContext(), "Posting...", Toast.LENGTH_SHORT).show()
             }
 

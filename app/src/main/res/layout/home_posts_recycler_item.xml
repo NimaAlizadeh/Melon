@@ -43,6 +43,7 @@
             android:layout_height="wrap_content" />
 
         <me.relex.circleindicator.CircleIndicator2
+            android:layout_marginTop="5dp"
             app:ci_drawable="@drawable/indicator_shape"
             app:ci_drawable_unselected="@drawable/indicator_shape"
             android:id="@+id/home_fragment_pics_indicator"
@@ -160,9 +161,22 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/home_fragment_post_like_button"
             app:layout_constraintStart_toStartOf="@id/home_fragment_post_like_button"
-            android:text="4600 Likes"
+            android:text="0"
             android:textColor="@color/black"
-            android:fontFamily="casual"
+
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_marginStart="5dp"
+            android:id="@+id/home_fragment_likes_number_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/home_fragment_post_like_button"
+            app:layout_constraintStart_toEndOf="@id/home_fragment_likes_text"
+            android:text="Likes"
+            android:textColor="@color/black"
+
             android:textSize="16sp"
             android:textStyle="bold"/>
 
@@ -170,6 +184,7 @@
             android:id="@+id/home_fragment_description_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_marginStart="2.5dp"
             android:layout_marginEnd="10dp"
             android:ellipsize="end"

@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity(), ProfileFragment.OnProfileFragmentListe
         var followersIdList = ArrayList<String>()
         var followingsRequestedIdList = ArrayList<String>()
         var followersRequestedIdList = ArrayList<String>()
+
+        var myUserID = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?)

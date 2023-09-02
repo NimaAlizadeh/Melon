@@ -18,6 +18,7 @@ import com.example.melon.ui.adapters.NotificationAdapter
 import com.example.melon.utils.Constants
 import com.example.melon.utils.StoreUserData
 import com.example.melon.utils.getFollowIds
+import com.example.melon.utils.getIds
 import com.example.melon.viewmodels.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -56,8 +57,8 @@ class NotificationFragment : Fragment(){
             viewModel.requestsResponse.observe(viewLifecycleOwner){
 
 //                if(it.followerRequests != null && it.followingRequests != null){
-                    val tempFollowerRequested = it.followerRequests.getFollowIds()
-                    val tempFollowingRequested = it.followingRequests.getFollowIds()
+                    val tempFollowerRequested = it.followerRequests.getIds()
+                    val tempFollowingRequested = it.followingRequests.getIds()
 
                     lifecycle.coroutineScope.launch {
                         userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())

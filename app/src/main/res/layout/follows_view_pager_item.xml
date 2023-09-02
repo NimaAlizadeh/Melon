@@ -59,20 +59,6 @@
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp" />
 
-        <TextView
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/follows_view_pager_item_not_found_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:textColor="@color/light_grey"
-            android:layout_gravity="center"
-            android:text="No User Found"
-            android:elevation="10dp"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

@@ -103,6 +103,7 @@ class SearchFragment : Fragment() {
                 }
             }
 
+
             // when refreshing the fragment
             searchFragmentSwipeRefresh.setOnRefreshListener {
 //                adapter.differ.submitList(list)
