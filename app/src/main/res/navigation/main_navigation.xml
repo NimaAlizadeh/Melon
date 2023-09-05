@@ -185,7 +185,14 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-<!--        <action-->
+        <action
+            android:id="@+id/action_searchFragment_to_theirProfileFragment"
+            app:destination="@id/theirProfileFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <!--        <action-->
 <!--            android:id="@+id/action_searchFragment_to_profileFragment"-->
 <!--            app:destination="@id/profileFragment" />-->
     </fragment>
@@ -282,6 +289,36 @@
         <argument
             android:name="user_name"
             app:argType="string" />
+        <action
+            android:id="@+id/action_followsFragment_to_theirProfileFragment"
+            app:destination="@id/theirProfileFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/theirProfileFragment"
+        android:name="com.example.melon.ui.userProfile.TheirProfileFragment"
+        android:label="fragment_their_profile"
+        tools:layout="@layout/fragment_their_profile" >
+        <action
+            android:id="@+id/action_theirProfileFragment_to_showPostFragment"
+            app:destination="@id/showPostFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <argument
+            android:name="searchingUserID"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_theirProfileFragment_to_followsFragment"
+            app:destination="@id/followsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
     </fragment>
 
 </navigation>

@@ -17,14 +17,8 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.melon.R
 import com.example.melon.databinding.FragmentConfirmAddPostBinding
 import com.example.melon.ui.adapters.ConfirmAddPostAdapter
-import com.example.melon.ui.userProfile.ProfileFragmentDirections
-import com.example.melon.utils.Constants
 import com.example.melon.viewmodels.AddPostViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

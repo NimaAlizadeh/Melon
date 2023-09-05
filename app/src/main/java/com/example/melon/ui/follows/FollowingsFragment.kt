@@ -24,8 +24,6 @@ class FollowingsFragment : Fragment() {
 
     private lateinit var binding: FollowsViewPagerItemBinding
 
-    private val args by navArgs<FollowsFragmentArgs>()
-
     private lateinit var adapter: NotificationAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -41,16 +39,6 @@ class FollowingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-//            viewPagerAdapter.differ.submitList(listOf(args.followers.toList(), args.followings.toList()))
-//            followsFragmentViewPager.adapter = viewPagerAdapter
-//
-//            TabLayoutMediator(followsFragmentTabsLayout, followsFragmentViewPager) { tab, position ->
-//                if(position == 0)
-//                    tab.text = "Followers"
-//                else if(position == 1)
-//                    tab.text = "Followings"
-//            }.attach()
-//
 
             loadAdapter()
 
@@ -63,7 +51,7 @@ class FollowingsFragment : Fragment() {
         }
     }
 
-    fun loadAdapter(){
+    private fun loadAdapter(){
         binding.apply {
             followsViewPagerItemRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             followsViewPagerItemRecycler.adapter = adapter

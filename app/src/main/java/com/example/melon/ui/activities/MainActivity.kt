@@ -4,22 +4,14 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AlphaAnimation
-import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.melon.R
 import com.example.melon.databinding.ActivityMainBinding
-import com.example.melon.models.FollowModel
-import com.example.melon.ui.home.HomeFragment
-import com.example.melon.ui.profileHamburger.ProfileHamburgerFragment
 import com.example.melon.ui.search.SearchFragment
 import com.example.melon.ui.userProfile.ProfileFragment
 import com.example.melon.utils.Constants
-import com.example.melon.viewmodels.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

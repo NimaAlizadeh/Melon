@@ -1,10 +1,8 @@
 package com.example.melon.ui.userProfile
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,26 +23,23 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.melon.R
 import com.example.melon.databinding.FragmentProfileBinding
+import com.example.melon.databinding.FragmentTheirProfileBinding
 import com.example.melon.models.*
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.ProfilePostsAdapter
-import com.example.melon.ui.profileHamburger.ProfileHamburgerFragment
 import com.example.melon.utils.Constants
 import com.example.melon.utils.StoreUserData
 import com.example.melon.utils.getFollowIds
 import com.example.melon.utils.getIds
 import com.example.melon.viewmodels.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener{
+class TheirProfileFragment : Fragment(){
 
-    private lateinit var binding: FragmentProfileBinding
+    private lateinit var binding: FragmentTheirProfileBinding
 
     private val viewModel: ProfileViewModel by viewModels()
 
@@ -63,7 +58,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     private var followersList: Array<FollowModel> = emptyArray()
     private var followingsList: Array<FollowModel> = emptyArray()
 
-    private val args by navArgs<ProfileFragmentArgs>()
+    private val args by navArgs<TheirProfileFragmentArgs>()
 
     private var isAvatarLoaded = false
 
@@ -72,21 +67,8 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
 
     private var posts: Array<Post> = emptyArray()
 
-    companion object{
-        private lateinit var onProfileFragmentListener: OnProfileFragmentListener
-    }
-
-    interface OnProfileFragmentListener{
-        fun onProfileFragmentLoaded()
-    }
-
-    fun setOnProfileFragmentListener(listener: OnProfileFragmentListener){
-        onProfileFragmentListener = listener
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
-        binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
-        ProfileHamburgerFragment().setOnCallBackClickListener(this)
+        binding = FragmentTheirProfileBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -94,92 +76,71 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     override fun onResume() {
         super.onResume()
         if(!isAvatarLoaded)
-            binding.userProfileProgressbar.visibility = View.VISIBLE
+            binding.theirUserProfileProgressbar.visibility = View.VISIBLE
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            if(MainActivity.appPagePosition != Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
-                MainActivity.appPagePosition = Constants.GO_TO_MY_USER_PROFILE_FRAGMENT
 
 
-            if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT){
-                loadDataWhenIsTheirProfile(args.searchingUserID)
-                onProfileFragmentListener.onProfileFragmentLoaded()
-            }
-            else if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
-                loadDataWhenIsMyProfile()
-                followProgressbar.visibility = View.GONE
-            }
+            loadDataWhenIsTheirProfile(args.searchingUserID)
 
             //refreshing the page
-            profileFragmentSwipeRefresh.setOnRefreshListener {
-                userProfileProgressbar.visibility = View.VISIBLE
+            theirProfileFragmentSwipeRefresh.setOnRefreshListener {
+                theirUserProfileProgressbar.visibility = View.VISIBLE
 
-                if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
-                    loadDataWhenIsMyProfile()
-                }else if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
-                    loadDataWhenIsTheirProfile(args.searchingUserID)
+                loadDataWhenIsTheirProfile(args.searchingUserID)
 
-                profileFragmentSwipeRefresh.isRefreshing = false
-            }
-
-            userProfileImage.setOnClickListener {
-                if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
-                    findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToChangeAvatarFragment())
+                theirProfileFragmentSwipeRefresh.isRefreshing = false
             }
 
             //back button onclick
-            userProfileBackButton.setOnClickListener {
+            theirUserProfileBackButton.setOnClickListener {
                 findNavController().popBackStack()
             }
 
             //follow button on click listener
-            userProfileFollowButton.setOnClickListener {
+            theirUserProfileFollowButton.setOnClickListener {
                 viewModel.addFollower(AddFollowerModel(followUserId))
-                userProfileUnFollowButton.visibility = View.INVISIBLE
-                userProfileFollowButton.visibility = View.INVISIBLE
-                userProfileRequestedButton.visibility = View.INVISIBLE
+                theirUserProfileUnFollowButton.visibility = View.INVISIBLE
+                theirUserProfileFollowButton.visibility = View.INVISIBLE
+                theirUserProfileRequestedButton.visibility = View.INVISIBLE
             }
 
             // unfollow button on click listener
-            userProfileUnFollowButton.setOnClickListener {
+            theirUserProfileUnFollowButton.setOnClickListener {
                 viewModel.unFollow(UnFollowModel(followUserId))
-                userProfileUnFollowButton.visibility = View.INVISIBLE
-                userProfileFollowButton.visibility = View.INVISIBLE
-                userProfileRequestedButton.visibility = View.INVISIBLE
+                theirUserProfileUnFollowButton.visibility = View.INVISIBLE
+                theirUserProfileFollowButton.visibility = View.INVISIBLE
+                theirUserProfileRequestedButton.visibility = View.INVISIBLE
             }
 
-            userProfileRequestedButton.setOnClickListener {
+            theirUserProfileRequestedButton.setOnClickListener {
                 viewModel.cancelRequest(RemoveFollowerModel(followUserId))
-                userProfileUnFollowButton.visibility = View.INVISIBLE
-                userProfileFollowButton.visibility = View.INVISIBLE
-                userProfileRequestedButton.visibility = View.INVISIBLE
+                theirUserProfileUnFollowButton.visibility = View.INVISIBLE
+                theirUserProfileFollowButton.visibility = View.INVISIBLE
+                theirUserProfileRequestedButton.visibility = View.INVISIBLE
             }
 
-            userProfileHamburgerMenuButton.setOnClickListener {
-                ProfileHamburgerFragment().show(parentFragmentManager, ProfileHamburgerFragment().tag)
-            }
-
-            userProfileFollowersNumberText.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList, userName))
+            theirUserProfileFollowersNumberText.setOnClickListener {
+                findNavController().navigate(TheirProfileFragmentDirections.actionTheirProfileFragmentToFollowsFragment(followersList, followingsList, userName))
                 MainActivity.appPagePosition = Constants.FRAGMENT_FOLLOWERS
             }
 
-            userProfileFollowingNumberText.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList, userName))
+            theirUserProfileFollowingNumberText.setOnClickListener {
+                findNavController().navigate(TheirProfileFragmentDirections.actionTheirProfileFragmentToFollowsFragment(followersList, followingsList, userName))
                 MainActivity.appPagePosition = Constants.FRAGMENT_FOLLOWINGS
             }
 
-            userProfileFollowersTextView.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList, userName))
+            theirUserProfileFollowersTextView.setOnClickListener {
+                findNavController().navigate(TheirProfileFragmentDirections.actionTheirProfileFragmentToFollowsFragment(followersList, followingsList, userName))
                 MainActivity.appPagePosition = Constants.FRAGMENT_FOLLOWERS
             }
 
-            userProfileFollowingTextView.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList, userName))
+            theirUserProfileFollowingTextView.setOnClickListener {
+                findNavController().navigate(TheirProfileFragmentDirections.actionTheirProfileFragmentToFollowsFragment(followersList, followingsList, userName))
                 MainActivity.appPagePosition = Constants.FRAGMENT_FOLLOWINGS
             }
 
@@ -208,7 +169,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                         userData.setFollowersCollection(tempFollowers.toSet())
                     }
                 } else{
-                    userProfileFollowButton.visibility = View.VISIBLE
+                    theirUserProfileFollowButton.visibility = View.VISIBLE
                 }
 
                 isFromFollow = true
@@ -242,7 +203,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                     viewModel.followLoading.postValue(true)
                     viewModel.loadUserDataWithId(userId)
                 }else{
-                    userProfileUnFollowButton.visibility = View.VISIBLE
+                    theirUserProfileUnFollowButton.visibility = View.VISIBLE
                 }
 
             }
@@ -270,23 +231,23 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                     viewModel.followLoading.postValue(true)
                     viewModel.loadUserDataWithId(userId)
                 }else{
-                    userProfileRequestedButton.visibility = View.GONE
+                    theirUserProfileRequestedButton.visibility = View.GONE
                 }
 
             }
 
             viewModel.followLoading.observe(viewLifecycleOwner){
                 if(it)
-                    followProgressbar.visibility = View.VISIBLE
+                    theirFollowProgressbar.visibility = View.VISIBLE
                 else
-                    followProgressbar.visibility = View.INVISIBLE
+                    theirFollowProgressbar.visibility = View.INVISIBLE
             }
 
 
             viewModel.allPostsResponseList.observe(viewLifecycleOwner){
 
                 if(it.success){
-                    userProfilePostsNumberText.text = it.posts.size.toString()
+                    theirUserProfilePostsNumberText.text = it.posts.size.toString()
                     if(it != null)
                     {
                         loadDataToRecycler(it.posts)
@@ -296,41 +257,6 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                     {
                         loadDataToRecycler(emptyList())
                     }
-                }
-            }
-
-            viewModel.userDataResponseWithToken.observe(viewLifecycleOwner){
-
-                if(it.success){
-
-                    MainActivity.myUserID = it.user.id
-                    userName = it.user.username
-
-                    followersList = emptyArray()
-                    followingsList = emptyArray()
-                    followersList = it.user.followers.toTypedArray()
-                    followingsList = it.user.followings.toTypedArray()
-
-
-                    val tempFollowings = it.user.followings.getIds()
-                    val tempFollowers = it.user.followers.getIds()
-
-                    MainActivity.followingsIdList = tempFollowings
-                    MainActivity.followersIdList = tempFollowers
-
-                    lifecycle.coroutineScope.launch {
-                        userData.setFollowingsCollection(tempFollowings.toSet())
-                        userData.setFollowersCollection(tempFollowers.toSet())
-                    }
-
-
-                    userId = it.user.id
-                    loadDataIntoViews(it.user.bio, it.user.username, it.user.followers.size.toString(), it.user.followings.size.toString())
-                    loadProfileAvatar(userId)
-
-
-
-                    viewModel.loadPostsWithToken()
                 }
             }
 
@@ -359,28 +285,28 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                     if(!it.user.private || (it.user.private && MainActivity.followingsIdList.contains(userId))){
 
                         viewModel.loadPostsWithId(userId)
-                        userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
-                        userProfileNoPostText.text = "No Posts Yet"
+                        theirUserProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
+                        theirUserProfileNoPostText.text = "No Posts Yet"
 
                     }else{
-                        userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_lock_24)
-                        userProfileNoPostText.text = "This Account is private"
+                        theirUserProfileNoPostImage.setBackgroundResource(R.drawable.baseline_lock_24)
+                        theirUserProfileNoPostText.text = "This Account is private"
                     }
 
                     if(MainActivity.followingsIdList.contains(theirUserId)){
-                        userProfileUnFollowButton.visibility = View.VISIBLE
-                        userProfileFollowButton.visibility = View.INVISIBLE
-                        userProfileRequestedButton.visibility = View.INVISIBLE
+                        theirUserProfileUnFollowButton.visibility = View.VISIBLE
+                        theirUserProfileFollowButton.visibility = View.INVISIBLE
+                        theirUserProfileRequestedButton.visibility = View.INVISIBLE
                     }
                     else if(MainActivity.followingsRequestedIdList.contains(theirUserId)){
-                        userProfileUnFollowButton.visibility = View.INVISIBLE
-                        userProfileFollowButton.visibility = View.INVISIBLE
-                        userProfileRequestedButton.visibility = View.VISIBLE
+                        theirUserProfileUnFollowButton.visibility = View.INVISIBLE
+                        theirUserProfileFollowButton.visibility = View.INVISIBLE
+                        theirUserProfileRequestedButton.visibility = View.VISIBLE
                     }
                     else{
-                        userProfileFollowButton.visibility = View.VISIBLE
-                        userProfileUnFollowButton.visibility = View.INVISIBLE
-                        userProfileRequestedButton.visibility = View.INVISIBLE
+                        theirUserProfileFollowButton.visibility = View.VISIBLE
+                        theirUserProfileUnFollowButton.visibility = View.INVISIBLE
+                        theirUserProfileRequestedButton.visibility = View.INVISIBLE
                     }
                 }
 
@@ -391,75 +317,40 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             viewModel.loading.observe(viewLifecycleOwner){
                 if(!isFromFollow){
                     if(it){
-                        profileFragmentLoadingProgressbar.visibility = View.VISIBLE
-                        profileFragmentWholeLayout.visibility = View.GONE
+                        theirProfileFragmentLoadingProgressbar.visibility = View.VISIBLE
+                        theirProfileFragmentWholeLayout.visibility = View.GONE
                     }
                     else
                     {
-                        profileFragmentLoadingProgressbar.visibility = View.GONE
-                        profileFragmentWholeLayout.visibility = View.VISIBLE
+                        theirProfileFragmentLoadingProgressbar.visibility = View.GONE
+                        theirProfileFragmentWholeLayout.visibility = View.VISIBLE
                     }
                 }
             }
 
             viewModel.postloading.observe(viewLifecycleOwner){
                 if(it){
-                    userProfileLoadPostsProgressbar.visibility = View.VISIBLE
-                    userProfilePostsRecycler.visibility = View.INVISIBLE
-                    userProfileNoPostImage.visibility = View.INVISIBLE
-                    userProfileNoPostText.visibility = View.INVISIBLE
+                    theirUserProfileLoadPostsProgressbar.visibility = View.VISIBLE
+                    theirUserProfilePostsRecycler.visibility = View.INVISIBLE
+                    theirUserProfileNoPostImage.visibility = View.INVISIBLE
+                    theirUserProfileNoPostText.visibility = View.INVISIBLE
                 }
                 else
-                    userProfileLoadPostsProgressbar.visibility = View.INVISIBLE
+                    theirUserProfileLoadPostsProgressbar.visibility = View.INVISIBLE
             }
 
             // on click listeners from adapter
             adapter.setOnItemCLickListener { position, s ->
                 if(s == "onClick"){
-                    findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToShowPostFragment(position, userId, userName))
+                    findNavController().navigate(TheirProfileFragmentDirections.actionTheirProfileFragmentToShowPostFragment(position, userId, userName))
                 }
-            }
-        }
-    }
-
-    
-
-    override fun onClickLogOut() {
-        lifecycle.coroutineScope.launch {
-            val dialog = Dialog(requireContext())
-            dialog.setContentView(R.layout.progress_dialog_layout)
-            dialog.setCancelable(false)
-            dialog.show()
-            dataStore.setUserToken("out")
-            dataStore.setFollowingsCollection(emptySet())
-            dataStore.setFollowersCollection(emptySet())
-            dataStore.setFollowingRequestedCollection(emptySet())
-            dataStore.setFollowersRequestedCollection(emptySet())
-            delay(2000)
-            dialog.dismiss()
-            withContext(Dispatchers.Main){
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFirstFragment())
             }
         }
     }
 
     private fun loadDataWhenIsTheirProfile(userId: String){
         binding.apply {
-
             viewModel.loadUserDataWithId(userId)
-            userProfileHamburgerMenuButton.visibility = View.GONE
-
-        }
-    }
-
-    private fun loadDataWhenIsMyProfile(){
-        binding.apply {
-            viewModel.loadUserDataWithToken()
-
-            userProfileHamburgerMenuButton.visibility = View.VISIBLE
-            userProfileFollowButton.visibility = View.GONE
-            userProfileUnFollowButton.visibility = View.GONE
-            userProfileRequestedButton.visibility = View.GONE
         }
     }
 
@@ -467,14 +358,14 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
         binding.apply {
 
             if(bio.isEmpty())
-                userProfileBio.visibility = View.GONE
+                theirUserProfileBio.visibility = View.GONE
             else
-                userProfileBio.visibility = View.VISIBLE
+                theirUserProfileBio.visibility = View.VISIBLE
 
-            userProfileBio.text = bio
-            userProfileUserName.text = username
-            userProfileFollowersNumberText.text = followers
-            userProfileFollowingNumberText.text = followings
+            theirUserProfileBio.text = bio
+            theirUserProfileUserName.text = username
+            theirUserProfileFollowersNumberText.text = followers
+            theirUserProfileFollowingNumberText.text = followings
         }
     }
 
@@ -485,23 +376,23 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             if(it.reversed().isNotEmpty()){
 
                 adapter.differ.submitList(it.reversed())
-                userProfilePostsRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
-                userProfilePostsRecycler.setHasFixedSize(true)
-                userProfilePostsRecycler.adapter = adapter
+                theirUserProfilePostsRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
+                theirUserProfilePostsRecycler.setHasFixedSize(true)
+                theirUserProfilePostsRecycler.adapter = adapter
 
-                userProfileNoPostText.visibility = View.GONE
-                userProfileNoPostImage.visibility = View.GONE
-                userProfilePostsRecycler.visibility = View.VISIBLE
-                userProfilePostsNumberText.text = it.reversed().size.toString()
+                theirUserProfileNoPostText.visibility = View.GONE
+                theirUserProfileNoPostImage.visibility = View.GONE
+                theirUserProfilePostsRecycler.visibility = View.VISIBLE
+                theirUserProfilePostsNumberText.text = it.reversed().size.toString()
 
             }
             else{
 
-                userProfileNoPostText.visibility = View.VISIBLE
-                userProfileNoPostImage.visibility = View.VISIBLE
-                userProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
-                userProfileNoPostText.text = "No Posts Yet"
-                userProfilePostsRecycler.visibility = View.INVISIBLE
+                theirUserProfileNoPostText.visibility = View.VISIBLE
+                theirUserProfileNoPostImage.visibility = View.VISIBLE
+                theirUserProfileNoPostImage.setBackgroundResource(R.drawable.baseline_camera_24)
+                theirUserProfileNoPostText.text = "No Posts Yet"
+                theirUserProfilePostsRecycler.visibility = View.INVISIBLE
 
             }
         }
@@ -520,12 +411,12 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             .load(glideUrl)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    binding.userProfileProgressbar.visibility = View.GONE
+                    binding.theirUserProfileProgressbar.visibility = View.GONE
                     return false
                 }
 
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    binding.userProfileProgressbar.visibility = View.GONE
+                    binding.theirUserProfileProgressbar.visibility = View.GONE
                     isAvatarLoaded = true
                     return false
                 }
@@ -536,14 +427,6 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             .error(R.drawable.user_png)
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .into(binding.userProfileImage)
-    }
-
-    override fun onClickSettings() {
-
-    }
-
-    override fun onClickEditProfile() {
-        findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToEditProfileFragment())
+            .into(binding.theirUserProfileImage)
     }
 }

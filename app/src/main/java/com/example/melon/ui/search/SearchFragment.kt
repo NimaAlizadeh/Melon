@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.R
 import com.example.melon.databinding.FragmentSearchBinding
 import com.example.melon.models.User
-import com.example.melon.models.UserX
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.SearchUserAdapter
 import com.example.melon.utils.Constants
@@ -65,7 +64,7 @@ class SearchFragment : Fragment() {
                     edtClicked.value = true
                 }
             }
-            searchFragmentSearchEdt.setOnFocusChangeListener { view, b ->
+            searchFragmentSearchEdt.setOnFocusChangeListener { _, _ ->
                 isListVisible.postValue(!isListVisible.value!!)
                 edtClicked.value = true
             }
@@ -117,7 +116,7 @@ class SearchFragment : Fragment() {
             adapter.setOnItemCLickListener { userX, s ->
                 if(s == Constants.SEARCH_FRAGMENT_GO_TO_PROFILE_FRAGMENT){
                     MainActivity.appPagePosition = Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT
-                    findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToProfileFragment2(userX.id))
+                    findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToTheirProfileFragment(userX.id))
                 }
             }
         }

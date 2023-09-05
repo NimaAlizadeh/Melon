@@ -107,6 +107,8 @@ class FollowsFragment : Fragment() {
 
         if(dataForThisPage.isNotEmpty())
             binding.followsViewPagerItemNotFoundText.visibility = View.GONE
+        else
+            binding.followsViewPagerItemNotFoundText.visibility = View.VISIBLE
 
         if(position == 0)
             adapter0.setData(dataForThisPage)
