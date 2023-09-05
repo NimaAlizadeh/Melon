@@ -90,21 +90,23 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onResume() {
         super.onResume()
         if(!isAvatarLoaded)
             binding.userProfileProgressbar.visibility = View.VISIBLE
     }
 
-
-    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        Log.d("ssssssssssssssssssssssssssss", MainActivity.appPagePosition)
+
+
+
         binding.apply {
-            if(MainActivity.appPagePosition != Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT && MainActivity.appPagePosition != Constants.FRAGMENT_SHOW_POST &&
-                    MainActivity.appPagePosition != Constants.FRAGMENT_COMMENTS && MainActivity.appPagePosition != Constants.FRAGMENT_FOLLOWINGS &&
-                    MainActivity.appPagePosition != Constants.FRAGMENT_FOLLOWERS)
+            if(MainActivity.appPagePosition != Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
                 MainActivity.appPagePosition = Constants.GO_TO_MY_USER_PROFILE_FRAGMENT
 
 
@@ -167,22 +169,22 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             }
 
             userProfileFollowersNumberText.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList))
+                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList, userName))
                 MainActivity.appPagePosition = Constants.FRAGMENT_FOLLOWERS
             }
 
             userProfileFollowingNumberText.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList))
+                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList, userName))
                 MainActivity.appPagePosition = Constants.FRAGMENT_FOLLOWINGS
             }
 
             userProfileFollowersTextView.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList))
+                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList, userName))
                 MainActivity.appPagePosition = Constants.FRAGMENT_FOLLOWERS
             }
 
             userProfileFollowingTextView.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList))
+                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFollowsFragment(followersList, followingsList, userName))
                 MainActivity.appPagePosition = Constants.FRAGMENT_FOLLOWINGS
             }
 
@@ -229,16 +231,16 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 if(it.message == "Follower unfollowed successfully"){
 
 //                    if(it.data.followers != null && it.data.followings != null){
-                        val tempFollowings = it.data.followings.getFollowIds()
-                        val tempFollowers = it.data.followers.getFollowIds()
+                    val tempFollowings = it.data.followings.getFollowIds()
+                    val tempFollowers = it.data.followers.getFollowIds()
 
-                        MainActivity.followingsIdList = tempFollowings
-                        MainActivity.followersIdList = tempFollowers
+                    MainActivity.followingsIdList = tempFollowings
+                    MainActivity.followersIdList = tempFollowers
 
-                        lifecycle.coroutineScope.launch {
-                            userData.setFollowingsCollection(tempFollowings.toSet())
-                            userData.setFollowersCollection(tempFollowers.toSet())
-                        }
+                    lifecycle.coroutineScope.launch {
+                        userData.setFollowingsCollection(tempFollowings.toSet())
+                        userData.setFollowersCollection(tempFollowers.toSet())
+                    }
 //                    }
 
                     isFromFollow = true
@@ -258,15 +260,15 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                 if(it.message == "Follow request cancelled successfully"){
 
 //                    if(it.data.followerRequests != null && it.data.followingRequests != null){
-                        val tempFollowerRequested = it.data.followerRequests.getFollowIds()
-                        val tempFollowingRequested = it.data.followingRequests.getFollowIds()
+                    val tempFollowerRequested = it.data.followerRequests.getFollowIds()
+                    val tempFollowingRequested = it.data.followingRequests.getFollowIds()
 
-                        lifecycle.coroutineScope.launch {
-                            userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())
-                            userData.setFollowingRequestedCollection(tempFollowingRequested.toSet())
-                        }
-                        MainActivity.followersRequestedIdList = tempFollowerRequested
-                        MainActivity.followingsRequestedIdList = tempFollowingRequested
+                    lifecycle.coroutineScope.launch {
+                        userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())
+                        userData.setFollowingRequestedCollection(tempFollowingRequested.toSet())
+                    }
+                    MainActivity.followersRequestedIdList = tempFollowerRequested
+                    MainActivity.followingsRequestedIdList = tempFollowingRequested
 //                    }
 
                     isFromFollow = true
@@ -332,10 +334,8 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
                     loadProfileAvatar(userId)
 
 
-                    if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
-                        viewModel.loadPostsWithId(userId)
-                    else if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
-                        viewModel.loadPostsWithToken()
+
+                    viewModel.loadPostsWithToken()
                 }
             }
 
@@ -426,6 +426,8 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
             }
         }
     }
+
+    
 
     override fun onClickLogOut() {
         lifecycle.coroutineScope.launch {

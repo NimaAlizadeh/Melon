@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.melon.databinding.FragmentFollowsBinding
 import com.example.melon.models.FollowModel
@@ -32,6 +33,8 @@ class FollowsFragment : Fragment() {
 
     private lateinit var dataSet: List<List<FollowModel>>
 
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentFollowsBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -41,6 +44,7 @@ class FollowsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+            followsFragmentUserName.text = args.userName
 
             val fragments = listOf(
                 FollowersFragment().apply { setAdapter(adapter0) },
@@ -87,6 +91,11 @@ class FollowsFragment : Fragment() {
                     initAdapter(1)
                 }
 
+            }
+
+
+            followsFragmentBackButton.setOnClickListener {
+                findNavController().popBackStack()
             }
 
         }

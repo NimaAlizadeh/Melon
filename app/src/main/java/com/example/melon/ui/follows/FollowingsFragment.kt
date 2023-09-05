@@ -55,6 +55,11 @@ class FollowingsFragment : Fragment() {
             loadAdapter()
 
 
+            followsViewPagerItemSearchEdt.setOnClickListener {
+                adapter.setData(emptyList())
+                loadAdapter()
+            }
+
         }
     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -56,6 +57,18 @@ class FollowersFragment : Fragment() {
         loadAdapter()
 
 
+//            followsViewPagerItemSearchEdt.addTextChangedListener {
+//                if(it.toString().isNotEmpty())
+//                    adapter.setData()
+//                    loadAdapter()
+//                else
+//                    loadAdapter(emptyList())
+//            }
+//
+            followsViewPagerItemSearchEdt.setOnClickListener {
+                adapter.setData(emptyList())
+                loadAdapter()
+            }
         }
     }
 

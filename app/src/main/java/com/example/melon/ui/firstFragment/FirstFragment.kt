@@ -60,32 +60,6 @@ class FirstFragment : Fragment() {
                     }
                 }
             }
-
-            lifecycle.coroutineScope.launch {
-                userData.getFollowingsCollection().collect{
-                    if(it.isNotEmpty()){
-                        MainActivity.followingsIdList = ArrayList(it.toList())
-                    }
-                }
-
-                userData.getFollowersCollection().collect{
-                    if(it.isNotEmpty()){
-                        MainActivity.followersIdList = ArrayList(it.toList())
-                    }
-                }
-
-                userData.getFollowersRequestedCollection().collect{
-                    if(it.isNotEmpty()){
-                        MainActivity.followersRequestedIdList = ArrayList(it.toList())
-                    }
-                }
-
-                userData.getFollowingRequestedCollection().collect{
-                    if(it.isNotEmpty()){
-                        MainActivity.followingsRequestedIdList = ArrayList(it.toList())
-                    }
-                }
-            }
         }
     }
 }

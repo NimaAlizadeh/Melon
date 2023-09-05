@@ -1,6 +1,7 @@
 package com.example.melon.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,6 +62,41 @@ class HomeFragment : Fragment() {
 
             homeFragmentToolbar.customToolbarNotificationsButton.setOnClickListener {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNotificationFragment())
+            }
+
+
+            lifecycle.coroutineScope.launch {
+                userData.getFollowingsCollection().collect{
+                    if(it.isNotEmpty()){
+                        MainActivity.followingsIdList = ArrayList(it.toList())
+                    }
+                }
+            }
+
+            lifecycle.coroutineScope.launch {
+                userData.getFollowersCollection().collect{
+                    if(it.isNotEmpty()){
+                        MainActivity.followersIdList = ArrayList(it.toList())
+                    }
+                }
+            }
+
+            lifecycle.coroutineScope.launch {
+                userData.getFollowersRequestedCollection().collect{
+                    Log.d("ssssssssss1", it.toList().toString())
+                    if(it.isNotEmpty()){
+                        MainActivity.followersRequestedIdList = ArrayList(it.toList())
+                    }
+                }
+            }
+
+            lifecycle.coroutineScope.launch {
+                userData.getFollowingRequestedCollection().collect{
+                    Log.d("ssssssssss2", it.toList().toString())
+                    if(it.isNotEmpty()){
+                        MainActivity.followingsRequestedIdList = ArrayList(it.toList())
+                    }
+                }
             }
 
 //            //where to go when

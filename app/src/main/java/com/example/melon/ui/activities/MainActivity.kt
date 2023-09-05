@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity(), ProfileFragment.OnProfileFragmentListe
 
     companion object{
         var appPagePosition = Constants.MAIN_ACTIVITY
+        var profilePosition = Constants.MAIN_ACTIVITY
         private lateinit var callBack: OnPermissionCallBackListener
 
         var followingsIdList = ArrayList<String>()

@@ -159,13 +159,6 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"/>
-        <!--        <action-->
-<!--            android:id="@+id/action_profileFragment2_to_showPostFragment"-->
-<!--            app:destination="@id/showPostFragment"-->
-<!--            app:enterAnim="@android:anim/slide_in_left"-->
-<!--            app:exitAnim="@android:anim/slide_out_right"-->
-<!--            app:popEnterAnim="@android:anim/slide_in_left"-->
-<!--            app:popExitAnim="@android:anim/slide_out_right"/>-->
     </fragment>
     <fragment
         android:id="@+id/addPostFragment"
@@ -286,6 +279,9 @@
         <argument
             android:name="followings"
             app:argType="com.example.melon.models.FollowModel[]" />
+        <argument
+            android:name="user_name"
+            app:argType="string" />
     </fragment>
 
 </navigation>
