@@ -103,9 +103,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
 
-//    implementation "androidx.navigation:navigation-safe-args-gradle-plugin:2.6.0"
-
-//    implementation 'com.nightonke:jellytogglebutton:1.0.2'
-
     implementation 'com.rm:rmswitch:1.2.2'
+
+    //paging3
+    implementation "androidx.paging:paging-runtime:3.2.1"
 }

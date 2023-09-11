@@ -87,6 +87,7 @@ class ProfileFragment : Fragment() , ProfileHamburgerFragment.OnCallBackListener
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         ProfileHamburgerFragment().setOnCallBackClickListener(this)
+        MainActivity.profilePosition = Constants.GO_TO_MY_USER_PROFILE_FRAGMENT
         return binding.root
     }
 

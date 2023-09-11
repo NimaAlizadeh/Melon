@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.melon.databinding.FragmentFollowsBinding
 import com.example.melon.models.FollowModel
 import com.example.melon.ui.activities.MainActivity
+import com.example.melon.ui.adapters.FollowsAdapter
 import com.example.melon.ui.adapters.NotificationAdapter
 import com.example.melon.ui.adapters.ViewPagerAdapter
 import com.example.melon.utils.Constants
@@ -26,10 +27,10 @@ class FollowsFragment : Fragment() {
     private val args by navArgs<FollowsFragmentArgs>()
 
     @Inject
-    lateinit var adapter0: NotificationAdapter
+    lateinit var adapter0: FollowsAdapter
 
     @Inject
-    lateinit var adapter1: NotificationAdapter
+    lateinit var adapter1: FollowsAdapter
 
     private lateinit var dataSet: List<List<FollowModel>>
 
@@ -110,8 +111,19 @@ class FollowsFragment : Fragment() {
         else
             binding.followsViewPagerItemNotFoundText.visibility = View.VISIBLE
 
+        adapter0.setPage(Constants.FRAGMENT_FOLLOWERS)
+        adapter1.setPage(Constants.FRAGMENT_FOLLOWINGS)
+
         if(position == 0)
-            adapter0.setData(dataForThisPage)
+        {
+            val temp = dataForThisPage.toMutableList()
+            dataForThisPage.forEach {
+                if(it.id == MainActivity.myUserID){
+
+                }
+            }
+            adapter0.setData(temp)
+        }
         else if(position == 1)
             adapter1.setData(dataForThisPage)
 

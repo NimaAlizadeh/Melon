@@ -56,17 +56,16 @@ class NotificationFragment : Fragment(){
 
             viewModel.requestsResponse.observe(viewLifecycleOwner){
 
-//                if(it.followerRequests != null && it.followingRequests != null){
-                    val tempFollowerRequested = it.followerRequests.getIds()
-                    val tempFollowingRequested = it.followingRequests.getIds()
+                val tempFollowerRequested = it.followerRequests.getIds()
+                val tempFollowingRequested = it.followingRequests.getIds()
 
-                    lifecycle.coroutineScope.launch {
-                        userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())
-                        userData.setFollowingRequestedCollection(tempFollowingRequested.toSet())
-                    }
-                    MainActivity.followersRequestedIdList = tempFollowerRequested
-                    MainActivity.followingsRequestedIdList = tempFollowingRequested
-//                }
+                lifecycle.coroutineScope.launch {
+                    userData.setFollowersRequestedCollection(tempFollowerRequested.toSet())
+                    userData.setFollowingRequestedCollection(tempFollowingRequested.toSet())
+                }
+                MainActivity.followersRequestedIdList = tempFollowerRequested
+                MainActivity.followingsRequestedIdList = tempFollowingRequested
+
 
 
                 if(it.followerRequests.isEmpty())

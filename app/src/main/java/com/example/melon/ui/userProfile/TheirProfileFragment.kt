@@ -69,6 +69,7 @@ class TheirProfileFragment : Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentTheirProfileBinding.inflate(layoutInflater, container, false)
+        MainActivity.profilePosition = Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT
         return binding.root
     }
 

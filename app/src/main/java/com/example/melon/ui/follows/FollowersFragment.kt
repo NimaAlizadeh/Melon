@@ -14,6 +14,7 @@ import com.example.melon.databinding.FragmentFollowingsBinding
 import com.example.melon.databinding.FragmentFollowsBinding
 import com.example.melon.models.FollowModel
 import com.example.melon.ui.activities.MainActivity
+import com.example.melon.ui.adapters.FollowsAdapter
 import com.example.melon.ui.adapters.FollowsViewPagerAdapter
 import com.example.melon.ui.adapters.NotificationAdapter
 import com.example.melon.utils.Constants
@@ -26,14 +27,14 @@ class FollowersFragment : Fragment() {
 
     private lateinit var binding: FollowsViewPagerItemBinding
 
-    private lateinit var adapter: NotificationAdapter
+    private lateinit var adapter: FollowsAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FollowsViewPagerItemBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
-    fun setAdapter(adapter: NotificationAdapter){
+    fun setAdapter(adapter: FollowsAdapter){
         this.adapter = adapter
     }
 

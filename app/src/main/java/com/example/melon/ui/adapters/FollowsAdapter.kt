@@ -19,11 +19,16 @@ import com.example.melon.utils.Constants
 import javax.inject.Inject
 
 
-class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<NotificationAdapter.CustomViewHolder>() {
+class FollowsAdapter @Inject constructor(): RecyclerView.Adapter<FollowsAdapter.CustomViewHolder>() {
     private lateinit var binding: NotificationRecyclerItemBinding
     lateinit var context: Context
 
-    private var notificationList = emptyList<FollowModel>()
+    private var followsList = emptyList<FollowModel>()
+    private var page = ""
+
+    fun setPage(page: String){
+        this.page = page
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         binding = NotificationRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -32,64 +37,94 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        holder.bindItems(notificationList[position])
+        holder.bindItems(followsList[position])
         holder.setIsRecyclable(false)
     }
 
-    override fun getItemCount() = notificationList.size
+    override fun getItemCount() = followsList.size
 
     inner class CustomViewHolder : RecyclerView.ViewHolder(binding.root) {
         fun bindItems(model: FollowModel) {
             binding.apply {
 
-//                if(MainActivity.appPagePosition == Constants.FRAGMENT_FOLLOWERS || MainActivity.appPagePosition == Constants.FRAGMENT_FOLLOWINGS){
-//                    notificationRecyclerButtonConfirm.text = "Follow"
-//                    notificationRecyclerButtonDelete.visibility = View.GONE
-//
-//                    if(model.name == null){
-//                        notificationRecyclerTextRequest.visibility = View.GONE
-//                    }else{
-//                        if(model.name.isEmpty()){
-//                            notificationRecyclerTextRequest.visibility = View.GONE
-//                        }else{
-//                            notificationRecyclerTextRequest.visibility = View.VISIBLE
-//                            notificationRecyclerTextRequest.text = model.name
-//                        }
-//                    }
-//
-//                }else{
-//                    notificationRecyclerButtonConfirm.text = "Confirm"
-//                    notificationRecyclerButtonDelete.visibility = View.VISIBLE
-//
-//                    notificationRecyclerTextRequest.visibility = View.VISIBLE
-//                    notificationRecyclerTextRequest.text = "requested to follow you"
-//                }
-
-
-                notificationRecyclerButtonConfirm.text = "Confirm"
-                notificationRecyclerButtonDelete.visibility = View.VISIBLE
-
-                notificationRecyclerTextRequest.visibility = View.VISIBLE
-                notificationRecyclerTextRequest.text = "requested to follow you"
-
                 notificationRecyclerUserName.text = model.username
                 loadUserProfileAvatar(model.id)
+
+                initViews(model)
 
 
                 notificationRecyclerButtonConfirm.setOnClickListener {
                     onItemClickListener?.let {
-                        it(model, "confirm")
+                        it(model, "follow")
                     }
                 }
 
                 notificationRecyclerButtonDelete.setOnClickListener {
                     onItemClickListener?.let {
-                        it(model, "delete")
+                        it(model, "unfollow")
                     }
                 }
 
             }
         }
+    }
+
+    private fun initViews(model: FollowModel){
+
+        binding.apply {
+
+            if(model.name == null){
+                notificationRecyclerTextRequest.visibility = View.GONE
+            }else{
+                if(model.name.isEmpty()){
+                    notificationRecyclerTextRequest.visibility = View.GONE
+                }else{
+                    notificationRecyclerTextRequest.visibility = View.VISIBLE
+                    notificationRecyclerTextRequest.text = model.name
+                }
+            }
+
+            if(MainActivity.profilePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT){
+
+                if(page == Constants.FRAGMENT_FOLLOWERS){
+
+                    //showing follow and remove button for my profile user
+                    notificationRecyclerButtonConfirm.visibility = View.VISIBLE
+                    notificationRecyclerButtonDelete.visibility = View.VISIBLE
+                    notificationRecyclerButtonConfirm.text = "Follow"
+                    notificationRecyclerButtonDelete.text = "Remove"
+
+                } else if (page == Constants.FRAGMENT_FOLLOWINGS){
+
+                    //showing following button that user can click on it and unfollow the user
+                    notificationRecyclerButtonConfirm.visibility = View.GONE
+                    notificationRecyclerButtonDelete.visibility = View.VISIBLE
+                    notificationRecyclerButtonDelete.text = "Following"
+
+                }
+
+            }else if(MainActivity.profilePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT){
+
+                // if it's following then we are going to let the user unfollow them
+                if(MainActivity.followingsIdList.contains(model.id)){
+                    notificationRecyclerButtonConfirm.visibility = View.GONE
+                    notificationRecyclerButtonDelete.visibility = View.VISIBLE
+                    notificationRecyclerButtonDelete.text = "Following"
+                }
+                else{
+                    notificationRecyclerButtonConfirm.visibility = View.VISIBLE
+                    notificationRecyclerButtonDelete.visibility = View.GONE
+                    notificationRecyclerButtonConfirm.text = "Follow"
+                }
+
+            }
+
+            if(model.id == MainActivity.myUserID){
+                notificationRecyclerButtonConfirm.visibility = View.GONE
+                notificationRecyclerButtonDelete.visibility = View.GONE
+            }
+        }
+
     }
 
     private val differCallback = object : DiffUtil.ItemCallback<Follow>() {
@@ -106,9 +141,9 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
 
     fun setData(newListData: List<FollowModel>)
     {
-        val notesDiffUtils = NotesDiffUtils(notificationList, newListData)
+        val notesDiffUtils = NotesDiffUtils(followsList, newListData)
         val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
-        notificationList = newListData
+        followsList = newListData
         diffUtils.dispatchUpdatesTo(this)
     }
 

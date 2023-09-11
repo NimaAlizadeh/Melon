@@ -5,12 +5,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.load.engine.Engine.LoadStatus
 import com.example.melon.databinding.FragmentHomeBinding
 import com.example.melon.ui.activities.MainActivity
+import com.example.melon.ui.adapters.HomePostsAdapter
+import com.example.melon.ui.adapters.LoadMoreAdapter
 import com.example.melon.ui.adapters.ShowPostsAdapter
 import com.example.melon.utils.Constants
 import com.example.melon.utils.StoreUserData
@@ -25,7 +34,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
 
     @Inject
-    lateinit var adapter: ShowPostsAdapter
+    lateinit var adapter: HomePostsAdapter
 
     @Inject
     lateinit var userData: StoreUserData
@@ -40,7 +49,36 @@ class HomeFragment : Fragment() {
         lifecycle.coroutineScope.launch {
             userData.setUserToken(Constants.USER_TOKEN)
         }
-//        viewModel.loadData()
+
+        // get first data that the applications needs from data store
+        lifecycle.coroutineScope.launch {
+            userData.getFollowingsCollection().collect{
+                if(it.isNotEmpty()){
+                    MainActivity.followingsIdList = ArrayList(it.toList())
+                }
+            }
+        }
+        lifecycle.coroutineScope.launch {
+            userData.getFollowersCollection().collect{
+                if(it.isNotEmpty()){
+                    MainActivity.followersIdList = ArrayList(it.toList())
+                }
+            }
+        }
+        lifecycle.coroutineScope.launch {
+            userData.getFollowersRequestedCollection().collect{
+                if(it.isNotEmpty()){
+                    MainActivity.followersRequestedIdList = ArrayList(it.toList())
+                }
+            }
+        }
+        lifecycle.coroutineScope.launch {
+            userData.getFollowingRequestedCollection().collect{
+                if(it.isNotEmpty()){
+                    MainActivity.followingsRequestedIdList = ArrayList(it.toList())
+                }
+            }
+        }
         return binding.root
     }
 
@@ -49,96 +87,38 @@ class HomeFragment : Fragment() {
 
         binding.apply {
 
-//            viewModel.loading.observe(viewLifecycleOwner){
-//                if(it){
-//                    homeFragmentLoadDataProgressbar.visibility = View.VISIBLE
-//                    homeFragmentWholeLayout.visibility = View.INVISIBLE
-//                }else{
-//                    homeFragmentLoadDataProgressbar.visibility = View.INVISIBLE
-//                    homeFragmentWholeLayout.visibility = View.VISIBLE
-//                    onHomeFragmentListener.onHomeFragmentLoaded()
-//                }
-//            }
-
             homeFragmentToolbar.customToolbarNotificationsButton.setOnClickListener {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNotificationFragment())
             }
 
 
             lifecycle.coroutineScope.launch {
-                userData.getFollowingsCollection().collect{
-                    if(it.isNotEmpty()){
-                        MainActivity.followingsIdList = ArrayList(it.toList())
-                    }
+                viewModel.postsList.collect{
+                    adapter.submitData(it)
                 }
             }
 
             lifecycle.coroutineScope.launch {
-                userData.getFollowersCollection().collect{
-                    if(it.isNotEmpty()){
-                        MainActivity.followersIdList = ArrayList(it.toList())
-                    }
+                adapter.loadStateFlow.collect{
+                    homeFragmentLoadDataProgressbar.isVisible = it.refresh is LoadState.Loading
                 }
             }
 
-            lifecycle.coroutineScope.launch {
-                userData.getFollowersRequestedCollection().collect{
-                    Log.d("ssssssssss1", it.toList().toString())
-                    if(it.isNotEmpty()){
-                        MainActivity.followersRequestedIdList = ArrayList(it.toList())
-                    }
-                }
+            // init adapter
+            homeFragmentPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            homeFragmentPostRecycler.adapter = adapter
+
+
+            //refresh
+            homeFragmentSwipeRefresh.setOnRefreshListener {
+                adapter.refresh()
+                homeFragmentSwipeRefresh.isRefreshing = false
             }
 
-            lifecycle.coroutineScope.launch {
-                userData.getFollowingRequestedCollection().collect{
-                    Log.d("ssssssssss2", it.toList().toString())
-                    if(it.isNotEmpty()){
-                        MainActivity.followingsRequestedIdList = ArrayList(it.toList())
-                    }
-                }
-            }
+            homeFragmentPostRecycler.adapter = adapter.withLoadStateFooter(
+                LoadMoreAdapter{adapter.retry()}
+            )
 
-//            //where to go when
-//            adapter.setOnItemCLickListener { _, s ->
-//                when(s){
-//                    Constants.GO_TO_COMMENTS_FRAGMENT -> {
-//                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCommentsFragment())
-//                    }
-//
-//                    Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT-> {
-//                        MainActivity.appPagePosition = Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT
-//                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProfileFragment(""))
-//                    }
-//                }
-//            }
-
-//
-//            val list = ArrayList<Int>()
-//            list.add(R.drawable.ph)
-//            list.add(R.drawable.ph1)
-//            list.add(R.drawable.ph2)
-//            list.add(R.drawable.ph3)
-//            list.add(R.drawable.ph4)
-//            list.add(R.drawable.ph5)
-//            list.add(R.drawable.ph6)
-//            list.add(R.drawable.ph7)
-//            list.add(R.drawable.ph8)
-//            list.add(R.drawable.ph9)
-
-//
-//            adapter.differ.submitList(list)
-//            homeFragmentPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-//            homeFragmentPostRecycler.adapter = adapter
-//
-//
-//            // when refreshing the fragment
-//            homeFragmentSwipeRefresh.setOnRefreshListener {
-//                adapter.differ.submitList(list)
-//                homeFragmentPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-//                homeFragmentPostRecycler.adapter = adapter
-//                homeFragmentSwipeRefresh.isRefreshing = false
-//            }
         }
     }
 }

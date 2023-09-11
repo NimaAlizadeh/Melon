@@ -37,16 +37,21 @@ class ShowPostFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentShowPostBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
 
-        if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT || MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
+    override fun onResume() {
+        super.onResume()
+
+        if(MainActivity.profilePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT || MainActivity.profilePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
             viewModel.leftPosition.postValue(RecyclerViewState(args.position, 0))
 
-        if(MainActivity.appPagePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
+        if(MainActivity.profilePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
             viewModel.loadPostsWithId(args.userId)
-        else if(MainActivity.appPagePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
+        else if(MainActivity.profilePosition == Constants.GO_TO_MY_USER_PROFILE_FRAGMENT)
             viewModel.loadPostsWithToken()
 
-        return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

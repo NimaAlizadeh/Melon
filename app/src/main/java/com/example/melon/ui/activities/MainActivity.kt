@@ -46,7 +46,8 @@ class MainActivity : AppCompatActivity(), ProfileFragment.OnProfileFragmentListe
             //set bottomNavigation to be active in special fragments
             val navController = findNavController(R.id.fragmentContainerView)
             navController.addOnDestinationChangedListener { _, destination, _ ->
-                if(destination.id == R.id.profileFragment || destination.id == R.id.searchFragment || destination.id == R.id.homeFragment){
+                if(destination.id == R.id.profileFragment || destination.id == R.id.searchFragment || destination.id == R.id.homeFragment ||
+                        destination.id == R.id.theirProfileFragment){
                     mainBottomNavigation.visibility = View.VISIBLE
                     mainSimpleView1.visibility = View.VISIBLE
                 }

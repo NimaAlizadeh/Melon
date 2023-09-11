@@ -70,4 +70,10 @@ interface ApiServices {
 
     @POST("post/comment")
     suspend fun addComment(@Body body: LikeCommentModel): Response<CommentResponse>
+
+    @GET("post/getHomePosts")
+    suspend fun getHomePosts(@Query("page") page: Int, @Query("limit") limit: Int): Response<HomePostsResponse>
+
+    @GET("post/getAllPosts")
+    suspend fun getSearchPosts(@Query("page") page: Int, @Query("limit") limit: Int): Response<HomePostsResponse>
 }
