@@ -7,20 +7,28 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.R
 import com.example.melon.databinding.FragmentSearchBinding
 import com.example.melon.models.User
 import com.example.melon.ui.activities.MainActivity
+import com.example.melon.ui.adapters.LoadMoreAdapter
+import com.example.melon.ui.adapters.SearchPostsAdapter
 import com.example.melon.ui.adapters.SearchUserAdapter
 import com.example.melon.utils.Constants
 import com.example.melon.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -30,7 +38,10 @@ class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
 
     @Inject
-    lateinit var adapter: SearchUserAdapter
+    lateinit var userAdapter: SearchUserAdapter
+
+    @Inject
+    lateinit var postAdapter: SearchPostsAdapter
 
     private val viewModel: SearchViewModel by viewModels()
 
@@ -52,6 +63,39 @@ class SearchFragment : Fragment() {
         MainActivity.appPagePosition = Constants.FRAGMENT_SEARCH
 
         binding.apply {
+
+
+            // post --------------------------------------------------------------------------------------------------------
+
+
+            lifecycle.coroutineScope.launch {
+                viewModel.searchPostsList.collect{
+                    postAdapter.submitData(it)
+                }
+            }
+
+            lifecycle.coroutineScope.launch {
+                postAdapter.loadStateFlow.collect{
+                    searchFragmentUserProgressbar.isVisible = it.refresh is LoadState.Loading
+                }
+            }
+
+            //init adapter
+            searchFragmentExploreRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
+            searchFragmentExploreRecycler.adapter = postAdapter
+
+            //refresh
+            searchFragmentSwipeRefresh.setOnRefreshListener {
+                postAdapter.refresh()
+                searchFragmentSwipeRefresh.isRefreshing = false
+            }
+
+            searchFragmentExploreRecycler.adapter = postAdapter.withLoadStateFooter(
+                LoadMoreAdapter{postAdapter.retry()}
+            )
+
+
+            // user --------------------------------------------------------------------------------------------------------
 
             isListVisible.observe(viewLifecycleOwner){
                 toggleListVisibility()
@@ -105,15 +149,12 @@ class SearchFragment : Fragment() {
 
             // when refreshing the fragment
             searchFragmentSwipeRefresh.setOnRefreshListener {
-//                adapter.differ.submitList(list)
-//                searchFragmentRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
-//                searchFragmentRecycler.setHasFixedSize(true)
-//                searchFragmentRecycler.adapter = adapter
+
 
                 searchFragmentSwipeRefresh.isRefreshing = false
             }
 
-            adapter.setOnItemCLickListener { userX, s ->
+            userAdapter.setOnItemCLickListener { userX, s ->
                 if(s == Constants.SEARCH_FRAGMENT_GO_TO_PROFILE_FRAGMENT){
                     MainActivity.appPagePosition = Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT
                     findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToTheirProfileFragment(userX.id))
@@ -148,10 +189,10 @@ class SearchFragment : Fragment() {
     private fun loadAdapter(list: List<User>){
         binding.apply {
             searchFragmentUserNotFoundText.visibility = View.GONE
-            adapter.setData(list)
+            userAdapter.setData(list)
             searchFragmentUserRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             searchFragmentUserRecycler.setHasFixedSize(true)
-            searchFragmentUserRecycler.adapter = adapter
+            searchFragmentUserRecycler.adapter = userAdapter
         }
     }
 }

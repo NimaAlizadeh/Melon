@@ -6,4 +6,5 @@ import javax.inject.Inject
 class SearchRepository @Inject constructor(private val apiServices: ApiServices)
 {
     suspend fun searchUser(searchTerm: String) = apiServices.searchUser(searchTerm)
+    suspend fun getAllSearchPosts(page: Int, limit: Int) = apiServices.getSearchPosts(page, limit)
 }

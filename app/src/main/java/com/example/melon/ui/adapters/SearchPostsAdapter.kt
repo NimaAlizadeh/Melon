@@ -1,5 +1,6 @@
 package com.example.melon.ui.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -8,36 +9,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.Headers
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.melon.R
+import com.example.melon.databinding.HomePostsRecyclerItemBinding
 import com.example.melon.databinding.ProfilePostsRecyclerItemBinding
+import com.example.melon.models.HomePostsResponse
 import com.example.melon.models.Post
 import com.example.melon.models.PostModel
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.utils.Constants
-import okhttp3.MultipartBody
-import retrofit2.http.Url
-import java.net.HttpURLConnection
+import okhttp3.internal.notifyAll
 import javax.inject.Inject
-import javax.net.ssl.HttpsURLConnection
 
 
-class ProfilePostsAdapter @Inject constructor(): RecyclerView.Adapter<ProfilePostsAdapter.CustomViewHolder>()
+class SearchPostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsResponse.Post, SearchPostsAdapter.CustomViewHolder>(
+    differCallback)
 {
     private lateinit var binding: ProfilePostsRecyclerItemBinding
-    private lateinit var context: Context
-    private var size = 0
+    lateinit var context: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder
     {
@@ -48,22 +45,18 @@ class ProfilePostsAdapter @Inject constructor(): RecyclerView.Adapter<ProfilePos
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int)
     {
-        holder.bindItems(differ.currentList[position])
+        holder.bindItems(getItem(position)!!)
         holder.setIsRecyclable(false)
 
         val anim = AlphaAnimation(0.0f, 1.0f)
-        anim.duration = 700
+        anim.duration = 1000
         holder.itemView.startAnimation(anim)
-    }
-
-    override fun getItemCount(): Int {
-        size = differ.currentList.size
-        return size
     }
 
     inner class CustomViewHolder: RecyclerView.ViewHolder(binding.root)
     {
-        fun bindItems(model: Post)
+        @SuppressLint("SetTextI18n")
+        fun bindItems(model: HomePostsResponse.Post)
         {
             binding.apply {
 
@@ -77,7 +70,7 @@ class ProfilePostsAdapter @Inject constructor(): RecyclerView.Adapter<ProfilePos
 
                 Glide.with(context)
                     .load(glideUrl)
-                    .listener(object : RequestListener<Drawable>{
+                    .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                             Log.d("TAG", "onLoadFailed: ")
                             return false
@@ -111,17 +104,18 @@ class ProfilePostsAdapter @Inject constructor(): RecyclerView.Adapter<ProfilePos
         }
     }
 
-    private val differCallback = object: DiffUtil.ItemCallback<Post>(){
-        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-            return oldItem == newItem
-        }
+    companion object{
+        private val differCallback = object: DiffUtil.ItemCallback<HomePostsResponse.Post>(){
+            override fun areItemsTheSame(oldItem: HomePostsResponse.Post, newItem: HomePostsResponse.Post): Boolean {
+                return oldItem == newItem
+            }
 
-        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-            return oldItem == newItem
+            override fun areContentsTheSame(oldItem: HomePostsResponse.Post, newItem: HomePostsResponse.Post): Boolean {
+                return oldItem == newItem
+            }
         }
     }
 
-    val differ = AsyncListDiffer(this, differCallback)
 
     //on item select handling
     private var onItemClickListener: ((Int, String) -> Unit)? = null
