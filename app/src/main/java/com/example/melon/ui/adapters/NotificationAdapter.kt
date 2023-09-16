@@ -14,7 +14,6 @@ import com.example.melon.R
 import com.example.melon.databinding.NotificationRecyclerItemBinding
 import com.example.melon.models.Follow
 import com.example.melon.models.FollowModel
-import com.example.melon.ui.activities.MainActivity
 import com.example.melon.utils.Constants
 import javax.inject.Inject
 
@@ -41,29 +40,6 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     inner class CustomViewHolder : RecyclerView.ViewHolder(binding.root) {
         fun bindItems(model: FollowModel) {
             binding.apply {
-
-//                if(MainActivity.appPagePosition == Constants.FRAGMENT_FOLLOWERS || MainActivity.appPagePosition == Constants.FRAGMENT_FOLLOWINGS){
-//                    notificationRecyclerButtonConfirm.text = "Follow"
-//                    notificationRecyclerButtonDelete.visibility = View.GONE
-//
-//                    if(model.name == null){
-//                        notificationRecyclerTextRequest.visibility = View.GONE
-//                    }else{
-//                        if(model.name.isEmpty()){
-//                            notificationRecyclerTextRequest.visibility = View.GONE
-//                        }else{
-//                            notificationRecyclerTextRequest.visibility = View.VISIBLE
-//                            notificationRecyclerTextRequest.text = model.name
-//                        }
-//                    }
-//
-//                }else{
-//                    notificationRecyclerButtonConfirm.text = "Confirm"
-//                    notificationRecyclerButtonDelete.visibility = View.VISIBLE
-//
-//                    notificationRecyclerTextRequest.visibility = View.VISIBLE
-//                    notificationRecyclerTextRequest.text = "requested to follow you"
-//                }
 
 
                 notificationRecyclerButtonConfirm.text = "Confirm"
@@ -146,22 +122,9 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
 
         Glide.with(context)
             .load(glideUrl)
-//            .listener(object : RequestListener<Drawable> {
-//                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-//                    binding.searchUserRecyclerImageProgressbar.visibility = View.GONE
-//                    return false
-//                }
-//
-//                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-//                    binding.searchUserRecyclerImageProgressbar.visibility = View.GONE
-//                    return false
-//                }
-//
-//            })
+
             .placeholder(R.drawable.solid_black)
             .error(R.drawable.baseline_person_24)
-//            .skipMemoryCache(true)
-//            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.notificationRecyclerImageView)
     }
 }

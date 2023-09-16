@@ -1,6 +1,7 @@
 package com.example.melon.ui.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,11 +24,17 @@ class FollowsAdapter @Inject constructor(): RecyclerView.Adapter<FollowsAdapter.
     private lateinit var binding: NotificationRecyclerItemBinding
     lateinit var context: Context
 
-    private var followsList = emptyList<FollowModel>()
+    private var followsList: ArrayList<FollowModel> = ArrayList()
     private var page = ""
 
     fun setPage(page: String){
         this.page = page
+    }
+
+    fun removeAt(position: Int, element: FollowModel) {
+        followsList.remove(element)
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, followsList.size)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
@@ -38,7 +45,8 @@ class FollowsAdapter @Inject constructor(): RecyclerView.Adapter<FollowsAdapter.
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         holder.bindItems(followsList[position])
-        holder.setIsRecyclable(false)
+//        holder.setIsRecyclable(false)
+
     }
 
     override fun getItemCount() = followsList.size
@@ -53,15 +61,40 @@ class FollowsAdapter @Inject constructor(): RecyclerView.Adapter<FollowsAdapter.
                 initViews(model)
 
 
+                notificationRecyclerWholeLayout.setOnClickListener {
+                    onItemClickListener?.let {
+                        it(bindingAdapterPosition, model, Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
+                    }
+                }
+
                 notificationRecyclerButtonConfirm.setOnClickListener {
                     onItemClickListener?.let {
-                        it(model, "follow")
+
+                        when(notificationRecyclerButtonConfirm.text){
+                            "Follow" -> {
+                                it(bindingAdapterPosition, model, "Follow")
+                            }
+
+                            "Requested" -> {
+                                it(bindingAdapterPosition, model, "Requested")
+                            }
+                        }
                     }
                 }
 
                 notificationRecyclerButtonDelete.setOnClickListener {
                     onItemClickListener?.let {
-                        it(model, "unfollow")
+
+                        when(notificationRecyclerButtonDelete.text){
+                            "Remove" -> {
+                                it(bindingAdapterPosition, model, "Remove")
+                            }
+
+                            "Following" -> {
+                                it(bindingAdapterPosition, model, "Following")
+                            }
+                        }
+
                     }
                 }
 
@@ -89,18 +122,36 @@ class FollowsAdapter @Inject constructor(): RecyclerView.Adapter<FollowsAdapter.
                 if(page == Constants.FRAGMENT_FOLLOWERS){
 
                     //showing follow and remove button for my profile user
-                    notificationRecyclerButtonConfirm.visibility = View.VISIBLE
+
                     notificationRecyclerButtonDelete.visibility = View.VISIBLE
-                    notificationRecyclerButtonConfirm.text = "Follow"
                     notificationRecyclerButtonDelete.text = "Remove"
+
+
+                    if(MainActivity.followingsIdList.contains(model.id)){
+                        notificationRecyclerButtonConfirm.visibility = View.GONE
+                    }else{
+                        if(MainActivity.followingsRequestedIdList.contains(model.id)){
+                            notificationRecyclerButtonConfirm.text = "Requested"
+                        }else{
+                            notificationRecyclerButtonConfirm.text = "Follow"
+                        }
+
+                        notificationRecyclerButtonConfirm.visibility = View.VISIBLE
+                    }
 
                 } else if (page == Constants.FRAGMENT_FOLLOWINGS){
 
                     //showing following button that user can click on it and unfollow the user
-                    notificationRecyclerButtonConfirm.visibility = View.GONE
-                    notificationRecyclerButtonDelete.visibility = View.VISIBLE
-                    notificationRecyclerButtonDelete.text = "Following"
 
+                    if(MainActivity.followingsIdList.contains(model.id)){
+                        notificationRecyclerButtonDelete.visibility = View.VISIBLE
+                        notificationRecyclerButtonDelete.text = "Following"
+                        notificationRecyclerButtonConfirm.visibility = View.GONE
+                    }else{
+                        notificationRecyclerButtonConfirm.text = "Follow"
+                        notificationRecyclerButtonConfirm.visibility = View.VISIBLE
+                        notificationRecyclerButtonDelete.visibility = View.GONE
+                    }
                 }
 
             }else if(MainActivity.profilePosition == Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT){
@@ -112,9 +163,15 @@ class FollowsAdapter @Inject constructor(): RecyclerView.Adapter<FollowsAdapter.
                     notificationRecyclerButtonDelete.text = "Following"
                 }
                 else{
-                    notificationRecyclerButtonConfirm.visibility = View.VISIBLE
                     notificationRecyclerButtonDelete.visibility = View.GONE
-                    notificationRecyclerButtonConfirm.text = "Follow"
+
+                    if(MainActivity.followingsRequestedIdList.contains(model.id)){
+                        notificationRecyclerButtonConfirm.text = "Requested"
+                        notificationRecyclerButtonConfirm.visibility = View.VISIBLE
+                    }else{
+                        notificationRecyclerButtonConfirm.text = "Follow"
+                        notificationRecyclerButtonConfirm.visibility = View.VISIBLE
+                    }
                 }
 
             }
@@ -139,7 +196,7 @@ class FollowsAdapter @Inject constructor(): RecyclerView.Adapter<FollowsAdapter.
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    fun setData(newListData: List<FollowModel>)
+    fun setData(newListData: ArrayList<FollowModel>)
     {
         val notesDiffUtils = NotesDiffUtils(followsList, newListData)
         val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
@@ -164,9 +221,9 @@ class FollowsAdapter @Inject constructor(): RecyclerView.Adapter<FollowsAdapter.
     }
 
     //on item select handling
-    private var onItemClickListener: ((FollowModel, String) -> Unit)? = null
+    private var onItemClickListener: ((Int ,FollowModel, String) -> Unit)? = null
 
-    fun setOnItemCLickListener(listener: (FollowModel, String) -> Unit) {
+    fun setOnItemCLickListener(listener: (Int, FollowModel, String) -> Unit) {
         onItemClickListener = listener
     }
 

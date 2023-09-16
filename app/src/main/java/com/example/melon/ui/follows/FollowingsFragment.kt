@@ -43,25 +43,6 @@ class FollowingsFragment : Fragment() {
 
             loadAdapter()
 
-
-            followsViewPagerItemSearchEdt.setOnClickListener {
-                adapter.setData(emptyList())
-                loadAdapter()
-            }
-
-
-            adapter.setOnItemCLickListener { followModel, s ->
-                when(s){
-                    "follow" -> {
-
-                    }
-
-                    "unfollow" -> {
-
-                    }
-                }
-            }
-
         }
     }
 

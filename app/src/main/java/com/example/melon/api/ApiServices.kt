@@ -50,7 +50,7 @@ interface ApiServices {
     suspend fun unFollow(@Body body: UnFollowModel): Response<FollowResponse>
 
     @POST("auth/removeFollower")
-    suspend fun removeFollower(@Body body: RemoveFollowerModel): Response<FollowResponse>
+    suspend fun removeFollower(@Body body: RemoveFollowModel): Response<FollowResponse>
 
     @POST("auth/cancelRequest")
     suspend fun cancelRequest(@Body body: RemoveFollowerModel): Response<FollowResponse>

@@ -161,10 +161,10 @@ class SearchFragment : Fragment() {
             viewModel.loading.observe(viewLifecycleOwner){
                 if(it){
                     searchFragmentUserProgressbar.visibility = View.VISIBLE
-                    searchFragmentUserLayout.visibility = View.INVISIBLE
+                    searchFragmentUserRecycler.visibility = View.INVISIBLE
                 }else{
                     searchFragmentUserProgressbar.visibility = View.INVISIBLE
-                    searchFragmentUserLayout.visibility = View.VISIBLE
+                    searchFragmentUserRecycler.visibility = View.VISIBLE
                 }
             }
 

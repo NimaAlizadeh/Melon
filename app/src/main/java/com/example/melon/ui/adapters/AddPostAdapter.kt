@@ -6,16 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.widget.Toast
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.bumptech.glide.Glide
 import com.example.melon.databinding.ProfilePostsRecyclerItemBinding
+import com.example.melon.models.HomePostsResponse
 import com.example.melon.ui.addPost.AddPostFragment
 import javax.inject.Inject
 
 
-class AddPostAdapter @Inject constructor(): RecyclerView.Adapter<AddPostAdapter.CustomViewHolder>()
+class AddPostAdapter @Inject constructor(): PagingDataAdapter<String, AddPostAdapter.CustomViewHolder>(
+    differCallback
+)
 {
     private lateinit var binding: ProfilePostsRecyclerItemBinding
     private lateinit var context: Context
@@ -36,8 +41,8 @@ class AddPostAdapter @Inject constructor(): RecyclerView.Adapter<AddPostAdapter.
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int)
     {
-        val isSelected = selectedItems.contains(differ.currentList[position])
-        holder.bindItems(differ.currentList[position], isSelected)
+        val isSelected = selectedItems.contains(getItem(position)!!)
+        holder.bindItems(getItem(position)!!, isSelected)
         holder.setIsRecyclable(false)
 
         val anim = AlphaAnimation(0.0f, 1.0f)
@@ -45,7 +50,7 @@ class AddPostAdapter @Inject constructor(): RecyclerView.Adapter<AddPostAdapter.
         holder.itemView.startAnimation(anim)
     }
 
-    override fun getItemCount(): Int = differ.currentList.size
+//    override fun getItemCount(): Int = differ.currentList.size
 
     inner class CustomViewHolder: RecyclerView.ViewHolder(binding.root)
     {
@@ -67,6 +72,7 @@ class AddPostAdapter @Inject constructor(): RecyclerView.Adapter<AddPostAdapter.
 
 
                 Glide.with(context).load(image).into(recyclerItemImageView)
+//                recyclerItemImageView.load(image)
 
                 recyclerItemImageView.setOnClickListener {
                     if (selectedItems.size < 5)
@@ -102,13 +108,15 @@ class AddPostAdapter @Inject constructor(): RecyclerView.Adapter<AddPostAdapter.
         }
     }
 
-    private val differCallback = object: DiffUtil.ItemCallback<String>(){
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
-        }
+    companion object{
+        private val differCallback = object: DiffUtil.ItemCallback<String>(){
+            override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+                return oldItem == newItem
+            }
 
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
+            override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+                return oldItem == newItem
+            }
         }
     }
 

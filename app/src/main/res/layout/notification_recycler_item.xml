@@ -3,7 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/notification_recycler_whole_layout"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:background="#FBFBFB">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/notification_recycler_image_view"
@@ -77,7 +81,7 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/notification_recycler_button_confirm"
-            android:layout_width="70dp"
+            android:layout_width="80dp"
             android:layout_height="35dp"
             android:background="@drawable/button_purple_shape"
             android:elevation="5dp"

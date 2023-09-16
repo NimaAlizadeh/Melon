@@ -46,7 +46,7 @@ class SearchPostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespo
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int)
     {
         holder.bindItems(getItem(position)!!)
-//        holder.setIsRecyclable(false)
+        holder.setIsRecyclable(false)
 
         val anim = AlphaAnimation(0.0f, 1.0f)
         anim.duration = 100

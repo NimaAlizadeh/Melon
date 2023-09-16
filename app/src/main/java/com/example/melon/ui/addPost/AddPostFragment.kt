@@ -14,15 +14,23 @@ import android.view.animation.AlphaAnimation
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.melon.api.ApiServices
 import com.example.melon.databinding.FragmentAddPostBinding
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.AddPostAdapter
+import com.example.melon.ui.adapters.LoadMoreAdapter
 import com.example.melon.utils.Constants
+import com.example.melon.viewmodels.AddPostViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -44,6 +52,8 @@ class AddPostFragment : Fragment(), MainActivity.OnPermissionCallBackListener, A
     private lateinit var selectedImages: ArrayList<String>
 
     var isOnMultipleMode = false
+
+    private val viewModel: AddPostViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentAddPostBinding.inflate(layoutInflater, container, false)
@@ -121,37 +131,50 @@ class AddPostFragment : Fragment(), MainActivity.OnPermissionCallBackListener, A
 
     @SuppressLint("Recycle")
     private fun loadImages(){
-        imagesList.clear()
+//        imagesList.clear()
+//
+//        val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+//        val projection = arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+//        val orderBy = MediaStore.Video.Media.DATE_TAKEN
+//        val cursor = requireContext().contentResolver.query(uri, projection, null, null, "$orderBy DESC")
+//        val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
+//
+//        while (cursor.moveToNext())
+//            imagesList.add(cursor.getString(columnIndexData))
+//
+//        cursor.close()
 
-        val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-        val orderBy = MediaStore.Video.Media.DATE_TAKEN
-        val cursor = requireContext().contentResolver.query(uri, projection, null, null, "$orderBy DESC")
-        val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
-
-        while (cursor.moveToNext())
-            imagesList.add(cursor.getString(columnIndexData))
-
-        cursor.close()
-
-        Toast.makeText(requireContext(), imagesList.size.toString(), Toast.LENGTH_LONG).show()
 
 
         binding.apply {
-            adapter.differ.submitList(imagesList)
+            lifecycle.coroutineScope.launch {
+                viewModel.addPostsList.collect{
+                    adapter.submitData(it)
+                }
+            }
+            addPostFragmentRecycler.adapter = adapter.withLoadStateFooter(
+                LoadMoreAdapter{adapter.retry()}
+            )
+
+            lifecycle.coroutineScope.launch {
+                adapter.loadStateFlow.collect{
+                    addPostFragmentRecycler.isVisible = it.refresh !is LoadState.Loading
+                }
+            }
+
             addPostFragmentRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
             addPostFragmentRecycler.setHasFixedSize(true)
             addPostFragmentRecycler.adapter = adapter
 
-            if(adapter.selectedItems.size == 0) {
-                Glide.with(requireContext()).load(imagesList[0]).into(addPostImageView)
-                addPostImageView.startAnimation(anim)
-                this@AddPostFragment.path = imagesList[0]
-            }else{
-                Glide.with(requireContext()).load(adapter.selectedItems[adapter.selectedItems.size -1]).into(addPostImageView)
-                addPostImageView.startAnimation(anim)
-                this@AddPostFragment.path = adapter.selectedItems[adapter.selectedItems.size -1]
-            }
+//            if(adapter.selectedItems.size == 0) {
+//                Glide.with(requireContext()).load(imagesList[0]).into(addPostImageView)
+//                addPostImageView.startAnimation(anim)
+//                this@AddPostFragment.path = imagesList[0]
+//            }else{
+//                Glide.with(requireContext()).load(adapter.selectedItems[adapter.selectedItems.size -1]).into(addPostImageView)
+//                addPostImageView.startAnimation(anim)
+//                this@AddPostFragment.path = adapter.selectedItems[adapter.selectedItems.size -1]
+//            }
         }
     }
 
