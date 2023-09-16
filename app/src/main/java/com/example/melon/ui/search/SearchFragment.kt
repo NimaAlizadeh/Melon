@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.R
 import com.example.melon.databinding.FragmentSearchBinding
 import com.example.melon.models.User
+import com.example.melon.ui.showSinglePost.ShowSinglePostFragment
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.LoadMoreAdapter
 import com.example.melon.ui.adapters.SearchPostsAdapter
@@ -57,6 +58,16 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        binding.apply {
+            postAdapter.refresh()
+            searchFragmentExploreRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
+            searchFragmentExploreRecycler.adapter = postAdapter
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -77,6 +88,7 @@ class SearchFragment : Fragment() {
             lifecycle.coroutineScope.launch {
                 postAdapter.loadStateFlow.collect{
                     searchFragmentUserProgressbar.isVisible = it.refresh is LoadState.Loading
+                    searchFragmentExploreRecycler.isVisible = it.refresh !is LoadState.Loading
                 }
             }
 
@@ -87,12 +99,22 @@ class SearchFragment : Fragment() {
             //refresh
             searchFragmentSwipeRefresh.setOnRefreshListener {
                 postAdapter.refresh()
+
+                searchFragmentExploreRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
+                searchFragmentExploreRecycler.adapter = postAdapter
                 searchFragmentSwipeRefresh.isRefreshing = false
             }
 
             searchFragmentExploreRecycler.adapter = postAdapter.withLoadStateFooter(
                 LoadMoreAdapter{postAdapter.retry()}
             )
+
+
+            postAdapter.setOnItemCLickListener { post, s ->
+                if(s == "onClick"){
+                    findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToShowSinglePostFragment(post))
+                }
+            }
 
 
             // user --------------------------------------------------------------------------------------------------------
@@ -146,14 +168,6 @@ class SearchFragment : Fragment() {
                 }
             }
 
-
-            // when refreshing the fragment
-            searchFragmentSwipeRefresh.setOnRefreshListener {
-
-
-                searchFragmentSwipeRefresh.isRefreshing = false
-            }
-
             userAdapter.setOnItemCLickListener { userX, s ->
                 if(s == Constants.SEARCH_FRAGMENT_GO_TO_PROFILE_FRAGMENT){
                     MainActivity.appPagePosition = Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT
@@ -166,7 +180,7 @@ class SearchFragment : Fragment() {
     private fun toggleListVisibility(){
         binding.apply {
             if (isListVisible.value!!) {
-                // Hide the list with animation
+                // Hide the list with out animation
                 searchFragmentUserLayout.visibility = View.INVISIBLE
             } else {
                 // Show the list with animation

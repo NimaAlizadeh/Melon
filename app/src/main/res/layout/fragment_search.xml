@@ -90,6 +90,7 @@
         android:layout_height="50dp"/>
 
     <FrameLayout
+        android:background="@color/white"
         android:visibility="invisible"
         android:id="@+id/search_fragment_user_layout"
         android:layout_width="match_parent"
@@ -104,9 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingEnd="5dp"
-            android:paddingStart="5dp"
-            android:paddingVertical="10dp"
-            android:clipToPadding="false" />
+            android:paddingStart="5dp" />
 
         <TextView
             android:id="@+id/search_fragment_user_not_found_text"

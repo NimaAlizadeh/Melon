@@ -4,7 +4,8 @@ object Constants {
     const val BASE_URL = "https://socialmedia.bahadorcodes.com/"
     const val CLIENT_TIMEOUT = 600L
     const val DATASTORE_NAME_USER = "user_info"
-    const val DATASTORE_TOKEN_USER = "user_key"
+    const val DATASTORE_USER_TOKEN = "user_key"
+    const val DATASTORE_USER_ID = "user_id"
     const val DATASTORE_USER_FOLLOWINGS_COLLECTION = "datastore_user_followings_collection"
     const val DATASTORE_USER_FOLLOWERS_COLLECTION = "datastore_user_followers_collection"
     const val DATASTORE_USER_FOLLOWING_REQUESTED_COLLECTION = "datastore_user_following_requested_collection"

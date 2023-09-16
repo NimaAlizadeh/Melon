@@ -8,9 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.example.melon.models.Post
 import com.example.melon.models.SearchUserResponse
-import com.example.melon.paging.HomePostsPagingSource
 import com.example.melon.paging.SearchPostsPagingSource
 import com.example.melon.repositories.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

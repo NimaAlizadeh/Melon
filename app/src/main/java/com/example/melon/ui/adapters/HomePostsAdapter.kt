@@ -12,11 +12,8 @@ import androidx.recyclerview.widget.*
 import com.example.melon.R
 import com.example.melon.databinding.HomePostsRecyclerItemBinding
 import com.example.melon.models.HomePostsResponse
-import com.example.melon.models.Post
-import com.example.melon.models.PostModel
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.utils.Constants
-import okhttp3.internal.notifyAll
 import javax.inject.Inject
 
 
@@ -25,15 +22,10 @@ class HomePostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespons
 {
     private lateinit var binding: HomePostsRecyclerItemBinding
     lateinit var context: Context
-//    lateinit var userName: String
-//    lateinit var userProfileAvatar: String
 
-//    private var postsList = emptyList<HomePostsResponse.Post>()
+    @Inject
+    lateinit var pagerSnapHelper: PagerSnapHelper
 
-//    fun setValues(userName: String, userProfileAvatar: String){
-//        this.userName = userName
-//        this.userProfileAvatar = userProfileAvatar
-//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder
     {
@@ -45,7 +37,7 @@ class HomePostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespons
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int)
     {
         holder.bindItems(getItem(position)!!)
-        holder.setIsRecyclable(false)
+
 
         val anim = AlphaAnimation(0.0f, 1.0f)
         anim.duration = 1000
@@ -93,13 +85,13 @@ class HomePostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespons
 
                 homeFragmentPostCommentButton.setOnClickListener {
                     onItemClickListener?.let {
-                        getItem(bindingAdapterPosition)?.let { it1 -> it(it1, Constants.GO_TO_COMMENTS_FRAGMENT) }
+                        it(model, Constants.GO_TO_COMMENTS_FRAGMENT)
                     }
                 }
 
                 homeFragmentPostLikeButton.setOnClickListener {
                     onItemClickListener?.let {
-                        getItem(bindingAdapterPosition)?.let { it1 -> it(it1, Constants.DO_LIKE_BUTTON) }
+                        it(model ,Constants.DO_LIKE_BUTTON)
                     }
 
                     if(isLiked){
@@ -114,8 +106,10 @@ class HomePostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespons
                     }
                 }
 
+
+
                 //indicator for recycler
-                val pagerSnapHelper = PagerSnapHelper()
+
                 pagerSnapHelper.attachToRecyclerView(homeFragmentPicsRecycler)
                 homeFragmentPicsIndicator.attachToRecyclerView(homeFragmentPicsRecycler, pagerSnapHelper)
 
@@ -125,6 +119,14 @@ class HomePostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespons
                 homeFragmentPicsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 homeFragmentPicsRecycler.adapter = adapter
 
+
+                adapter.setOnItemCLickListener { s, s2 ->
+                    if(s2 == "userNameOnClick"){
+                        onItemClickListener?.let {
+                            it(model, "userNameOnClick")
+                        }
+                    }
+                }
             }
         }
     }
@@ -132,7 +134,7 @@ class HomePostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespons
     companion object{
         private val differCallback = object: DiffUtil.ItemCallback<HomePostsResponse.Post>(){
             override fun areItemsTheSame(oldItem: HomePostsResponse.Post, newItem: HomePostsResponse.Post): Boolean {
-                return oldItem == newItem
+                return oldItem._id == newItem._id
             }
 
             override fun areContentsTheSame(oldItem: HomePostsResponse.Post, newItem: HomePostsResponse.Post): Boolean {
@@ -140,32 +142,6 @@ class HomePostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespons
             }
         }
     }
-
-//    val differ = AsyncListDiffer(this, differCallback)
-
-//    fun setData(newListData: List<HomePostsResponse.Post>)
-//    {
-//        val notesDiffUtils = NotesDiffUtils(postsList, newListData)
-//        val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
-//        postsList = newListData
-//        diffUtils.dispatchUpdatesTo(this)
-//    }
-//
-//    class NotesDiffUtils(private val oldItem: List<Post>, private val newItem: List<Post>) : DiffUtil.Callback(){
-//        override fun getOldListSize() = oldItem.size
-//
-//        override fun getNewListSize() = newItem.size
-//
-//        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean
-//        {
-//            return oldItem[oldItemPosition] === newItem[newItemPosition]
-//        }
-//
-//        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean
-//        {
-//            return oldItem[oldItemPosition] === newItem[newItemPosition]
-//        }
-//    }
 
 
     //on item select handling

@@ -46,10 +46,10 @@ class SearchPostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespo
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int)
     {
         holder.bindItems(getItem(position)!!)
-        holder.setIsRecyclable(false)
+//        holder.setIsRecyclable(false)
 
         val anim = AlphaAnimation(0.0f, 1.0f)
-        anim.duration = 1000
+        anim.duration = 100
         holder.itemView.startAnimation(anim)
     }
 
@@ -97,7 +97,7 @@ class SearchPostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespo
 
                 cardView.setOnClickListener {
                     onItemClickListener?.let {
-                        it(bindingAdapterPosition, "onClick")
+                        it(model, "onClick")
                     }
                 }
             }
@@ -107,7 +107,7 @@ class SearchPostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespo
     companion object{
         private val differCallback = object: DiffUtil.ItemCallback<HomePostsResponse.Post>(){
             override fun areItemsTheSame(oldItem: HomePostsResponse.Post, newItem: HomePostsResponse.Post): Boolean {
-                return oldItem == newItem
+                return oldItem._id == newItem._id
             }
 
             override fun areContentsTheSame(oldItem: HomePostsResponse.Post, newItem: HomePostsResponse.Post): Boolean {
@@ -118,9 +118,9 @@ class SearchPostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespo
 
 
     //on item select handling
-    private var onItemClickListener: ((Int, String) -> Unit)? = null
+    private var onItemClickListener: ((HomePostsResponse.Post, String) -> Unit)? = null
 
-    fun setOnItemCLickListener(listener: (Int, String) -> Unit){
+    fun setOnItemCLickListener(listener: (HomePostsResponse.Post, String) -> Unit){
         onItemClickListener = listener
     }
 }

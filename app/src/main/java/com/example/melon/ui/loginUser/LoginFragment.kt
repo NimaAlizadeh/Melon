@@ -79,6 +79,7 @@ class LoginFragment : Fragment() {
                 if(response.success){
                     MainActivity.myUserID = response.user.id
 
+
                     val tempFollowings = response.user.followings.getIds()
                     val tempFollowers = response.user.followers.getIds()
 
@@ -88,6 +89,7 @@ class LoginFragment : Fragment() {
                     lifecycle.coroutineScope.launch {
                         userData.setFollowingsCollection(tempFollowings.toSet())
                         userData.setFollowersCollection(tempFollowers.toSet())
+                        userData.setUserId(response.user.id)
                     }
                 }
 

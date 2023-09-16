@@ -7,9 +7,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.melon.models.FollowData
-import com.example.melon.models.Follow
-import com.example.melon.models.FollowResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -19,7 +16,8 @@ class StoreUserData @Inject constructor(@ApplicationContext val context: Context
     companion object{
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.DATASTORE_NAME_USER)
 
-        val userToken = stringPreferencesKey(Constants.DATASTORE_TOKEN_USER)
+        val userToken = stringPreferencesKey(Constants.DATASTORE_USER_TOKEN)
+        val userId = stringPreferencesKey(Constants.DATASTORE_USER_ID)
         val followingsCollection = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWINGS_COLLECTION)
         val followersCollection = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWERS_COLLECTION)
         val followingsRequestedCollection = stringSetPreferencesKey(Constants.DATASTORE_USER_FOLLOWING_REQUESTED_COLLECTION)
@@ -30,11 +28,24 @@ class StoreUserData @Inject constructor(@ApplicationContext val context: Context
     {
         //here we just save our string value in the datastore as a string (actually we are editing the value that have been saved before)
         context.dataStore.edit {
-            it[userToken] = token
+            it[userId] = token
         }
     }
 
     fun getUserToken() = context.dataStore.data.map {
+        //give me the userToken from datastore and if it was empty just give me an empty string
+        it[userId] ?: ""
+    }
+
+    suspend fun setUserId(token: String)
+    {
+        //here we just save our string value in the datastore as a string (actually we are editing the value that have been saved before)
+        context.dataStore.edit {
+            it[userToken] = token
+        }
+    }
+
+    fun getUserId() = context.dataStore.data.map {
         //give me the userToken from datastore and if it was empty just give me an empty string
         it[userToken] ?: ""
     }

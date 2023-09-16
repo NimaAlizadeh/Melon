@@ -22,6 +22,7 @@ import com.example.melon.databinding.ConfirmAddPostItemBinding
 import com.example.melon.databinding.HomePostsPictureItemBinding
 import com.example.melon.databinding.ProfilePostsRecyclerItemBinding
 import com.example.melon.databinding.ShowPostRecyclerItemBinding
+import com.example.melon.models.HomePostsResponse
 import com.example.melon.models.MultiSelectRecycler
 import com.example.melon.models.Post
 import com.example.melon.ui.activities.MainActivity
@@ -67,6 +68,13 @@ class ShowPostsItemAdapter @Inject constructor(): RecyclerView.Adapter<ShowPosts
                 //username  initiate
                 showPostRecyclerItemUsername.text = userName
 
+                // onclick listener for clicking on username or picture to go to theirProfileFragment
+                showPostRecyclerItemUserLayout.setOnClickListener {
+                    onItemClickListener?.let {
+                        it(avatar, "userNameOnClick")
+                    }
+                }
+
                 //load picture in image view with glide
                 val headers = Headers {
                     val headersMap = HashMap<String, String>()
@@ -78,18 +86,6 @@ class ShowPostsItemAdapter @Inject constructor(): RecyclerView.Adapter<ShowPosts
                 Glide.with(context)
                     .load(glideUrl)
                     .timeout(60000)
-//                    .listener(object : RequestListener<Drawable> {
-//                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-//                            Log.d("TAG", "onLoadFailed: ")
-//                            return false
-//                        }
-//
-//                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-////                            showPostRecyclerItemProgressbar.visibility = View.GONE
-//                            return false
-//                        }
-//
-//                    })
                     .into(showPostRecyclerItemImageView)
 
 
@@ -138,5 +134,12 @@ class ShowPostsItemAdapter @Inject constructor(): RecyclerView.Adapter<ShowPosts
         {
             return oldItem[oldItemPosition] === newItem[newItemPosition]
         }
+    }
+
+    //on item select handling
+    private var onItemClickListener: ((String, String) -> Unit)? = null
+
+    fun setOnItemCLickListener(listener: (String, String) -> Unit){
+        onItemClickListener = listener
     }
 }

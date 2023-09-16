@@ -113,6 +113,13 @@
         <action
             android:id="@+id/action_homeFragment_to_profileFragment2"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_theirProfileFragment"
+            app:destination="@id/theirProfileFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -192,6 +199,16 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_searchFragment_to_showPostFragment"
+            app:destination="@id/showPostFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_showSinglePostFragment"
+            app:destination="@id/showSinglePostFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <!--        <action-->
 <!--            android:id="@+id/action_searchFragment_to_profileFragment"-->
 <!--            app:destination="@id/profileFragment" />-->
@@ -315,6 +332,29 @@
         <action
             android:id="@+id/action_theirProfileFragment_to_followsFragment"
             app:destination="@id/followsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/showSinglePostFragment"
+        android:name="com.example.melon.ui.showSinglePost.ShowSinglePostFragment"
+        android:label="fragment_show_single_post"
+        tools:layout="@layout/fragment_show_single_post" >
+        <argument
+            android:name="postModel"
+            app:argType="com.example.melon.models.HomePostsResponse$Post" />
+        <action
+            android:id="@+id/action_showSinglePostFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_showSinglePostFragment_to_theirProfileFragment"
+            app:destination="@id/theirProfileFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"

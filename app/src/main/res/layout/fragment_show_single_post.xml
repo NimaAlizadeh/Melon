@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.showSinglePost.ShowSinglePostFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/show_single_post_fragment_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:elevation="20dp"
+        app:navigationIconTint="@color/black"
+        app:title="Explore"
+        app:titleCentered="true"
+        app:titleTextColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:id="@+id/show_single_post_fragment_post_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/show_single_post_fragment_toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/show_single_post_fragment_pics_recycler"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <me.relex.circleindicator.CircleIndicator2
+            android:layout_marginTop="5dp"
+            app:ci_drawable="@drawable/indicator_shape"
+            app:ci_drawable_unselected="@drawable/indicator_shape"
+            android:id="@+id/show_single_post_fragment_pics_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            app:layout_constraintTop_toBottomOf="@id/show_single_post_fragment_pics_recycler"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/show_single_post_fragment_info_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/show_single_post_fragment_post_layout"
+        app:layout_constraintStart_toStartOf="@id/show_single_post_fragment_post_layout"
+        app:layout_constraintEnd_toEndOf="@id/show_single_post_fragment_post_layout">
+
+        <androidx.cardview.widget.CardView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/show_single_post_fragment_post_like_button"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="7.5dp"
+            android:layout_marginTop="5dp"
+            app:cardCornerRadius="30dp"
+            android:focusable="true"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/show_single_post_fragment_post_like_imageView"
+                app:tint="@color/red"
+                android:layout_gravity="center"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/baseline_favorite_border_24"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            app:layout_constraintTop_toTopOf="@id/show_single_post_fragment_post_like_button"
+            app:layout_constraintStart_toEndOf="@id/show_single_post_fragment_post_like_button"
+            app:layout_constraintBottom_toBottomOf="@id/show_single_post_fragment_post_like_button"
+            android:id="@+id/show_single_post_fragment_post_comment_button"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="30dp"
+            android:focusable="true"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/show_single_post_fragment_comment_imageView"
+                android:layout_gravity="center"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/bubble_chat"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_marginStart="2.5dp"
+            android:id="@+id/show_single_post_fragment_likes_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/show_single_post_fragment_post_like_button"
+            app:layout_constraintStart_toStartOf="@id/show_single_post_fragment_post_like_button"
+            android:text="0"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_marginStart="5dp"
+            android:id="@+id/show_single_post_fragment_likes_number_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/show_single_post_fragment_post_like_button"
+            app:layout_constraintStart_toEndOf="@id/show_single_post_fragment_likes_text"
+            android:text="Likes"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/show_single_post_fragment_description_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="2.5dp"
+            android:layout_marginEnd="10dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="3dp"
+            android:maxLines="2"
+            android:text="f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohff hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf f hjf sehfpshe kjsh  sljhf sjkehosf sif s[ifejszifsuh fspefoish feoshf osihef spofih spefohisz fohsi fpsuhf spohf"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/show_single_post_fragment_post_like_button"
+            app:layout_constraintTop_toBottomOf="@id/show_single_post_fragment_likes_text" />
+
+        <TextView
+            android:layout_marginStart="2.5dp"
+            android:id="@+id/show_single_post_fragment_time_text"
+            android:paddingBottom="8dp"
+            android:singleLine="true"
+            android:layout_marginTop="5dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/show_single_post_fragment_description_text"
+            app:layout_constraintStart_toStartOf="@id/show_single_post_fragment_post_like_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="2 days ago"
+            android:textColor="@color/gray"
+            android:fontFamily="casual"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

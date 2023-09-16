@@ -60,6 +60,12 @@ class FirstFragment : Fragment() {
                     }
                 }
             }
+
+            lifecycle.coroutineScope.launch {
+                userData.getUserId().collect{
+                    MainActivity.myUserID = it
+                }
+            }
         }
     }
 }

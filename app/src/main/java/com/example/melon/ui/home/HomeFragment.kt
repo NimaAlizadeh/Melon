@@ -17,10 +17,13 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.load.engine.Engine.LoadStatus
 import com.example.melon.databinding.FragmentHomeBinding
+import com.example.melon.models.LikeCommentModel
+import com.example.melon.models.RecyclerViewState
 import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.HomePostsAdapter
 import com.example.melon.ui.adapters.LoadMoreAdapter
 import com.example.melon.ui.adapters.ShowPostsAdapter
+import com.example.melon.ui.showPost.ShowPostFragmentDirections
 import com.example.melon.utils.Constants
 import com.example.melon.utils.StoreUserData
 import com.example.melon.viewmodels.HomeViewModel
@@ -92,12 +95,36 @@ class HomeFragment : Fragment() {
             }
 
 
+            // adapter on click listeners
+            adapter.setOnItemCLickListener { postModel, s ->
+                when(s){
+                    Constants.GO_TO_COMMENTS_FRAGMENT -> {
+                        val layoutManager = homeFragmentPostRecycler.layoutManager as LinearLayoutManager
+                        val position = layoutManager.findFirstVisibleItemPosition()
+                        val firstVisibleView = layoutManager.findViewByPosition(position)
+                        val offset = firstVisibleView?.top ?: 0
+                        viewModel.leftPosition.postValue(RecyclerViewState(position, offset))
+                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCommentsFragment(postModel._id, postModel.user, postModel.comments.toTypedArray()))
+                    }
+
+                    Constants.DO_LIKE_BUTTON -> {
+                        viewModel.likePost(LikeCommentModel(postModel._id, postModel.user))
+                    }
+
+                    "userNameOnClick" -> {
+                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToTheirProfileFragment(postModel.user))
+                    }
+                }
+            }
+
+
             lifecycle.coroutineScope.launch {
                 viewModel.postsList.collect{
                     adapter.submitData(it)
                 }
             }
 
+            // refresh icon showing or not
             lifecycle.coroutineScope.launch {
                 adapter.loadStateFlow.collect{
                     homeFragmentLoadDataProgressbar.isVisible = it.refresh is LoadState.Loading
@@ -112,6 +139,10 @@ class HomeFragment : Fragment() {
             //refresh
             homeFragmentSwipeRefresh.setOnRefreshListener {
                 adapter.refresh()
+
+                homeFragmentPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                homeFragmentPostRecycler.adapter = adapter
+
                 homeFragmentSwipeRefresh.isRefreshing = false
             }
 
