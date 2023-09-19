@@ -61,6 +61,7 @@ interface ApiServices {
     @POST("auth/acceptRequest")
     suspend fun acceptFollow(@Body body: AcceptOrRejectModel): Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
+
     @POST("auth/rejectRequest")
     suspend fun rejectFollow(@Body body: AcceptOrRejectModel) : Response<AddPostResponse>
     // response is like the same as addPostResponse and it just gets success and message
@@ -76,4 +77,10 @@ interface ApiServices {
 
     @GET("post/getAllPosts")
     suspend fun getSearchPosts(@Query("page") page: Int, @Query("limit") limit: Int): Response<HomePostsResponse>
+
+    @GET("user/notifications")
+    suspend fun getNotifications(): Response<NotificationResponse>
+
+    @GET("post/getPost/{postId}")
+    suspend fun getOnePost(@Path("postId") postId: String): Response<Post>
 }

@@ -14,46 +14,46 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/hamburger_menu_settings_layout"
+        app:layout_constraintBottom_toTopOf="@id/hamburger_menu_edit_profile_layout"
         android:layout_width="40dp"
         android:layout_height="6dp"
         android:background="@drawable/bottom_sheet_view_shape" />
 
-    <LinearLayout
-        android:focusable="true"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:id="@+id/hamburger_menu_settings_layout"
-        app:layout_constraintTop_toBottomOf="@id/view1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center|start"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp">
+<!--    <LinearLayout-->
+<!--        android:focusable="true"-->
+<!--        android:clickable="true"-->
+<!--        android:foreground="?android:attr/selectableItemBackground"-->
+<!--        android:id="@+id/hamburger_menu_settings_layout"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/view1"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center|start"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_marginTop="10dp">-->
 
-        <ImageView
-            android:layout_margin="10dp"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/baseline_settings_24"/>
+<!--        <ImageView-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:layout_width="32dp"-->
+<!--            android:layout_height="32dp"-->
+<!--            android:src="@drawable/baseline_settings_24"/>-->
 
-        <TextView
-            android:layout_marginStart="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Settings"
-            android:textSize="@dimen/_13font_mdp" />
+<!--        <TextView-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Settings"-->
+<!--            android:textSize="@dimen/_13font_mdp" />-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
     <LinearLayout
         android:focusable="true"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:id="@+id/hamburger_menu_edit_profile_layout"
-        app:layout_constraintTop_toBottomOf="@id/hamburger_menu_settings_layout"
+        app:layout_constraintTop_toBottomOf="@id/view1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="match_parent"

@@ -196,6 +196,29 @@
                     android:textSize="15sp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginTop="5dp"
+                app:endIconMode="clear_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="Name"
+                app:startIconDrawable="@drawable/baseline_drive_file_rename_outline_24"
+                app:boxStrokeWidth="2dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:textStyle="bold"
+                    android:fontFamily="casual"
+                    android:id="@+id/edit_profile_fragment_name_edt"
+                    android:inputType="textEmailAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:paddingBottom="@dimen/_10mdp"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <CheckBox
                 android:id="@+id/edit_profile_fragment_change_password_box"
                 android:layout_marginTop="25dp"

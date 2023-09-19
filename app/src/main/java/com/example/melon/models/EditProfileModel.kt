@@ -8,5 +8,6 @@ data class EditProfileModel(
     var newPassword: String = "",
     var oldPassword: String = "",
     var username: String = "",
-    var private: Boolean = false
+    var private: Boolean = false,
+    var name: String = "",
 )

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.melon.models.JustStringResponse
 import com.example.melon.models.LikeCommentModel
+import com.example.melon.models.Post
 import com.example.melon.repositories.ShowSinglePostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,6 +17,8 @@ class ShowSinglePostViewModel @Inject constructor(private val repository: ShowSi
 {
 
     val likePostResponse = MutableLiveData<JustStringResponse>()
+    val postResponse = MutableLiveData<Post>()
+    val loading = MutableLiveData<Boolean>()
 
     fun likePost(body: LikeCommentModel) = viewModelScope.launch {
 
@@ -29,6 +32,25 @@ class ShowSinglePostViewModel @Inject constructor(private val repository: ShowSi
         }catch (e: Exception) {
             Log.d("likePost - ShowSinglePostViewModel ------------------------------------------------------------", "exception : " + e.message)
         }
+
+    }
+
+    fun getOnePost(postId: String) = viewModelScope.launch {
+
+        loading.postValue(true)
+
+        try{
+
+            val response = repository.getOnePost(postId)
+            if(response.isSuccessful) {
+                postResponse.postValue(response.body())
+            }
+
+        }catch (e: Exception) {
+            Log.d("likePost - ShowSinglePostViewModel ------------------------------------------------------------", "exception : " + e.message)
+        }
+
+        loading.postValue(false)
 
     }
 }

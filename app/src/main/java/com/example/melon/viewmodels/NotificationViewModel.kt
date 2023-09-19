@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.melon.models.AcceptOrRejectModel
-import com.example.melon.models.AddPostResponse
-import com.example.melon.models.FollowModel
-import com.example.melon.models.RequestsResponse
+import com.example.melon.models.*
 import com.example.melon.repositories.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -21,6 +18,7 @@ class NotificationViewModel @Inject constructor(private val notificationReposito
     val requestsResponse = MutableLiveData<RequestsResponse>()
     val acceptResponse = MutableLiveData<AddPostResponse>()
     val rejectResponse = MutableLiveData<AddPostResponse>()
+    val notificationsResponse = MutableLiveData<NotificationResponse>()
     val requestLoading = MutableLiveData<Boolean>()
 
     fun loadRequests() = viewModelScope.launch {
@@ -72,6 +70,24 @@ class NotificationViewModel @Inject constructor(private val notificationReposito
             }
         }catch (e: Exception){
             Log.d("Notification view model rejectFollowRequest try exception :     ", e.message.toString())
+        }
+
+        requestLoading.postValue(false)
+    }
+
+    fun getNotifications() = viewModelScope.launch {
+        requestLoading.postValue(true)
+
+        try {
+            val response = notificationRepository.getNotifications()
+            if(response.isSuccessful)
+                notificationsResponse.postValue(response.body())
+            else{
+                Log.d("Notification view model getNotifications code:     ", response.code().toString())
+                Log.d("Notification view model getNotifications message:     ", response.message().toString())
+            }
+        }catch (e: Exception){
+            Log.d("Notification view model getNotifications try exception :     ", e.message.toString())
         }
 
         requestLoading.postValue(false)

@@ -43,10 +43,10 @@ class ProfileHamburgerFragment : BottomSheetDialogFragment(){
             }
 
             //open settings page
-            hamburgerMenuSettingsLayout.setOnClickListener {
-                callBack.onClickSettings()
-                this@ProfileHamburgerFragment.dismiss()
-            }
+//            hamburgerMenuSettingsLayout.setOnClickListener {
+//                callBack.onClickSettings()
+//                this@ProfileHamburgerFragment.dismiss()
+//            }
 
             //open edit profile page
             hamburgerMenuEditProfileLayout.setOnClickListener {

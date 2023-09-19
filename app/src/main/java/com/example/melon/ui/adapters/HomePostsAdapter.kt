@@ -44,6 +44,10 @@ class HomePostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespons
         holder.itemView.startAnimation(anim)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     inner class CustomViewHolder: RecyclerView.ViewHolder(binding.root)
     {
         @SuppressLint("SetTextI18n")

@@ -260,7 +260,15 @@
         android:id="@+id/notificationFragment"
         android:name="com.example.melon.ui.notification.NotificationFragment"
         android:label="fragment_notification"
-        tools:layout="@layout/fragment_notification" />
+        tools:layout="@layout/fragment_notification" >
+        <action
+            android:id="@+id/action_notificationFragment_to_theirProfileFragment"
+            app:destination="@id/theirProfileFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
     <fragment
         android:id="@+id/showPostFragment"
         android:name="com.example.melon.ui.showPost.ShowPostFragment"

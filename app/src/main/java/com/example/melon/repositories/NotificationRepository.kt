@@ -9,4 +9,6 @@ class NotificationRepository @Inject constructor(private val apiServices: ApiSer
     suspend fun getRequests() = apiServices.getRequests()
     suspend fun acceptFollowRequest(body: AcceptOrRejectModel) = apiServices.acceptFollow(body)
     suspend fun rejectFollowRequest(body: AcceptOrRejectModel) = apiServices.rejectFollow(body)
+
+    suspend fun getNotifications() = apiServices.getNotifications()
 }

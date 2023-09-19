@@ -4,23 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.melon.databinding.FollowsViewPagerItemBinding
-import com.example.melon.databinding.FragmentFollowersBinding
-import com.example.melon.databinding.FragmentFollowingsBinding
-import com.example.melon.databinding.FragmentFollowsBinding
-import com.example.melon.models.FollowModel
-import com.example.melon.ui.activities.MainActivity
 import com.example.melon.ui.adapters.FollowsAdapter
-import com.example.melon.ui.adapters.FollowsViewPagerAdapter
-import com.example.melon.ui.adapters.NotificationAdapter
-import com.example.melon.utils.Constants
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class FollowersFragment : Fragment() {

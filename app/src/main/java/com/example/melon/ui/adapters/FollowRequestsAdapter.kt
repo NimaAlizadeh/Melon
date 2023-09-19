@@ -14,16 +14,15 @@ import com.example.melon.R
 import com.example.melon.databinding.NotificationRecyclerItemBinding
 import com.example.melon.models.Follow
 import com.example.melon.models.FollowModel
-import com.example.melon.models.NotificationResponse
 import com.example.melon.utils.Constants
 import javax.inject.Inject
 
 
-class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<NotificationAdapter.CustomViewHolder>() {
+class FollowRequestsAdapter @Inject constructor(): RecyclerView.Adapter<FollowRequestsAdapter.CustomViewHolder>() {
     private lateinit var binding: NotificationRecyclerItemBinding
     lateinit var context: Context
 
-    private var notificationList = emptyList<NotificationResponse.Notification>()
+    private var notificationList = emptyList<FollowModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         binding = NotificationRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -39,37 +38,29 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     override fun getItemCount() = notificationList.size
 
     inner class CustomViewHolder : RecyclerView.ViewHolder(binding.root) {
-        fun bindItems(model: NotificationResponse.Notification) {
+        fun bindItems(model: FollowModel) {
             binding.apply {
 
-                notificationRecyclerActionIcon.visibility = View.VISIBLE
-                notificationRecyclerButtonConfirm.visibility = View.GONE
-                notificationRecyclerButtonDelete.visibility = View.GONE
+
+                notificationRecyclerButtonConfirm.text = "Confirm"
+                notificationRecyclerButtonDelete.visibility = View.VISIBLE
+
+                notificationRecyclerTextRequest.visibility = View.VISIBLE
+                notificationRecyclerTextRequest.text = "requested to follow you"
+
+                notificationRecyclerUserName.text = model.username
+                loadUserProfileAvatar(model.id)
 
 
-                notificationRecyclerUserName.text = model.performer.username
-                notificationRecyclerTextRequest.text = model.message
-                loadUserProfileAvatar(model.performer._id)
-
-                when(model.action){
-                    "LIKED_POST" -> {
-                        notificationRecyclerActionIcon.setImageResource(R.drawable.baseline_favorite_border_24)
-                    }
-                    "COMMENTED_ON_A_POST" -> {
-                        notificationRecyclerActionIcon.setImageResource(R.drawable.bubble_chat)
-                    }
-                    "ADD_FOLLOWER" -> {
-                        notificationRecyclerActionIcon.setImageResource(R.drawable.baseline_person_add_alt_1_24)
-                    }
-                    "REQUEST_ACCEPTANCE" -> {
-                        notificationRecyclerActionIcon.setImageResource(R.drawable.baseline_check_24)
+                notificationRecyclerButtonConfirm.setOnClickListener {
+                    onItemClickListener?.let {
+                        it(model, "confirm")
                     }
                 }
 
-
-                notificationRecyclerWholeLayout.setOnClickListener {
+                notificationRecyclerButtonDelete.setOnClickListener {
                     onItemClickListener?.let {
-                        it(model, Constants.GO_TO_THEIR_USER_PROFILE_FRAGMENT)
+                        it(model, "delete")
                     }
                 }
 
@@ -89,7 +80,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    fun setData(newListData: List<NotificationResponse.Notification>)
+    fun setData(newListData: List<FollowModel>)
     {
         val notesDiffUtils = NotesDiffUtils(notificationList, newListData)
         val diffUtils = DiffUtil.calculateDiff(notesDiffUtils)
@@ -97,7 +88,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         diffUtils.dispatchUpdatesTo(this)
     }
 
-    class NotesDiffUtils(private val oldItem: List<NotificationResponse.Notification>, private val newItem: List<NotificationResponse.Notification>) : DiffUtil.Callback(){
+    class NotesDiffUtils(private val oldItem: List<FollowModel>, private val newItem: List<FollowModel>) : DiffUtil.Callback(){
         override fun getOldListSize() = oldItem.size
 
         override fun getNewListSize() = newItem.size
@@ -114,9 +105,9 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
     }
 
     //on item select handling
-    private var onItemClickListener: ((NotificationResponse.Notification, String) -> Unit)? = null
+    private var onItemClickListener: ((FollowModel, String) -> Unit)? = null
 
-    fun setOnItemCLickListener(listener: (NotificationResponse.Notification, String) -> Unit) {
+    fun setOnItemCLickListener(listener: (FollowModel, String) -> Unit) {
         onItemClickListener = listener
     }
 

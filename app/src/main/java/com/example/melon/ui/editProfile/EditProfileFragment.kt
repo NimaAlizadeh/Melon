@@ -30,6 +30,7 @@ class EditProfileFragment : Fragment() {
 
     private lateinit var gender: String
     private lateinit var birthDay: String
+    private lateinit var name: String
     private lateinit var editProfileModel: EditProfileModel
     private var isPrivate = false
 
@@ -86,12 +87,14 @@ class EditProfileFragment : Fragment() {
                     userResponse.gender = response.gender
                     userResponse.birthday = response.birthday
                     userResponse.username = response.username
+                    userResponse.name = response.name
 
                     //put user data in views
                     editProfileFragmentEmailEdt.setText(response.email)
                     editProfileFragmentBirthdayEdt.setText(response.birthday)
                     editProfileFragmentUsernameEdt.setText(response.username)
                     editProfileFragmentBioEdt.setText(response.bio)
+                    editProfileFragmentNameEdt.setText(response.name)
                     editProfileFragmentAccountPrivacySwitch.isChecked = response.private
                     isPrivate = response.private
                     if(isPrivate)
@@ -135,6 +138,10 @@ class EditProfileFragment : Fragment() {
                 if(editProfileFragmentUsernameEdt.text.toString() != userResponse.username)
                     editProfileModel.username = editProfileFragmentUsernameEdt.text.toString()
                 else editProfileModel.username = ""
+
+                if(editProfileFragmentNameEdt.text.toString() != userResponse.name)
+                    editProfileModel.name = editProfileFragmentNameEdt.text.toString()
+                else editProfileModel.name = ""
 
                 if(editProfileFragmentEmailEdt.text.toString() != userResponse.email)
                     editProfileModel.email = editProfileFragmentEmailEdt.text.toString()

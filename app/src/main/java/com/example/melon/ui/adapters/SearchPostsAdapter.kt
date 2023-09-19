@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
-import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
@@ -18,15 +17,9 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.Headers
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.example.melon.R
-import com.example.melon.databinding.HomePostsRecyclerItemBinding
 import com.example.melon.databinding.ProfilePostsRecyclerItemBinding
 import com.example.melon.models.HomePostsResponse
-import com.example.melon.models.Post
-import com.example.melon.models.PostModel
-import com.example.melon.ui.activities.MainActivity
 import com.example.melon.utils.Constants
-import okhttp3.internal.notifyAll
 import javax.inject.Inject
 
 
@@ -46,11 +39,15 @@ class SearchPostsAdapter @Inject constructor(): PagingDataAdapter<HomePostsRespo
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int)
     {
         holder.bindItems(getItem(position)!!)
-        holder.setIsRecyclable(false)
+//        holder.setIsRecyclable(false)
 
         val anim = AlphaAnimation(0.0f, 1.0f)
         anim.duration = 100
         holder.itemView.startAnimation(anim)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 
     inner class CustomViewHolder: RecyclerView.ViewHolder(binding.root)

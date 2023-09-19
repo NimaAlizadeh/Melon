@@ -7,4 +7,6 @@ import javax.inject.Inject
 class ShowSinglePostRepository @Inject constructor(private val apiServices: ApiServices)
 {
     suspend fun likePost(body: LikeCommentModel) = apiServices.likePost(body)
+
+    suspend fun getOnePost(postId: String) = apiServices.getOnePost(postId)
 }

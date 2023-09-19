@@ -21,8 +21,6 @@ class FollowsViewPagerAdapter @Inject constructor(): RecyclerView.Adapter<Follow
 
     private lateinit var context: Context
 
-    @Inject
-    lateinit var adapter: NotificationAdapter
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
         binding = FollowsViewPagerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -63,9 +61,9 @@ class FollowsViewPagerAdapter @Inject constructor(): RecyclerView.Adapter<Follow
 
     fun loadAdapter(list: List<FollowModel>){
         binding.apply {
-            adapter.setData(list)
-            followsViewPagerItemRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            followsViewPagerItemRecycler.adapter = adapter
+//            adapter.setData(list)
+//            followsViewPagerItemRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+//            followsViewPagerItemRecycler.adapter = adapter
         }
     }
 

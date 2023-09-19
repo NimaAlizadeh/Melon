@@ -13,4 +13,5 @@ data class User(
     var gender: String = "",
     var private: Boolean = false,
     var username: String = "",
+    var name: String = "",
 )

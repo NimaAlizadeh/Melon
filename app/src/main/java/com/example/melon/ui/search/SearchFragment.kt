@@ -63,6 +63,8 @@ class SearchFragment : Fragment() {
 
         binding.apply {
             postAdapter.refresh()
+            postAdapter.notifyDataSetChanged()
+
             searchFragmentExploreRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
             searchFragmentExploreRecycler.adapter = postAdapter
         }
@@ -99,6 +101,7 @@ class SearchFragment : Fragment() {
             //refresh
             searchFragmentSwipeRefresh.setOnRefreshListener {
                 postAdapter.refresh()
+                postAdapter.notifyDataSetChanged()
 
                 searchFragmentExploreRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
                 searchFragmentExploreRecycler.adapter = postAdapter
